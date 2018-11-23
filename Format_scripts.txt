@@ -1,0 +1,45 @@
+################################################################################
+# Run-Time Environment:     R version 3.4.2
+# Author:                   Ilse van Beelen, intern CHDR
+# Supervisor:               Jeroen van Smeden
+# Sponsor:                  none
+# Project number:           CHDR1518 
+# Script:                   Part 1 (1/5)
+# Short title:  	    Effect of different polymorfisms of CYP2D6 in
+#                           healthy volunteers (HV) 
+#                           in relation to PK/PD of metoprolol
+# Purpose of script:        Designing a Linear Mixed-Effects Model for the PD
+#                           data of CHDR1518 
+#
+# Datafiles used:	    CHDR1518_Mixed_Model_Data2018-06-11.csv
+#                          
+# Date:                     2018-05-04
+# Version:  		    V.1.0					
+################################################################################
+
+#### Libraries ####
+library(plyr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(Matrix)
+library(lme4)
+library(car)
+library(lattice)
+library(lmerTest)
+library(reshape2)
+library(influence.ME)
+library(emmeans)
+library(xtable)
+options(xtable.floating = FALSE)
+options(xtable.timestamp = "")
+library(memisc)
+
+#### Input ####
+rm(list = ls(all.names = TRUE))
+options(warn = 1) 
+
+df_data = read.table(file =  '../Data/DataForGraphs/CHDR1518_Mixed_Model_Data2018-06-11.csv', 
+                     sep = ',', header = T)
+
+
