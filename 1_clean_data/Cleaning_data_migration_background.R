@@ -69,3 +69,4 @@ data_clean$Non_west_perc <- round(data_clean$Non_western / data_clean$Total, dig
 # Remove column absolute amounts
 data_clean <- data_clean[,-c(2:5)]
 
+write.csv(data_clean,"1_clean_data/migrant_background.csv")
