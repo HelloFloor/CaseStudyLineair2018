@@ -1,5 +1,11 @@
 # CaseStudyLineair2018
 
+Voor scripts:
+- Cleaning.... -> alles wat met cleaning te maken had
+- Data_visualisation -> "pre" model plotjes
+- Model_exploration -> modellen van floor
+-Model_final -> Uiteindelijke model & assumptions checker
+
 Explanatory variables
 •	Stedelijkheid index
 •	Leeftijd groepen ?
