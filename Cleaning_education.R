@@ -7,7 +7,7 @@
 # Datafiles used:	          hoogopgeleiden2017.csv
 #                          
 # Date:                     2018-11-23
-# Version:  		    V.1.1					
+# Version:  		    V.1.2					
 ################################################################################
 
 #####Read the data####
