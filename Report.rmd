@@ -42,7 +42,7 @@ In this report the election
 In this chapter the data is summarized and explained how the data is collected. The percentage of votes per party per municipality were found on .... The demographics; *amount of non-west residents per municipality*, *the urban index of a municipality* and *the standardized income per municipality*, were found on the cbs site.  
 
 ## 1.2 Data cleaning 
-De data-cleaning hier beschrijven 
+The variable *non-western residents* are divided in three groups. Municipalities with less than 5 % non-western residents, 5-10 % non-western residents and municipalities with more dan 10 % non-western residents.
 ```{r}
 
 #GetData
