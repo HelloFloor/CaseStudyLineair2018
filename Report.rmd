@@ -38,18 +38,29 @@ library("formatR")
 # 1. Introduction 
 In this report the election 
 
-## 1.1 Summary data
-In this chapter the data is summarized and explained how the data is collected. The percentage of votes per party per municipality were found on https://data.overheid.nl/data/dataset/verkiezingsuitslag-tweede-kamer-2017. The demographics; *amount of non-west residents per municipality*, *the urban index of a municipality* and *the standardized income per municipality*, were found on the CBS site. This is the Dutch central office of statistics.    
+## 1.1 Motivation
 
-![Partie landscape](Partijlandschap.jpg){width=250px}
+
+
+![Party landscape](Partijlandschap.jpg){width=250px}
 **Dutch political parties**   
 In this landscape the diffence between the parties is graphically displayed in this figure. In this research, two parties are chosen to investigate. These two parties had to be different, so that some comparisons could be made. The parties should not be to extreme left/right/conservative/progressive, so that the model will be proven to work on less-extreme parties. Therefore, the chosen parties are: CDA and GroenLinks. After the data-cleaning the CDA will be researched first, afterwards GroenLinks will be researched.  
 
-**Demographics**  
+## 1.2 Data sources
+
+**Electoral data**  
+For the electoral data 
+
+In this chapter the data is summarized and explained how the data is collected. The percentage of votes per party per municipality was found on the official data repository of the dutch government.^[https://data.overheid.nl/data/dataset/verkiezingsuitslag-tweede-kamer-2017] The demographics; *amount of non-west residents per municipality*, *the urban index of a municipality* and *the standardized income per municipality*, were found on the CBS site. This is the Dutch central office of statistics.    
+
+
+**Demographical data**  
 In this research the above described demographics are chosen because of there influence on a municipality level. The thought is that a more non-western municipality for example votes different than a less non-western municipality. This is the same for the other two demographics. Other demographics are also researched, for example gender, but on a municipality level there is no big difference between the amount of men and women per municipality. So that is a more interesting demographic to research on an individual level. 
 *The standardized income per municipality* are given in thousands. *the urban index of a municipality* is a database with five categories per municipality. These five categories are; really strong urban (more than 2500 addresses per km2), strong urban (1500-2500 addresses per km2), moderate urban (1000- 1500 addresses per km2), little urban (500-1000 addresses per km2) and not urban (less than 500 addresses per km2). Per municipality the amount of km2 per category is given. The *non-west residents per municipality* is given in an amount per municipality, also the total amount of residents is given per municipality. 
 
-## 1.2 Data cleaning 
+## 1.3 Data cleaning 
+
+
 The variable *non-western residents* are divided in three groups. Municipalities with less than 5 % non-western residents, 5-10 % non-western residents and municipalities with more dan 10 % non-western residents.
 ```{r}
 #GetData
