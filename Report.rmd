@@ -52,7 +52,6 @@ In this research the above described demographics are chosen because of there in
 ## 1.2 Data cleaning 
 The variable *non-western residents* are divided in three groups. Municipalities with less than 5 % non-western residents, 5-10 % non-western residents and municipalities with more dan 10 % non-western residents.
 ```{r}
-setwd("~/Studie/Statistics & Data Science/Semester 1/Lineair models and Algebra/CaseStudyLineair2018")
 #GetData
 
 Data <- read.csv("1_clean_data/voting_and_demographics.csv",
