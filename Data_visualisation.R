@@ -26,6 +26,7 @@ rm(list = ls()) # empty work space
 Data <- read.csv("1_clean_data/voting_and_demographics.csv",
                  stringsAsFactors=F, header = T)
 
+
 # Rename and remove columns
 Data <- Data[,-15]
 colnames(Data) <- c("Muni", "VVD","CDA","PVV", "D66", "SP", "GL","PvdA","CU","50PLUS","PvdD","SGP","FvD","DENK", "Urban_index", "High_edu_perc", "Mean_income", "Dutch_perc", "West_perc", "Non_west_perc")
@@ -41,10 +42,16 @@ Data$Non_west <- ifelse(Data$Non_west_perc >= 0.1, 3, Data$Non_west)
 
 Data$Non_west <- as.factor(Data$Non_west)
 
+# Party CDA
 # Select the right variables and remove NAs
 Dat_cda <- Data[,c(1,3,15,16,17,21)]
 Dat_cda <- Dat_cda[complete.cases(Dat_cda),]
 
+
+# Party GL
+# Select the right variables and remove NAs
+Dat_gl <- Data[,c(1,7,15,16,17,21)]
+Dat_gl <- Dat_gl[complete.cases(Dat_gl),]
 
 
 #### Save final dataframes ####
@@ -53,6 +60,10 @@ write.table(Data, file = paste("1_clean_data/Cleandata_all_variables_",
             row.names = FALSE, na = "", col.names = T)
 
 write.table(Dat_cda, file = paste("1_clean_data/Cleandata_CDA_", 
+                                  Sys.Date(),".csv", sep = ""), sep = ",", 
+            row.names = FALSE, na = "", col.names = T)
+
+write.table(Dat_gl, file = paste("1_clean_data/Cleandata_GL_", 
                                   Sys.Date(),".csv", sep = ""), sep = ",", 
             row.names = FALSE, na = "", col.names = T)
 

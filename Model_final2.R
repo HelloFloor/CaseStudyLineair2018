@@ -17,19 +17,18 @@ library(car)
 
 #### Set up ####
 rm(list = ls()) # empty work space
-Data <- read.csv("1_clean_data/Cleandata_all_variables_2018-12-06.csv", 
+Data <- read.csv("1_clean_data/Cleandata_GL_2018-12-14.csv", 
                  header = T, stringsAsFactors = F)
 
 Data$Non_west <- as.factor(Data$Non_west) # needs to be recognized as factor
-
+summary(Data)
 
 #### Model1 ####
 model1 <- lm(GL ~ Urban_index + High_edu_perc + Mean_income +
                 Non_west, data = Data)
 
 summary(model1)
-summary(Data$PvdA)
-summary(Data$GL)
+
 # Check assumptions 
 par(mfrow = c(2,2))
 plot(model1, which = 1)
@@ -38,3 +37,69 @@ plot(model1, which = 3)
 plot(model1, which = 4) 
 
 avPlots(model1)
+
+# GL needs a sqrt transformation
+
+#### Model1a ####
+# Transformation of response (sqrt)
+model1a <- lm(sqrt(GL) ~ Urban_index + High_edu_perc + Mean_income +
+               Non_west, data = Data)
+
+summary(model1a)
+
+# Check assumptions 
+par(mfrow = c(2,2))
+plot(model1a, which = 1)
+plot(model1a, which = 2)
+plot(model1a, which = 3)
+plot(model1a, which = 4)
+
+# Have closer look at extreme values
+Data[c(42, 122,307),]
+
+#### Model2 ####
+# We remove Urbanity index 
+model2 <- lm(sqrt(GL) ~ High_edu_perc + Mean_income +
+                Non_west, data = Data)
+summary(model2)
+
+# Check assumptions 
+par(mfrow = c(2,2))
+plot(model2, which = 1)
+plot(model2, which = 2)
+plot(model2, which = 3)
+plot(model2, which = 4)
+
+# Compare the two models
+anova(model1a, model2)
+
+
+#### Model3 ####
+# We remove mean income
+model3 <- lm(sqrt(GL) ~ High_edu_perc +
+               Non_west, data = Data)
+
+summary(model3)
+
+# Check assumptions 
+par(mfrow = c(2,2))
+plot(model3, which = 1)
+qqPlot(model3)
+plot(model3, which = 3)
+plot(model3, which = 4) # cut off: 4 / (369 - 2 - 1) = 0.011
+
+# Look at extreme values
+Data[c(218, 307, 332),]
+summary(Data$GL) # obs 218 is Nijmegen -> very high percentage voted for GL
+
+
+
+#### compare all models ####
+step(model1a) # model2 best
+anova(model1a, model2)
+anova(model2, model3) # model3 better than model2
+anova(model1a, model2, model3)
+step(model2) # model2 is best
+
+
+#### Conclusion: model2 ####
