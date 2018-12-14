@@ -24,7 +24,7 @@ Data$Non_west <- as.factor(Data$Non_west) # needs to be recognized as factor
 summary(Data)
 
 #### Model1 ####
-model1 <- lm(GL ~ Urban_index + High_edu_perc + Mean_income +
+model1 <- lm(GL ~ Urban_index + High_edu_perc + Mean_income + Perc_Old +
                 Non_west, data = Data)
 
 summary(model1)
@@ -37,12 +37,13 @@ plot(model1, which = 3)
 plot(model1, which = 4) 
 
 avPlots(model1)
+boxCox(model1)
 
 # GL needs a sqrt transformation
 
 #### Model1a ####
 # Transformation of response (sqrt)
-model1a <- lm(sqrt(GL) ~ Urban_index + High_edu_perc + Mean_income +
+model1a <- lm(sqrt(GL) ~ Urban_index + High_edu_perc + Mean_income + Perc_Old +
                Non_west, data = Data)
 
 summary(model1a)
@@ -55,11 +56,11 @@ plot(model1a, which = 3)
 plot(model1a, which = 4)
 
 # Have closer look at extreme values
-Data[c(42, 122,307),]
+Data[c(42, 307,308),]
 
 #### Model2 ####
 # We remove Urbanity index 
-model2 <- lm(sqrt(GL) ~ High_edu_perc + Mean_income +
+model2 <- lm(sqrt(GL) ~ High_edu_perc + Mean_income + Perc_Old + 
                 Non_west, data = Data)
 summary(model2)
 
@@ -76,7 +77,7 @@ anova(model1a, model2)
 
 #### Model3 ####
 # We remove mean income
-model3 <- lm(sqrt(GL) ~ High_edu_perc +
+model3 <- lm(sqrt(GL) ~ High_edu_perc + Perc_Old +
                Non_west, data = Data)
 
 summary(model3)
@@ -89,8 +90,8 @@ plot(model3, which = 3)
 plot(model3, which = 4) # cut off: 4 / (369 - 2 - 1) = 0.011
 
 # Look at extreme values
-Data[c(218, 307, 332),]
-summary(Data$GL) # obs 218 is Nijmegen -> very high percentage voted for GL
+Data[c(16, 307, 308),]
+
 
 
 
