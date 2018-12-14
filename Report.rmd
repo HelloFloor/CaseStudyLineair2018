@@ -36,7 +36,7 @@ library("formatR")
 ```
 
 # 1. Introduction 
-In this report the election 
+In this report the election is discussed.
 
 ## 1.1 Summary data
 In this chapter the data is summarized and explained how the data is collected. The percentage of votes per party per municipality were found on .... The demographics; *amount of non-west residents per municipality*, *the urban index of a municipality* and *the standardized income per municipality*, were found on the cbs site.  
