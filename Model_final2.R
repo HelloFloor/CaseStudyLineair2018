@@ -1,13 +1,13 @@
 ################################################################################
 # Run-Time Environment:     R version 3.4.2
 # Author:                   Ilse van Beelen 
-# Script:                   First_models.R
+# Script:                   Model_final2.R
 # Purpose of script:        Constructing final model & checking assumptions
-#                           for party CDA
-# Datafiles used:	          Clean_data_2018-12-06.csv;
+#                           for party GL
+# Datafiles used:	          Clean_data_GL_2018-12-14.csv;
 # Data downloaded:          Data downloaded from statline.cbs.nl
 #                          
-# Date:                     2018-12-06
+# Date:                     2018-12-14
 # Version:  		            V.1.0					
 ################################################################################
 
