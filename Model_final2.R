@@ -63,6 +63,10 @@ abline(h = 0.011, col = "red")
 # Have closer look at extreme values
 Data[c(42, 307,308),]
 
+
+
+
+
 #### Model2 ####
 # We remove Urbanity index 
 model2 <- lm(sqrt(GL) ~ High_edu_perc + Mean_income + Perc_60plus + 
@@ -72,9 +76,10 @@ summary(model2)
 anova(model1a, model2)
 
 # Check assumptions 
-par(mfrow = c(2,2))
+par(mfrow = c(1,2))
 plot(model2, which = 1)
-plot(model2, which = 2)
+qqPlot(model2)
+
 plot(model2, which = 3)
 plot(model2, which = 4)
 
