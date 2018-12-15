@@ -91,8 +91,10 @@ dens = ggplot(melt(Dat2), aes(x = value)) +
   geom_density(alpha=0.4, aes(fill = "red", col = "red"))+
   theme(legend.position="none")
 
-plot(dens) # zet in verslag: normaal verdeling, density by CDA/GL/Perc 60plus/High edu
-# is boven de 1. Dit komt omdat de x-as kleine waarden heeft. Area onder curve somt tot 1
+plot(dens) # zet in verslag: normaal verdeling, 
+# density bij CDA/GL/Perc 60plus/High edu
+# is boven de 1. Dit komt omdat de x-as kleine waarden heeft. 
+# Area onder curve somt tot 1
 
 
 
