@@ -13,9 +13,8 @@
 
 #### Libraries ####
 library(car)
-library(tidyverse)
-library(MASS)
 library(lindia)
+library(MASS)
 
 #### Set up ####
 rm(list = ls()) # empty work space
@@ -24,24 +23,32 @@ Data <- read.csv("1_clean_data/Cleandata_CDA_2018-12-14.csv",
 
 
 Data$Non_west <- as.factor(Data$Non_west) # needs to be recognized as factor
-row.names(Data) <- Data$Muni
-
+row.names(Data) <- Data$Muni # change rownames to the municipalities
+Data$CDA <- round(Data$CDA * 100, digits = 0)
+Data$fail <- 100 - Data$CDA
 
 
 
 #### Model 1 ####
 # Start with all explanatory variables
-model1 <- lm(CDA ~ Urban_index + High_edu_perc + Mean_income + Non_west + 
-               Perc_60plus, data = Data)
+model1 <- glm(cbind(CDA, fail)  ~ Urban_index + High_edu_perc + Mean_income +
+                Non_west + Perc_60plus, family=binomial, weights = wt,data = Data)
 
-summary(model1) # mean income has no significant effect
+
+step(model1)
+summary(model1) 
+
+avPlots(model1)
+
+
 
 # Check assumptions 
-par(mfrow = c(2,2))
+par(mfrow = c(1,2))
 plot(model1, which = 1, id.n = 5) # we see heterogenitiy of variance
-qqPlot(model1) # right tail has few  extreme values (non normality)
+qqPlot(model1) # right tail is skewed (non normality)
+
 plot(model1, which = 3, id.n = 5) # var of error not equal, non-linearity, obs 300 & 76 outliers
-plot(model1, which = 4, id.n = 5)# cutt off val: 0.011
+plot(model1, which = 4, id.n = 5)# cutt off val: 0.011. Everything above cut-off is outlier
 abline(h = 0.011, col = "red")
 
 
@@ -51,35 +58,37 @@ abline(h = 0.011, col = "red")
 #    that the relationship is linear is reasonable.
 #  2. The residuals roughly form a "horizontal band" around the 0 line. This suggests 
 #     that the variances of the error terms are equal.
-#  3. No one residual "stands out" from the basic random pattern of residuals. This 
-#     suggests that there are no outliers.
+#  3. No one residual "stands out" from the basic random pattern of residuals. 
+#   This suggests that there are no outliers.
+#     
 
-
-#### Diff influential & outlier ####
-# An outlier is a data point that diverges from an overall pattern in a sample. An outlier has a large residual (the distance between the predicted value () and the observed value (y)). Outliers lower the significance of the fit of a statistical model because they do not coincide with the model's prediction. An influential point is any point that has a large effect on the slope of a regression line fitting the data. They are generally extreme values. The process to identify an influential point begins by removing the suspected influential point from the data set. If this removal significantly changes the slope of the regression line, then the point is considered an influential point.
+#### Diff influential point & outlier ####
+# An outlier is a data point that diverges from an overall pattern in a sample. An outlier has a large residual (the distance between the predicted value () and the observed value (y)). Outliers lower the significance of the fit of a statistical model because they do not coincide with the model's prediction. An influential point is any point that has a large effect on the slope of a regression line fitting the data. They are generally extreme values. 
 
 
 
 # CoxBox, because we see heterogenity of variance
 # The Boxcox gives suggestions for transformation of the response
-# The 95% Confidence interval is located around the 0. Meaning: log transformation!
+# The 95% Confidence interval is located around the 0. Meaning: log transformation
 gg_boxcox(model1)
 
 
 
 # Added variable plots 
 # Used to investigate joint influence (see meeting 8)
-# All already found out that our X variables are correlated. 
-# These added variable plots show the simple linear regression 
-# between one X variable and another X variable/respons conditional on the other
-# variables. The estimates of te Xs suffer from omitted-variable bias
-# Therefore, normal simple regressions are not sufficient
+# We already found out that our X variables are correlated. 
+# In the model The estimates of the Xs suffer from omitted-variable bias
+# Therefore, normal simple regressions are not sufficient (what we did in data visualisation)
 # You can now look at the relationship between Y and X2 once all other predictors have been accounted for. So for example, the slope you can see in each plot now reflects the partial regression coefficients from your original multiple regression model.
+# Bijv: de plot CDA (yas) en Mean income (x-as). Laat zien dat Tubbergen en
+# Dinkelland outliers zijn. wassenaar en Bloemendaal hebben een hoge cooks distance (cooks kijkt naar effect of y & x-as), maar geen hoge leverage (leverage kijkt alleen naar effect op x-as)
+# Mijn conclusie is dat de correlatie tussen de verschillende Xs en Y in het model wel meevalt. Dit is gunstig!
 avPlots(model1) 
 
 # Have a look at the extreme values
 # Two are municipalities where ~40% of residents voted for CDA
 # Two others have low percentage of highly educted residents and a relative high mean income
+# Dit kan ook in het report
 Data[c(76,300, 307, 255),]
 
 
@@ -87,7 +96,8 @@ Data[c(76,300, 307, 255),]
 
 #### Model 1a ####
 # Check model1 when obs 300 and 76 are removed
-# These observations seemed to have a high influence
+# These observations are outliers
+# Model1a niet in report! Is niet belangrijk voor model selectie stappen.
 model1a <- lm(CDA ~ Urban_index + High_edu_perc + Mean_income + Perc_60plus + 
                 Non_west, data = Data[-c(76,300, 307, 255),])
 
@@ -95,12 +105,14 @@ summary(model1a)
 
 
 # Check assumptions 
-par(mfrow = c(2,2))
+par(mfrow = c(1,2))
 plot(model1a, which = 1) # still heterogenity
-plot(model1a, which = 2) # still right skewed
+qqPlot(model1a) # still right skewed
 plot(model1a, which = 3) # non-normal.
 plot(model1a, which = 4) # lot of influencial points
+abline(h = 0.011, col = "red")
 
+# CHeck added variable plots
 avPlots(model1a)
 
 
@@ -108,19 +120,22 @@ avPlots(model1a)
 
 
 #### Model 1b ####
+# BoxCox suggest that we need to log transform the respons
 model1b <- lm(log10(CDA) ~ Urban_index + High_edu_perc + Mean_income + Perc_60plus +
                 Non_west, data = Data)
+
 summary(model1b)
 
 # Check assumptions
-par(mfrow = c(2,2))
+par(mfrow = c(1,2))
 plot(model1b, which = 1) # still heteroscadacity, 
 qqPlot(model1b) # normally distributed
 plot(model1b, which = 3) # both the fitted and residuals are more spread out
 plot(model1b, which = 4)  # only obs 16(amsterdam) is influential. 
 # Cutoff val for Cooks: 4 / (369 - 5 - 1) = 0.011
 
-
+# Check added variable plots
+# Seems like the residuals are more spread due to the log transformation
 avPlots(model1b)
 
 
@@ -132,29 +147,37 @@ model2 <- lm(log10(CDA) ~ Urban_index + High_edu_perc + Non_west + Perc_60plus,
              data = Data)
 
 summary(model2)
+# ANOVA table shows that we have a large RSS (within group variance)
+Anova(model2, type = "II") # unbalanced dataset
+
+# Check added variable plots
 avPlots(model2)
+
+
 
 # compare to first model
 # The RSS has not changed significant 
 anova(model1b, model2)
 
 # Check assumptions 
-par(mfrow = c(2,2))
-plot(model2, which = 1) # obs 16 influential
+par(mfrow = c(1,2))
+plot(model2, which = 1) # heteroscadacity, amsterdam oostzaan outliers
 qqPlot(model2)          # normally
 plot(model2, which = 3)  
-plot(model2, which = 4) # cutoff Cooksdist: 4/(369-3-1) = 0.011. obs 16 influential
+plot(model2, which = 4) # cutoff Cooksdist: 4/(369-3-1) = 0.011. Amsterdam Utrecht, Urk influential
+abline(h = 0.011, col = "red")
 
 # Have closer look at extreme values
+# Hierbij kan in het verslag worden uitgelegd, waarom bepaalde steden outliers/influential zijn
 Data[c(16, 300, 239),]
 
+# Leverage = influential on the X-axis
 # Check leverage points again, now numerically 
-# 24/369 municipalities have high leverage
 levs <- lm.influence(model2)$hat 
-cutoff.lev <- 2*4/369 
-levs[levs>cutoff.lev]
+cutoff.lev <- 2*5/369 
+high_lev <- levs[levs>cutoff.lev] # 35/369 municipalities have high leverage
 
-# Check for outliers
+# Check for outliers numerically
 rstudent(model2) [abs(rstudent(model2)) > 2]
 outlierTest(model2)
 
@@ -179,6 +202,7 @@ anova(model1b, model3) # model3 is improvement in compare the model1b, weird
 
 # Backward elimination with the AIC
 # Lower AIC is better
+# Important for report: we compared the models using anova and AIC
 step(model1b) # results is model2
 
 #### Conclusion model2 ####
