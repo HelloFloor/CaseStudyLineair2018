@@ -15,6 +15,7 @@
 library(car)
 library(lindia)
 library(MASS)
+library(xtable)
 
 #### Set up ####
 rm(list = ls()) # empty work space
@@ -31,8 +32,8 @@ Data$fail <- 100 - Data$CDA
 
 #### Model 1 ####
 # Start with all explanatory variables
-model1 <- glm(cbind(CDA, fail)  ~ Urban_index + High_edu_perc + Mean_income +
-                Non_west + Perc_60plus, family=binomial, weights = wt,data = Data)
+model1 <- lm(CDA ~ Urban_index + High_edu_perc + Mean_income +
+                Non_west + Perc_60plus,data = Data)
 
 
 step(model1)
@@ -40,7 +41,11 @@ summary(model1)
 
 avPlots(model1)
 
-
+### Powerpoint
+xtable(summary(model1))
+png('Plots/avPlots1.png', width = 15, height = 7, units='in',res=600)
+print(avPlots(model1))
+dev.off()
 
 # Check assumptions 
 par(mfrow = c(1,2))
@@ -50,6 +55,7 @@ qqPlot(model1) # right tail is skewed (non normality)
 plot(model1, which = 3, id.n = 5) # var of error not equal, non-linearity, obs 300 & 76 outliers
 plot(model1, which = 4, id.n = 5)# cutt off val: 0.011. Everything above cut-off is outlier
 abline(h = 0.011, col = "red")
+
 
 
 
@@ -150,6 +156,8 @@ summary(model2)
 # ANOVA table shows that we have a large RSS (within group variance)
 Anova(model2, type = "II") # unbalanced dataset
 
+xtable(Anova(model2, type = "II"))
+
 # Check added variable plots
 avPlots(model2)
 
@@ -188,10 +196,14 @@ outlierTest(model2)
 # Remove highly educated and insert Mean_income again
 # Now, mean income has significant effect. But in practice this effect is very small
 # The estimate is -0.006
-model3 <- lm(log10(CDA) ~ Urban_index + Mean_income + Non_west + Perc_60plus,
+model3 <- lm(CDA ~ Urban_index + Mean_income + Non_west + Perc_60plus,
              data = Data)
 summary(model3)
 
+#### Powerpoint
+png('Plots/avPlots3.png', width = 15, height = 7, units='in',res=600)
+print(avPlots(model3))
+dev.off()
 
 ##### Compare all models ####
 # We cannot directly compare model2 and model3
