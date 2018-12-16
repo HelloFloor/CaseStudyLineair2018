@@ -196,10 +196,10 @@ outlierTest(model2)
 # Remove highly educated and insert Mean_income again
 # Now, mean income has significant effect. But in practice this effect is very small
 # The estimate is -0.006
-model3 <- lm(CDA ~ Urban_index + Mean_income + Non_west + Perc_60plus,
+model3 <- lm(CDA ~ Urban_index + Non_west + Perc_60plus,
              data = Data)
 summary(model3)
-
+xtable(summary(model3))
 #### Powerpoint
 png('Plots/avPlots3.png', width = 15, height = 7, units='in',res=600)
 print(avPlots(model3))
