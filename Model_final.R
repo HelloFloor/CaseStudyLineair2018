@@ -15,6 +15,7 @@
 library(car)
 library(lindia)
 library(MASS)
+library(knitr)
 
 #### Set up ####
 rm(list = ls()) # empty work space
@@ -24,17 +25,17 @@ Data <- read.csv("1_clean_data/Cleandata_CDA_2018-12-14.csv",
 
 Data$Non_west <- as.factor(Data$Non_west) # needs to be recognized as factor
 row.names(Data) <- Data$Muni # change rownames to the municipalities
-Data$CDA <- round(Data$CDA * 100, digits = 0)
-Data$fail <- 100 - Data$CDA
+Data$CDA_perc <- round(Data$CDA * 100, digits = 0)
+Data$Voted_other <- 100 - Data$CDA_perc
 
 
 
 #### Model 1 ####
 # Start with all explanatory variables
-model1 <- glm(cbind(CDA, fail)  ~ Urban_index + High_edu_perc + Mean_income +
-                Non_west + Perc_60plus, family=binomial, weights = wt,data = Data)
+model1 <- lm(CDA ~ Urban_index + High_edu_perc + Mean_income +
+                Non_west + Perc_60plus,data = Data)
 
-
+Anova(model1, type = "2")
 step(model1)
 summary(model1) 
 
@@ -103,6 +104,12 @@ model1a <- lm(CDA ~ Urban_index + High_edu_perc + Mean_income + Perc_60plus +
 
 summary(model1a)
 
+model1 <- lm(CDA ~ Urban_index + Perc_60plus + 
+                Non_west, data = Data)
+
+summary(model1)
+anova(model1)
+Anova(model1, type = "II")
 
 # Check assumptions 
 par(mfrow = c(1,2))
@@ -140,10 +147,22 @@ avPlots(model1b)
 
 
 
+#### Model 1c ####
+model1c <- glm(cbind(CDA_perc, Voted_other) ~ Urban_index + High_edu_perc + 
+                 Mean_income +Non_west + Perc_60plus, 
+               family=binomial,data = Data)
+
+# Everything is significant and estimate of Perc_60plus is very large/unusual
+summary(model1c)
+
+
+
+
 
 #### Model 2 ####
+# We continue with model1 (no transformation and normal lm model)
 # Remove mean income (not significant)
-model2 <- lm(log10(CDA) ~ Urban_index + High_edu_perc + Non_west + Perc_60plus,
+model2 <- lm(CDA ~ Urban_index + High_edu_perc + Non_west + Perc_60plus,
              data = Data)
 
 summary(model2)
@@ -157,7 +176,7 @@ avPlots(model2)
 
 # compare to first model
 # The RSS has not changed significant 
-anova(model1b, model2)
+anova(model1, model2)
 
 # Check assumptions 
 par(mfrow = c(1,2))
@@ -171,40 +190,42 @@ abline(h = 0.011, col = "red")
 # Hierbij kan in het verslag worden uitgelegd, waarom bepaalde steden outliers/influential zijn
 Data[c(16, 300, 239),]
 
-# Leverage = influential on the X-axis
-# Check leverage points again, now numerically 
-levs <- lm.influence(model2)$hat 
-cutoff.lev <- 2*5/369 
-high_lev <- levs[levs>cutoff.lev] # 35/369 municipalities have high leverage
 
-# Check for outliers numerically
-rstudent(model2) [abs(rstudent(model2)) > 2]
-outlierTest(model2)
 
 
 
 
 #### Model3 ####
-# Remove highly educated and insert Mean_income again
-# Now, mean income has significant effect. But in practice this effect is very small
-# The estimate is -0.006
-model3 <- lm(log10(CDA) ~ Urban_index + Mean_income + Non_west + Perc_60plus,
+# Remove highly educated 
+model3 <- lm(CDA ~ Urban_index + Non_west + Perc_60plus,
              data = Data)
+
 summary(model3)
+Anova(model3, type = "II")
+
+# Leverage = influential on the X-axis
+# Check leverage points again, now numerically 
+levs <- lm.influence(model3)$hat 
+cutoff.lev <- 2*3/369 
+high_lev <- levs[levs>cutoff.lev] # 35/369 municipalities have high leverage
+
+
+# Check for outliers numerically
+rstudent(model3) [abs(rstudent(model3)) > 2]
+outlierTest(model3)
+
 
 
 ##### Compare all models ####
-# We cannot directly compare model2 and model3
-anova(model1b, model2) # not significant improvement
-anova(model1b, model3) # model3 is improvement in compare the model1b, weird
-
+anova(model1, model2) # not significant improvement
+anova(model2, model3) # model3 is improvement 
 
 
 # Backward elimination with the AIC
 # Lower AIC is better
 # Important for report: we compared the models using anova and AIC
-step(model1b) # results is model2
+step(model1) # results is model1
 
-#### Conclusion model2 ####
+#### Conclusion model3 ####
 
 ##################### End script ###############################################
