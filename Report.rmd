@@ -33,6 +33,9 @@ library("Hmisc")
 library("lattice")
 library("survival")
 library("formatR")
+
+Dat2 <- read.csv("1_clean_data/Cleandata_GL_CDA2018-12-14.csv",
+                 stringsAsFactors=F, header = T)
 ```
 
 # 1. Introduction 
@@ -104,15 +107,14 @@ Dat_cda <- Dat_cda[complete.cases(Dat_cda),]
 
 ```
 ## 1.3 Data visualisation
-###CDA 
-In this part the cleaned data is visualized, so that a good picture can be obtained of the current data. First of all some demographics of data will be showed. In these histograms the density of the *CDA*, *the urban index*, *the percentage of highly educated residents* and *the mean income* are plotted. 
 
+In this part the cleaned data is visualized, so that a good picture can be obtained of the current data. First of all some demographics of data will be showed. In these histograms the density of the *parties*, *the urban index*, *the percentage of highly educated residents*, *the mean income*, *The non west residents factor* and * the percentage 60 plus* are plotted. 
+As you can see in the plot, they are normal distributed. Because of the low values at the x-axis, the CDA, GroenLinks, 60 plus percentage and the highly educated densities are above 1. The area beneath the curve sums to 1, so it is correct. 
 
-
-```{r demographics_data, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE}
+```{r demographics_data, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.cap="Density plot" , fig.width=5, fig.height=3}
 #### Demographics of data ####
 
-dens = ggplot(melt(Dat_cda), aes(x = value)) + 
+dens = ggplot(melt(Dat2[,c(2,3,4,5,6,8)]), aes(x = value)) + 
   facet_wrap(~ variable, scales = "free", ncol = 2) + 
   geom_histogram(aes(y=..density..), position="identity", alpha=0.5)+
   geom_density(alpha=0.4, aes(fill = "red", col = "red"))+
@@ -121,131 +123,196 @@ dens = ggplot(melt(Dat_cda), aes(x = value)) +
 plot(dens)
 ```
 
+
 **Correlation heatmap**
-In this heatmap the correlation between explanatory and respons variable are showed. The red color means a positive relation, the purple color means a negative relation. The relation between *mean income* and *percentage highly educated* is the highest. 
+In this heatmap the correlation between explanatory and respons variable are showed. The red color means a positive relation, the purple color means a negative relation. The non_west variable is not taken into account, because it is a factor and the other variables are continous. 
+VERDER UITLEG 
 
-```{r correlation_heatmap, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE}
-#### Correlation ####
-# Correlation and p-value matrices
-corrlist <- rcorr(as.matrix(Dat_cda[,-1]), type="pearson")
-pvalues = data.frame(corrlist[["P"]])
-correlation = round(data.frame(corrlist[["r"]]), digits = 3)
-
+```{r correlation_heatmap, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.cap= 'Correlation between explanatory and respons variables', fig.width=5, fig.height=3}
 # Heatmap of the correlations
-heatmap = ggcorr(Dat_cda[-1], 
+heatmap = ggcorr(Dat2[,c(2,3,4,5,6,8)], 
                  low = "darkblue", mid = "lightyellow", high = "red",
                  label = T, label_size = 2.5, label_round = 3,   
-                 color = 'black', size = 4, layout.exp = 2, hjust = 1) +
-  ggtitle('Correlation between explanatory & respons variables ')
+                 color = 'black', size = 4, layout.exp = 2, hjust = 1) 
+                 #ggtitle('Correlation between explanatory and respons variables ')
 
 plot(heatmap)
+
+```
+
+```{r  echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.cap= "Votes for CDA per municipality", fig.width=5, fig.height=3}
+p1 <- ggplot(Dat2, aes(x = Non_west, y = CDA, fill = Non_west)) + 
+       geom_boxplot(outlier.colour="black", 
+                    outlier.size=2, 
+                    outlier.fill =  "red",
+                    na.rm = F,
+                    color = "black") +
+       #ggtitle("Votes for CDA per municipality") +
+       xlab("Non-western residents") +
+       ylab("Votes for CDA") +
+       scale_x_discrete(labels = c("< 5%", "5-10%", "> 10 %")) +
+       guides(fill = F)
+
+#plot(p1)
+```
+
+
+```{r  echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.cap= "Urbanity index against non-western residents" , fig.width=5, fig.height=3}
+
+p2 <- ggplot(Dat2, 
+             aes(x = Non_west, y = Urban_index, fill = Non_west)) + 
+  geom_boxplot(outlier.colour="black", 
+               outlier.size=2, 
+               outlier.fill =  "red",
+               na.rm = F,
+               color ="black") +
+  #ggtitle("Urbanity index against non-western residents") +
+  xlab("Non-western residents") +
+  ylab("Urbanity index") +
+  ylim(c(0,4)) +
+  scale_x_discrete(labels = c("< 5%", "5-10%", "> 10 %")) +
+  guides(fill = F)
+ 
+
+#plot(p2)
+```
+
+```{r  echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.cap= "Votes for GroenLinks per municipality", fig.width=5, fig.height=3}
+p2a <- ggplot(Dat2, aes(x = Non_west, y = GL, fill = Non_west)) + 
+  geom_boxplot(outlier.colour="black", 
+               outlier.size=2, 
+               outlier.fill =  "red",
+               na.rm = F,
+               color = "black") +
+  #ggtitle("Votes for CDA per municipality") +
+  xlab("Non-western residents") +
+  ylab("Votes for GL") +
+  scale_x_discrete(labels = c("< 5%", "5-10%", "> 10 %")) +
+  guides(fill = F)
+
+#plot(p2a)
+
 ```
 
 
 ```{r boxplots_code, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE}
-#### Boxplots ####
-fill <- "#4271AE"
-line <- "#1F3552"
-
-# Plot Probability CDA votes VS Non-western residents
-p1 <- ggplot(Dat_cda[complete.cases(Dat_cda),], aes(x = Non_west, y = CDA)) + 
-  geom_boxplot(outlier.colour="black", 
-               outlier.size=2, 
-               outlier.fill =  "red",
-               na.rm = F,
-               fill = fill,
-               color = line) +
-  ggtitle("Votes for CDA per municipality") +
-  xlab("Percentage of non-western residents") +
-  ylab("Probability") +
-  scale_x_discrete(labels = c("< 5%", "5-10%", "> 10 %")) 
-
-# Plot Urbanity index VS Non-western residents
-p2 <- ggplot(Dat_cda[complete.cases(Dat_cda),], 
-             aes(x = Non_west, y = Urban_index)) + 
-  geom_boxplot(outlier.colour="black", 
-               outlier.size=2, 
-               outlier.fill =  "red",
-               na.rm = F,
-               fill = fill,
-               color = line) +
-  ggtitle("Urbanity index against non-western residents") +
-  xlab("Percentage of non-western residents") +
-  ylab("Urbanity index") +
-  ylim(c(0,4)) +
-  scale_x_discrete(labels = c("< 5%", "5-10%", "> 10 %")) 
-
-
-
-
-#### Linear regression ####
-rsq <- function (x, y) cor(x, y) ^ 2
-rsq(Dat_cda$CDA, Dat_cda$Mean_income) # Calculate R-squared
-
 # Linear regression between votes for CDA and mean income
 Euro <- "\u20AC" # euro sign
 
-p3 <- ggplot(Dat_cda, aes(x=Mean_income, y=CDA)) + 
+p3 <- ggplot(Dat2, aes(x=Mean_income, y=CDA)) + 
   geom_point() + 
   geom_smooth(method=lm, se = T) + # standard error = True
-  ggtitle("Probability of votes for CDA and mean income per municipality") +
-  xlab(paste("Mean income per municipality (x ",Euro, " 1000)", sep = "")) +
-  ylab("Probability of CDA votes") +
-  xlim(c(20,42)) +
-  annotate("rect", xmin = 35, xmax = 41, ymin = 0.32, ymax = 0.4, 
-           fill="white", colour="red") +
-  annotate("text", x=38, y=0.38, label = "correlation == -0.27", parse=T) + 
-  annotate("text", x=38, y=0.35, label = "p-value < 0.001", parse=T)
+  ##ggtitle("Probability of votes for CDA and mean income per municipality") +
+  xlab(paste("Mean income per municipality ")) +
+  ylab("Votes for CDA") +
+  ylim(c(0,0.45)) +
+  xlim(c(20,42)) #+
+  #annotate("rect", xmin = 35, xmax = 41, ymin = 0.32, ymax = 0.4, 
+   #        fill="white", colour="red") +
+  #annotate("text", x=38, y=0.38, label = "correlation == -0.27", parse=T) + 
+  #annotate("text", x=38, y=0.35, label = "p-value < 0.001", parse=T)
+
+#plot(p3) 
 
 
-
-p4 <- ggplot(Dat_cda, aes(x=Mean_income, y=High_edu_perc)) + 
+p4 <- ggplot(Dat2, aes(x=Mean_income, y=High_edu_perc)) + 
   geom_point() + 
   geom_smooth(method=lm, se = T) + # standard error = True
-  ggtitle("Highly educated residents and mean income per municipality ") +
-  xlab(paste("Mean income per municipality (x ",Euro, " 1000)", sep = "")) +
-  ylab("Probability of highly educated residents") +
-  xlim(c(20,42)) +
-  annotate("rect", xmin = 36.5, xmax = 42, ymin = 0.1, ymax = 0.18, 
-           fill="white", colour="red") +
-  annotate("text", x=39.5, y=0.16, label = "correlation == 0.567", parse=T) + 
-  annotate("text", x=39.5, y=0.12, label = "p-value < 0.001", parse=T)
+  ##ggtitle("Highly educated residents and mean income per municipality ") +
+  xlab(paste("Mean income (x ",Euro, " 1000)", sep = "")) +
+  ylab("Highly educated residents") +
+  xlim(c(20,42)) #+
+  #annotate("rect", xmin = 36.5, xmax = 42, ymin = 0.1, ymax = 0.18, 
+   #        fill="white", colour="red") +
+  #annotate("text", x=39.5, y=0.16, label = "correlation == 0.567", parse=T) + 
+  #annotate("text", x=39.5, y=0.12, label = "p-value < 0.001", parse=T)
 
+#plot(p4)
 
 # Urbanity index and highly educated residents
-p5 <- ggplot(Dat_cda, aes(x=Urban_index, y=High_edu_perc)) + 
+p5 <- ggplot(Dat2, aes(x=Urban_index, y=High_edu_perc)) + 
   geom_point() + 
   geom_smooth(method=lm, se = T) + # standard error = True
-  ggtitle("Highly educated residents and urbanity index") +
+  ##ggtitle("Highly educated residents and urbanity index") +
   xlab("Urbanity index") +
-  ylab("Probability of highly educated residents") +
-  xlim(c(0,4)) +
-  ylim(c(0,0.5)) + 
-  annotate("rect", xmin = 3.0, xmax = 4.0, ymin = 0.0, ymax = 0.1, 
-           fill="white", colour="red") +
-  annotate("text", x=3.5, y=0.08, label = "correlation == 0.397", parse=T) + 
-  annotate("text", x=3.5, y=0.04, label = "p-value < 0.001", parse=T)
+  ylab("Highly educated residents") +
+  xlim(c(0,4))
+  #ylim(c(0,0.53))# + 
+  #annotate("rect", xmin = 3.0, xmax = 4.0, ymin = 0.0, ymax = 0.1, 
+      #     fill="white", colour="red") +
+  #annotate("text", x=3.5, y=0.08, label = "correlation == 0.397", parse=T) + 
+  #annotate("text", x=3.5, y=0.04, label = "p-value < 0.001", parse=T)
 
+#plot(p5)
 
 
 # Urbanity index and CDA votes
-#cor.test(Dat_cda$CDA, Dat_cda$Urban_index) # get correlation and p-val
-p6 <- ggplot(Dat_cda, aes(x=Urban_index, y=CDA)) + 
+p6 <- ggplot(Dat2, aes(x=Urban_index, y=CDA)) + 
   geom_point() + 
   geom_smooth(method=lm, se = T) + # standard error = True
-  ggtitle("Probability of the votes for CDA and urbanity index per municipality") +
+  ##ggtitle("Probability of the votes for CDA and urbanity index per municipality") +
   xlab("Urbanity index") +
-  ylab("Probability votes CDA") +
+  ylab("Votes for CDA") +
   xlim(c(0,4.1)) +
-  #ylim(c(0,0.5)) + 
-  annotate("rect", xmin = 2.95, xmax = 4.05, ymin = 0.33, ymax = 0.4, 
-           fill="white", colour="red") +
-  annotate("text", x=3.5, y=0.38, label = "correlation == -0.587", parse=T) + 
-  annotate("text", x=3.5, y=0.35, label = "p-value < 0.001", parse=T)
+  ylim(c(0,0.45))# + 
+  #annotate("rect", xmin = 2.95, xmax = 4.05, ymin = 0.33, ymax = 0.4, 
+      #     fill="white", colour="red") +
+  #annotate("text", x=3.5, y=0.38, label = "correlation == -0.587", parse=T) + 
+  #annotate("text", x=3.5, y=0.35, label = "p-value < 0.001", parse=T)
 
+#plot(p6)
+
+# Urbanity index and GL votes
+p7 <- ggplot(Dat2, aes(x=Urban_index, y=GL)) + 
+  geom_point() + 
+  geom_smooth(method=lm, se = T) + # standard error = True
+  ##ggtitle("Probability of the votes for CDA and urbanity index per municipality") +
+  xlab("Urbanity index") +
+  ylab("Votes for GL") +
+  xlim(c(0,4)) +
+  ylim(c(0,0.25))# + 
+#annotate("rect", xmin = 2.95, xmax = 4.05, ymin = 0.33, ymax = 0.4, 
+#     fill="white", colour="red") +
+#annotate("text", x=3.5, y=0.38, label = "correlation == -0.587", parse=T) + 
+#annotate("text", x=3.5, y=0.35, label = "p-value < 0.001", parse=T)
+
+#plot(p7)
+
+# Highly educted residents and GL votes
+p8 <- ggplot(Dat2, aes(x=High_edu_perc, y=GL)) + 
+  geom_point() + 
+  geom_smooth(method=lm, se = T) + # standard error = True
+  ##ggtitle("Probability of the votes for CDA and urbanity index per municipality") +
+  xlab("Highly educated residents") +
+  ylab("Votes for GL") +
+  #xlim(c(0, 0.6)) +
+  ylim(c(0,0.25))# + 
+#annotate("rect", xmin = 2.95, xmax = 4.05, ymin = 0.33, ymax = 0.4, 
+#     fill="white", colour="red") +
+#annotate("text", x=3.5, y=0.38, label = "correlation == -0.587", parse=T) + 
+#annotate("text", x=3.5, y=0.35, label = "p-value < 0.001", parse=T)
+
+#plot(p8)
+
+
+# Urbanity index and GL votes
+p9 <- ggplot(Dat2, aes(x=Urban_index, y=Perc_60plus)) + 
+  geom_point() + 
+  geom_smooth(method=lm, se = T) + # standard error = True
+  ##ggtitle("Probability of the votes for CDA and urbanity index per municipality") +
+  xlab("Urbanity index") +
+  ylab("> 60 years old residents") +
+  xlim(c(0, 4)) +
+  ylim(c(0,0.20))# + 
+#annotate("rect", xmin = 2.95, xmax = 4.05, ymin = 0.33, ymax = 0.4, 
+#     fill="white", colour="red") +
+#annotate("text", x=3.5, y=0.38, label = "correlation == -0.587", parse=T) + 
+#annotate("text", x=3.5, y=0.35, label = "p-value < 0.001", parse=T)
+
+#plot(p9)
 
 # Function to plot multiple plots together
-multiplot <- function(..., plotlist=NULL, file, cols=2, layout=NULL) {
+multiplot <- function(..., plotlist=NULL, file, cols=3, layout=NULL) {
   library(grid)
   
   # Make a list from the ... arguments and plotlist
@@ -281,17 +348,30 @@ multiplot <- function(..., plotlist=NULL, file, cols=2, layout=NULL) {
   }
 }
 ```
-**multiplot**
-```{r multi_plots, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE}
-multi_linear <- multiplot(p3, p6, p5, p4)
+**Multilineair plots CDA **
+In these two plots you can see a scatterplot with on the y-axis the votes for CDA in percentages and on the x-axis on the left graph the mean income per municipality in 1000 euro. The right plot has the urbanity index as x-axis. As you can see, the trend is that when the mean income goes up, the votes for CDA goes down. Same with the urbanity index. In the model formulation graph these trends are checked. 
+```{r, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.cap= "Scatterplots CDA", fig.width=5, fig.height=3}
+multi_linearCDA <- multiplot(p3, p6)
 
 ```
-**boxplots**
-```{r multi_boxplots, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, height=6}
-multi_boxpl <- multiplot(p1, p2)
+*Multilineair plots Groenlinks**
+In these plots the percentage of votes for GL are compared with urbanity index and percentage of highly educated residents. When municipalities get more crowded, the trend is that votes for GL goes up. The other visible trend is that when more residents in a municipality are highly educated, GL got more votes.   
+```{r, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE,fig.cap= "Scatterplot GroenLinks", fig.width=5, fig.height=3}
+multi_linearGL <- multiplot(p7, p8)
 
 ```
-### Groenlinks  
+**Multilinear plots explanatory variables**
+These three plots are scatterplots about explanatory variables. 
+```{r, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.width=5, fig.height=3, fig.cap= "Scatterplot explanatory variables"}
+multi_linear <- multiplot(p4, p5, p9)
+
+```
+**Multiple boxplots**
+In this graph boxplots are made, to compare some variables. A boxplot is a standardized way to display the distribution of data. It gives the minimum, first quartile, median, third quartile and the maximum. If there are any outliers, the boxplot is extended with those. The line within the box is the median, the first and third quartile are the down- and upside of the box. The length of the box is the Inter Quartile Range (IQR). The minimum and maximum are 1.5XIQR distance. Outliers are thus further away than 1.5XIQR. 
+```{r, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.width=5, fig.height=3, fig.cap= "Three boxplots: Votes for CDA, Votes for GroenLinks and Urbanity index"}
+multi_boxpl <- multiplot(p1, p2a, p2)
+
+```
 
 
 # 2. Formulate model 
@@ -300,15 +380,15 @@ Model formuleren
 ## CDA 
 ```{r set_up_CDA, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE}
 #### Libraries ####
-library(car)
+#library(car)
 
 
 #### Set up ####
-rm(list = ls()) # empty work space
-Data <- read.csv("1_clean_data/Cleandata_CDA_2018-12-06.csv", 
-                 header = T, stringsAsFactors = F)
+#rm(list = ls()) # empty work space
+#Data <- read.csv("1_clean_data/Cleandata_CDA_2018-12-06.csv", 
+                 #header = T, stringsAsFactors = F)
 
-Data$Non_west <- as.factor(Data$Non_west) # needs to be recognized as factor
+#Data$Non_west <- as.factor(Data$Non_west) # needs to be recognized as factor
 
 ```
 
