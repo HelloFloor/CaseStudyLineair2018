@@ -13,9 +13,7 @@
 
 #### Libraries ####
 library(car)
-library(lindia)
-library(MASS)
-library(knitr)
+
 
 #### Set up ####
 rm(list = ls()) # empty work space
@@ -57,13 +55,13 @@ abline(h = 0.011, col = "red")
 
 #### Model1a ####
 # Add logit link function
-model1a <- glm(cbind(CDA_perc, Voted_other) ~ Urban_index + High_edu_perc + 
+model1a <- glm(cbind(Voted_other, CDA_perc) ~ Urban_index + High_edu_perc + 
                 Mean_income +Non_west + Perc_60plus, 
               family=binomial(link = "logit"),data = Data)
 
 summary(model1a)
 Anova(model1, type = "II")
-avPlots(model1a)
+avPlots(modela)
 
 par(mfrow = c(1,3))
 plot(model1, which = 1, id.n = 5) 

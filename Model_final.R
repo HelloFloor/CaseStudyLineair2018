@@ -15,7 +15,11 @@
 library(car)
 library(lindia)
 library(MASS)
+<<<<<<< HEAD
 library(knitr)
+=======
+library(xtable)
+>>>>>>> 0c13089f013a26a8535aa58977e8a451017e7c78
 
 #### Set up ####
 rm(list = ls()) # empty work space
@@ -34,6 +38,10 @@ Data$Voted_other <- 100 - Data$CDA_perc
 # Start with all explanatory variables
 model1 <- lm(CDA ~ Urban_index + High_edu_perc + Mean_income +
                 Non_west + Perc_60plus,data = Data)
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0c13089f013a26a8535aa58977e8a451017e7c78
 
 Anova(model1, type = "2")
 step(model1)
@@ -41,7 +49,11 @@ summary(model1)
 
 avPlots(model1)
 
-
+### Powerpoint
+xtable(summary(model1))
+png('Plots/avPlots1.png', width = 15, height = 7, units='in',res=600)
+print(avPlots(model1))
+dev.off()
 
 # Check assumptions 
 par(mfrow = c(1,2))
@@ -51,6 +63,7 @@ qqPlot(model1) # right tail is skewed (non normality)
 plot(model1, which = 3, id.n = 5) # var of error not equal, non-linearity, obs 300 & 76 outliers
 plot(model1, which = 4, id.n = 5)# cutt off val: 0.011. Everything above cut-off is outlier
 abline(h = 0.011, col = "red")
+
 
 
 
@@ -169,6 +182,8 @@ summary(model2)
 # ANOVA table shows that we have a large RSS (within group variance)
 Anova(model2, type = "II") # unbalanced dataset
 
+xtable(Anova(model2, type = "II"))
+
 # Check added variable plots
 avPlots(model2)
 
@@ -196,11 +211,18 @@ Data[c(16, 300, 239),]
 
 
 #### Model3 ####
+<<<<<<< HEAD
 # Remove highly educated 
+=======
+# Remove highly educated and insert Mean_income again
+# Now, mean income has significant effect. But in practice this effect is very small
+# The estimate is -0.006
+>>>>>>> 0c13089f013a26a8535aa58977e8a451017e7c78
 model3 <- lm(CDA ~ Urban_index + Non_west + Perc_60plus,
              data = Data)
 
 summary(model3)
+<<<<<<< HEAD
 Anova(model3, type = "II")
 
 # Leverage = influential on the X-axis
@@ -208,6 +230,13 @@ Anova(model3, type = "II")
 levs <- lm.influence(model3)$hat 
 cutoff.lev <- 2*3/369 
 high_lev <- levs[levs>cutoff.lev] # 35/369 municipalities have high leverage
+=======
+xtable(summary(model3))
+#### Powerpoint
+png('Plots/avPlots3.png', width = 15, height = 7, units='in',res=600)
+print(avPlots(model3))
+dev.off()
+>>>>>>> 0c13089f013a26a8535aa58977e8a451017e7c78
 
 
 # Check for outliers numerically
