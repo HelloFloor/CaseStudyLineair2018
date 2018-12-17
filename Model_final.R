@@ -199,6 +199,14 @@ outlierTest(model2)
 model3 <- lm(CDA ~ Urban_index + Non_west + Perc_60plus,
              data = Data)
 summary(model3)
+
+par(mfrow = c(1,2))
+plot(model3, which = 1) # heteroscadacity, amsterdam oostzaan outliers
+qqPlot(model3)          # normally
+plot(model3, which = 3)  
+plot(model3, which = 4) # cutoff Cooksdist: 4/(369-3-1) = 0.011. Amsterdam Utrecht, Urk influential
+abline(h = 0.011, col = "red")
+
 xtable(summary(model3))
 #### Powerpoint
 png('Plots/avPlots3.png', width = 15, height = 7, units='in',res=600)
