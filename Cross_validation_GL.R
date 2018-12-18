@@ -16,22 +16,22 @@ library(car)
 
 #### Set up ####
 rm(list = ls()) # empty work space
-Data <- read.csv("1_clean_data/Cleandata_GL_2018-12-16.csv", 
+Data <- read.csv("1_clean_data/Cleandata_GL_2018-12-14.csv", 
                  header = T, stringsAsFactors = F)
 
 
 # Add binairy variables
 Data$Non_west <- as.factor(Data$Non_west) # needs to be recognized as factor
 row.names(Data) <- Data$Muni # change rownames to the municipalities
-Data$CDA_perc <- round(Data$CDA * 1000, digits = 0)
-Data$Voted_other <- 1000 - Data$CDA_perc
+Data$GL_perc <- round(Data$GL * 1000, digits = 0)
+Data$Voted_other <- 1000 - Data$GL_perc
 
 
 
 #### Final model ####
-final_model <- glm(cbind(Voted_other, CDA_perc) ~ Urban_index + High_edu_perc + 
-                     +Non_west + Perc_60plus, 
-                   family=binomial,data = Data)
+final_model <- glm(cbind(Voted_other, GL_perc)~ High_edu_perc + 
+                Mean_income +Non_west + Perc_60plus, 
+              family=binomial, data = Data)
 
 
 summary(final_model) 
@@ -39,7 +39,7 @@ summary(final_model)
 
 
 #### Make folds ####
-K <- 10
+K <- 5
 index <- rep(1:K, floor(nrow(Data)/K)+1)[1:nrow(Data)]
 summary(as.factor(index))
 fold.index <- sample(index)
@@ -54,7 +54,7 @@ for (k in 1:K){
   validation <- Data[fold.index==k, ]
   training.fit <- final_model
   validation.predict <- predict(training.fit, newdata=validation, type='response')
-  loss[k] <- Loss(validation$CDA, validation.predict)
+  loss[k] <- Loss(validation$GL, validation.predict)
 }
 
 #average, with weights equal to the number of objects used to calculate the loss at each fold:

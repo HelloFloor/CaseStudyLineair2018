@@ -29,7 +29,7 @@ Data$Voted_other <- 1000 - Data$CDA_perc
 
 
 #### Final model ####
-final_model <- glm(cbind(Voted_other, CDA_perc) ~ Urban_index + High_edu_perc + 
+final_model <- glm(cbind(CDA_perc, Voted_other) ~ Urban_index + High_edu_perc + 
                  +Non_west + Perc_60plus, 
               family=binomial,data = Data)
 

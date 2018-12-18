@@ -13,9 +13,7 @@
 
 #### Libraries ####
 library(car)
-library(lindia)
-library(MASS)
-library(knitr)
+
 
 #### Set up ####
 rm(list = ls()) # empty work space
