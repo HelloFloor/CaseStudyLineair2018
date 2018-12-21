@@ -21,11 +21,16 @@ library(data.table)
 
 ####Import data####
 votes <- read.csv("1_clean_data/stemmen_percentages.csv",stringsAsFactors=F)
-education <- read.csv("1_clean_data/education.csv",stringsAsFactors=F)
-income <- read.csv("1_clean_data/income.csv",stringsAsFactors=F)
-urban <- read.csv("1_clean_data/stedelijkheidsindex.csv",stringsAsFactors=F)
-migrant_background <- read.csv("1_clean_data/migrant_background.csv",stringsAsFactors=F)
-
+education <- read.csv("1_clean_data/education.csv",
+                      stringsAsFactors=F)
+income <- read.csv("1_clean_data/income.csv",
+                   stringsAsFactors=F)
+urban <- read.csv("1_clean_data/stedelijkheidsindex.csv",
+                  stringsAsFactors=F)
+migrant_background <- read.csv("1_clean_data/migrant_background.csv",
+                               stringsAsFactors=F)
+votes_raw <- read.csv("0_data/stemmen_aantallen.csv", 
+                      stringsAsFactors = F, header = T)
 
 ####Create a Data Frame Make the "Votes" data frame to a nice one####
 
@@ -35,7 +40,8 @@ data <- votes[,-2] #removes total votes
 
 ####Merge the urbanity data in the data frame####
 colnames(urban)[1] <- "Gemeente"
-data <- merge(data,urban[,c(1,7)],by="Gemeente")
+colnames(data)[1] <- "Gemeente"
+data <- merge(data, urban[,c(1,7)],by="Gemeente")
 
 ####Prepare the other variables#####
 
@@ -68,5 +74,31 @@ data <- merge(data,income[,c(2,3)],by="Gemeente")
 data <- merge(data,migrant_background[,-1],by="Gemeente")
 
 
+#### Remove parties that we do not use ####
+data <- data[ ,-c(2,4:6,8:14)]
+
+
+# Add absolute voting results 
+votes_raw$Votes_total <- rowSums(votes_raw[2:14])
+votes_raw <- votes_raw[-c(2,4:6,8:14)]
+colnames(votes_raw) <- c("Gemeente", "CDA_abs", "GL_abs", "Total_abs")
+
+# Merge raw data and data
+data2 <- merge(data, votes_raw, by = "Gemeente") 
+colnames(data2) <- c("Muni", "CDA_frac" ,"GL_frac", "Urban_index" , "High_educated_frac", "Mean_income" , "CDA_abs"  ,"GL_abs",  "Total_abs" )
+
+data2[, c(2:4)] <- round(data2[2:4], digits = 3)
+
 ####Save the data as one file####
-write.csv(data,"1_clean_data/voting_and_demographics.csv",row.names=FALSE)
+# all variables
+write.csv(data2,paste0("1_clean_data/Clean_data_all_variables_", 
+                       Sys.Date(), ".csv"), row.names=FALSE)
+
+# CDA variables
+write.csv(data2[,-c(3,8)],paste0("1_clean_data/Clean_data_CDA_", 
+                       Sys.Date(), ".csv"), row.names=FALSE)
+
+write.csv(data2[,-c(2,7)],paste0("1_clean_data/Clean_data_GL_", 
+                       Sys.Date(), ".csv"), row.names=FALSE)
+
+###################### End script ##############################################
