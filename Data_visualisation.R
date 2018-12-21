@@ -100,7 +100,7 @@ p2 <- ggplot(Dat2,
 plot(p2)
 
 # GL against Non_west
-p2a <- ggplot(Dat2, aes(x = Non_west, y = GL, fill = Non_west)) + 
+p2a <- ggplot(Dat2, aes(x = Non_west, y = GL_frac, fill = Non_west)) + 
   geom_boxplot(outlier.colour="black", 
                outlier.size=2, 
                outlier.fill =  "red",
@@ -119,7 +119,7 @@ plot(p2a)
 # Report: explain what is on the x and y-axis
 # We can report the R-squared in the report (but we do not need to show this function)
 rsq <- function (x, y) cor(x, y) ^ 2
-rsq(Dat2$CDA, Dat2$Mean_income) # Calculate R-squared
+rsq(Dat2$CDA_frac, Dat2$Mean_income) # Calculate R-squared
 
 # Linear regression between votes for CDA and mean income
 Euro <- "\u20AC" # euro sign
