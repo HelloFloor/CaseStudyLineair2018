@@ -25,7 +25,7 @@
 \usepackage{hyperref}
 \hypersetup{unicode=true,
             pdftitle={Case Study Elections Netherlands},
-            pdfauthor={Ilse van Beelen, Floor Komen and Lotte Pater},
+            pdfauthor={Ilse van Beelen and Floor Komen},
             pdfkeywords={put some keywords here},
             pdfborder={0 0 0},
             breaklinks=true}
@@ -120,13 +120,29 @@
   \title{Case Study Elections Netherlands}
     \pretitle{\vspace{\droptitle}\centering\huge}
   \posttitle{\par}
-    \author{Ilse van Beelen, Floor Komen and Lotte Pater}
+    \author{Ilse van Beelen and Floor Komen}
     \preauthor{\centering\large\emph}
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{december 17, 2018}
+    \date{december 21, 2018}
 
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage[table]{xcolor}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+
+\usepackage{float}
 
 \begin{document}
 \maketitle
@@ -227,22 +243,45 @@ residents.
 
 In this part the cleaned data is visualized, so that a good picture can
 be obtained of the current data. First of all some demographics of data
-will be showed. In these histograms the density of the \emph{parties},
-\emph{the urban index}, \emph{the percentage of highly educated
-residents}, \emph{the mean income}, \emph{The non west residents factor}
-and * the percentage 60 plus* are plotted. As you can see in the plot,
-they are normal distributed. Because of the low values at the x-axis,
-the CDA, GroenLinks, 60 plus percentage and the highly educated
-densities are above 1. The area beneath the curve sums to 1, so it is
-correct.
+will be showed. In figure \ref{1} of the \emph{parties}, \emph{the urban
+index}, \emph{the percentage of highly educated residents}, \emph{the
+mean income}, \emph{The non west residents factor} and * the percentage
+60 plus* are plotted. As you can see in the plot, they are normal
+distributed. Because of the low values at the x-axis, the CDA,
+GroenLinks, 60 plus percentage and the highly educated densities are
+above 1. The area beneath the curve sums to 1, so it is correct.
+\rowcolors{2}{gray!6}{white}
 
-\begin{figure}
+\begin{table}
+
+\caption{\label{tab:demographics_data1}Data summary}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{tabular}[t]{llllllll}
+\hiderowcolors
+\toprule
+  &      CDA &       GL &  Urban\_index & High\_edu\_perc &  Mean\_income &    Non\_west &  Perc\_60plus\\
+\midrule
+\showrowcolors
+ & Min.   :0.031 & Min.   :0.0025 & Min.   :0.00 & Min.   :0.12 & Min.   :21 & Min.   :1.0 & Min.   :0.067\\
+ & 1st Qu.:0.116 & 1st Qu.:0.0539 & 1st Qu.:0.66 & 1st Qu.:0.22 & 1st Qu.:24 & 1st Qu.:1.0 & 1st Qu.:0.123\\
+ & Median :0.142 & Median :0.0657 & Median :1.22 & Median :0.26 & Median :26 & Median :2.0 & Median :0.134\\
+ & Mean   :0.152 & Mean   :0.0714 & Mean   :1.43 & Mean   :0.27 & Mean   :26 & Mean   :1.7 & Mean   :0.133\\
+ & 3rd Qu.:0.182 & 3rd Qu.:0.0846 & 3rd Qu.:2.18 & 3rd Qu.:0.30 & 3rd Qu.:27 & 3rd Qu.:2.0 & 3rd Qu.:0.142\\
+ & Max.   :0.420 & Max.   :0.2055 & Max.   :3.79 & Max.   :0.53 & Max.   :42 & Max.   :3.0 & Max.   :0.178\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\rowcolors{2}{white}{white}
+
+\begin{figure}[H]
 
 {\centering \includegraphics{Report_files/figure-latex/demographics_data-1} 
 
 }
 
-\caption{Density plot}\label{fig:demographics_data}
+\caption{\label{1} Density plot}\label{fig:demographics_data}
 \end{figure}
 
 \textbf{Correlation heatmap} In this heatmap the correlation between
@@ -251,7 +290,7 @@ positive relation, the purple color means a negative relation. The
 non\_west variable is not taken into account, because it is a factor and
 the other variables are continous. VERDER UITLEG
 
-\begin{figure}
+\begin{figure}[H]
 
 {\centering \includegraphics{Report_files/figure-latex/correlation_heatmap-1} 
 
@@ -268,7 +307,7 @@ the trend is that when the mean income goes up, the votes for CDA goes
 down. Same with the urbanity index. In the model formulation graph these
 trends are checked.
 
-\begin{figure}
+\begin{figure}[H]
 
 {\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-5-1} 
 
@@ -277,13 +316,15 @@ trends are checked.
 \caption{Scatterplots CDA}\label{fig:unnamed-chunk-5}
 \end{figure}
 
-*Multilineair plots Groenlinks** In these plots the percentage of votes
-for GL are compared with urbanity index and percentage of highly
-educated residents. When municipalities get more crowded, the trend is
-that votes for GL goes up. The other visible trend is that when more
-residents in a municipality are highly educated, GL got more votes.\\
+\textbf{Multilineair plots Groenlinks}
 
-\begin{figure}
+In these plots the percentage of votes for GL are compared with urbanity
+index and percentage of highly educated residents. When municipalities
+get more crowded, the trend is that votes for GL goes up. The other
+visible trend is that when more residents in a municipality are highly
+educated, GL got more votes.\\
+
+\begin{figure}[H]
 
 {\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-6-1} 
 
@@ -295,7 +336,7 @@ residents in a municipality are highly educated, GL got more votes.\\
 \textbf{Multilinear plots explanatory variables} These three plots are
 scatterplots about explanatory variables.
 
-\begin{figure}
+\begin{figure}[H]
 
 {\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-7-1} 
 
@@ -313,7 +354,7 @@ and third quartile are the down- and upside of the box. The length of
 the box is the Inter Quartile Range (IQR). The minimum and maximum are
 1.5XIQR distance. Outliers are thus further away than 1.5XIQR.
 
-\begin{figure}
+\begin{figure}[H]
 
 {\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-8-1} 
 
