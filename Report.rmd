@@ -110,6 +110,9 @@ Dat_cda <- Dat_cda[complete.cases(Dat_cda),]
 
 In this part the cleaned data is visualized, so that a good picture can be obtained of the current data. First of all some demographics of data will be showed. In these histograms the density of the *parties*, *the urban index*, *the percentage of highly educated residents*, *the mean income*, *The non west residents factor* and * the percentage 60 plus* are plotted. 
 As you can see in the plot, they are normal distributed. Because of the low values at the x-axis, the CDA, GroenLinks, 60 plus percentage and the highly educated densities are above 1. The area beneath the curve sums to 1, so it is correct. 
+```{r demographics_data, echo=FALSE}
+summary(Dat2[,-1])
+```
 
 ```{r demographics_data, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.cap="Density plot" , fig.width=5, fig.height=3}
 #### Demographics of data ####
