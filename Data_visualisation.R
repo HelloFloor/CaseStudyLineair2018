@@ -11,6 +11,8 @@
 # Version:  		            V.1.0					
 ################################################################################
 
+rm(list = ls()) # empty work space
+
 #### Libraries ####
 library(car)
 library(tidyr)
@@ -20,69 +22,14 @@ library(lattice)
 library(survival)
 
 #### Import data ####
-rm(list = ls()) # empty work space
-Data <- read.csv("1_clean_data/voting_and_demographics.csv",
+
+Dat2 <- read.csv("1_clean_data/Clean_data_all_variables_2018-12-21.csv",
                  stringsAsFactors=F, header = T)
 
-#Data <- read.csv("1_clean_data/Cleandata_all_variables_2018-12-14.csv",
-#                 stringsAsFactors=F, header = T)
-
-# Rename and remove columns
-# Do not put in report
-Data <- Data[,-15]
-colnames(Data) <- c("Muni", "VVD","CDA","PVV", "D66", "SP", "GL","PvdA","CU","50PLUS","PvdD","SGP","FvD","DENK", "Urban_index", "High_edu_perc", "Mean_income", "Dutch_perc", "West_perc", "Non_west_perc")
-
-
-# Non_west_perc is not linear. Therefore, we create a dummy variable with 3 levels
-# Level 1: x < 5%
-# Level 2: 5 <= x < 10%
-# Level 3: x >= 10%
-# Explain this in report
-Data$Non_west <- ifelse(Data$Non_west_perc < 0.05, 1, NA)
-Data$Non_west <- ifelse(Data$Non_west_perc >= 0.05 
-                           & Data$Non_west_perc < 0.1, 2, Data$Non_west)
-Data$Non_west <- ifelse(Data$Non_west_perc >= 0.1, 3, Data$Non_west)
-
-# change to factor
-Data$Non_west <- as.factor(Data$Non_west)
-
-
-# Party CDA
-# Select the right variables and remove NAs
-Dat_cda <- Data[,c(1,3,15,16,17,21,22)]
-Dat_cda <- Dat_cda[complete.cases(Dat_cda),]
-
-
-# Party GL
-# Select the right variables and remove NAs
-Dat_gl <- Data[,c(1,7,15,16,17,21,22)]
-Dat_gl <- Dat_gl[complete.cases(Dat_gl),]
-
-# Select both GL & CDA
-# Select the right variables and remove NAs
-Dat2 <- Data[,c(1,3,7,15,16,17,21,22)]
-Dat2 <- Dat2[complete.cases(Dat2),]
-
-#### Save final dataframes ####
-write.table(Data, file = paste("1_clean_data/Cleandata_all_variables_", 
-                               Sys.Date(),".csv", sep = ""), sep = ",", 
-            row.names = FALSE, na = "", col.names = T)
-
-write.table(Dat_cda, file = paste("1_clean_data/Cleandata_CDA_", 
-                                  Sys.Date(),".csv", sep = ""), sep = ",", 
-            row.names = FALSE, na = "", col.names = T)
-
-write.table(Dat_gl, file = paste("1_clean_data/Cleandata_GL_", 
-                                  Sys.Date(),".csv", sep = ""), sep = ",", 
-            row.names = FALSE, na = "", col.names = T)
-
-write.table(Dat2, file = paste("1_clean_data/Cleandata_GL_CDA", 
-                                 Sys.Date(),".csv", sep = ""), sep = ",", 
-            row.names = FALSE, na = "", col.names = T)
 
 
 #### Demographics of data ####
-#Dat2$Non_west <- as.factor(Dat2$Non_west)
+Dat2$Non_west <- as.factor(Dat2$Non_west)
 summary(Dat2) # zet in verslag & presentatie. Leg uit of variabele numeriek/factor is
 
 dens = ggplot(melt(Dat2), aes(x = value)) + 
@@ -101,7 +48,7 @@ plot(dens) # zet in verslag: normaal verdeling,
 #### Correlation ####
 # Correlation and p-value matrices
 # Do not put in report
-corrlist <- rcorr(as.matrix(Dat_cda[,-1]), type="pearson")
+corrlist <- rcorr(as.matrix(Dat2[,-1]), type="pearson")
 pvalues = data.frame(corrlist[["P"]])
 correlation = round(data.frame(corrlist[["r"]]), digits = 3)
 
@@ -120,7 +67,7 @@ plot(heatmap)
 #### Boxplots ####
 # For report: explain how to interpretate a boxplot
 # Plot Probability CDA votes VS Non-western residents
-p1 <- ggplot(Dat2, aes(x = Non_west, y = CDA, fill = Non_west)) + 
+p1 <- ggplot(Dat2, aes(x = Non_west, y = CDA_frac, fill = Non_west)) + 
        geom_boxplot(outlier.colour="black", 
                     outlier.size=2, 
                     outlier.fill =  "red",

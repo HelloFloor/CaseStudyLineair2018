@@ -12,6 +12,7 @@
 # Version:  		            V.1.0					
 ################################################################################
 
+
 #### Libraries ####
 library(plyr)
 library(dplyr)
@@ -24,7 +25,7 @@ library(data.table)
 rm(list = ls(all.names = TRUE))
 options(warn = 1) 
 
-data = read.table(file =  'Population_migrant_background.csv', 
+data = read.table(file =  '0_data/Population_migrant_background.csv', 
                      sep = ',', header = T)
 
 str(data)
@@ -69,3 +70,7 @@ data_clean$Non_west_perc <- round(data_clean$Non_western / data_clean$Total, dig
 # Remove column absolute amounts
 data_clean <- data_clean[,-c(2:5)]
 
+#### Save the data as one file####
+write.csv(data_clean,"1_clean_data/migrant_background.csv",row.names=FALSE)
+
+####################### End script #############################################
