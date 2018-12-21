@@ -32,6 +32,8 @@ migrant_background <- read.csv("1_clean_data/migrant_background.csv",
 votes_raw <- read.csv("0_data/stemmen_aantallen.csv", 
                       stringsAsFactors = F, header = T)
 
+age <- read.csv("0_data/Leeftijd_groepen.csv", 
+                stringsAsFactors = F, header = T)
 ####Create a Data Frame Make the "Votes" data frame to a nice one####
 
 data <- votes
@@ -105,6 +107,31 @@ Data$Non_west <- ifelse(Data$Non_west_frac >= 0.1, 3, Data$Non_west)
 # change to factor and remove NAs
 Data$Non_west <- as.factor(Data$Non_west)
 Data <- na.omit(Data)
+Dat_all <- Data
+
+# Add 60+ residents and merge again
+Data <- read.csv("0_data/Leeftijd_groepen.csv",
+                 header = T, stringsAsFactors = F)
+
+# We need one column with total amount of residents per municipality
+# And one column with amount of 60 years or older residents per munipality
+total <- Data[Data$Age == "Totaal",]
+
+# Create wide format for Age groups
+Data_wd <- Data %>% 
+  spread(key = Age, value = Amount)
+
+Data_wd <- Data_wd %>%
+  rename(Total = Totaal) 
+
+Data_wd$Old <- rowSums(Data_wd[,c(2:3)])
+Data_wd$Frac_60plus <- round(Data_wd$Old / Data_wd$Total, digits = 2)
+Data_wd <- Data_wd[,c(1,12)] # remove all columns that we do not need
+
+
+# Merge datafiles
+Data <- merge(Dat_all, Data_wd, by = "Muni")
+
 
 
 ###Save the data as one file####
