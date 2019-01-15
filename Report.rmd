@@ -37,10 +37,10 @@ library("Hmisc")
 library("lattice")
 library("survival")
 library("formatR")
-library("kableExtra")
+#library("kableExtra")
 library("knitr")
 
-options(kableExtra.latex.load_packages = FALSE)
+#options(kableExtra.latex.load_packages = FALSE)
 
 rm(list = ls()) # empty work space
 Data_CDA <- read.csv("1_clean_data/Clean_data_CDA_2018-12-21.csv",
@@ -130,8 +130,8 @@ In this part the cleaned data is visualized, so that a good picture can be obtai
 As you can see in the plot, they are normal distributed. Because of the low values at the x-axis, the CDA, GroenLinks, 60 plus percentage and the highly educated densities are above 1. The area beneath the curve sums to 1, so it is correct.
 
 ```{r demographics_data1, echo=FALSE}
-knitr::kable(
-  summary(Data_CDA[,-1], digits=2), caption="Data summary", "latex",booktabs = T) %>% kable_styling(latex_options=c("scale_down", "striped"), bootstrap_options = "hover")
+#knitr::kable(
+#  summary(Data_CDA[,-1], digits=2), caption="Data summary", "latex",booktabs = T) %>% kable_styling(latex_options=c("scale_down", "striped"), bootstrap_options = "hover")
 ```
 
 ```{r demographics_data, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.cap="\\label{1} Density plot" , fig.width=5, fig.height=3}
@@ -265,7 +265,7 @@ p9 <- ggplot(Data_CDA, aes(x=Urban_index, y=Frac_60plus)) +
 ```{r, include=FALSE}
 
 # Function to plot multiple plots together
-multiplot <- function(..., plotlist=NULL, file, cols=3, layout=NULL) {
+multiplot <- function(..., plotlist=NULL, file, cols=2, layout=NULL) {
   library(grid)
   
   # Make a list from the ... arguments and plotlist
@@ -314,15 +314,16 @@ multi_linearCDA <- multiplot(p3, p6)
 **Multilinear plots explanatory variables**
 These three plots are scatterplots about explanatory variables. 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.width=5, fig.height=3, fig.cap= "\\label{5}Scatterplot explanatory variables"}
-multi_linear <- multiplot(p4, p5, p9)
+multi_linear <- multiplot(p4, p5)
+plot(p9)
 
 ```
 
 **Multiple boxplots**
 In this graph boxplots are made, to compare some variables. A boxplot is a standardized way to display the distribution of data. It gives the minimum, first quartile, median, third quartile and the maximum. If there are any outliers, the boxplot is extended with those. The line within the box is the median, the first and third quartile are the down- and upside of the box. The length of the box is the Inter Quartile Range (IQR). The minimum and maximum are 1.5XIQR distance. Outliers are thus further away than 1.5XIQR. 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.width=5, fig.height=3, fig.cap= "\\label{6}Three boxplots: Votes for CDA, Votes for GroenLinks and Urbanity index"}
-#plot(p1)
-#plot(p2)
+
+multiplot(p1, p2)
 
 ```
 

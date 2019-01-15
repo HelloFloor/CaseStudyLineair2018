@@ -125,22 +125,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{januari 15, 2019}
-
-\usepackage{booktabs}
-\usepackage{longtable}
-\usepackage{array}
-\usepackage{multirow}
-\usepackage[table]{xcolor}
-\usepackage{wrapfig}
-\usepackage{float}
-\usepackage{colortbl}
-\usepackage{pdflscape}
-\usepackage{tabu}
-\usepackage{threeparttable}
-\usepackage{threeparttablex}
-\usepackage[normalem]{ulem}
-\usepackage{makecell}
+    \date{January 15, 2019}
 
 \usepackage{float}
 
@@ -293,31 +278,6 @@ distributed. Because of the low values at the x-axis, the CDA,
 GroenLinks, 60 plus percentage and the highly educated densities are
 above 1. The area beneath the curve sums to 1, so it is correct.
 
-\rowcolors{2}{gray!6}{white}
-
-\begin{table}
-
-\caption{\label{tab:demographics_data1}Data summary}
-\centering
-\resizebox{\linewidth}{!}{
-\begin{tabular}[t]{llllllllll}
-\hiderowcolors
-\toprule
-  &    CDA\_frac &  Urban\_index & High\_educated\_frac &  Mean\_income & Non\_west\_frac &    CDA\_abs &   Total\_abs &  Frac\_60plus & Non\_west\\
-\midrule
-\showrowcolors
- & Min.   :0.031 & Min.   :0.00 & Min.   :0.12 & Min.   :21 & Min.   :0.010 & Min.   :  421 & Min.   :  2727 & Min.   :0.07 & 1:178\\
- & 1st Qu.:0.117 & 1st Qu.:0.66 & 1st Qu.:0.22 & 1st Qu.:24 & 1st Qu.:0.030 & 1st Qu.: 1737 & 1st Qu.: 11516 & 1st Qu.:0.12 & 2:111\\
- & Median :0.142 & Median :1.23 & Median :0.26 & Median :26 & Median :0.050 & Median : 2510 & Median : 16915 & Median :0.13 & 3: 77\\
- & Mean   :0.153 & Mean   :1.43 & Mean   :0.27 & Mean   :26 & Mean   :0.066 & Mean   : 3254 & Mean   : 25162 & Mean   :0.13 & NA\\
- & 3rd Qu.:0.182 & 3rd Qu.:2.17 & 3rd Qu.:0.30 & 3rd Qu.:27 & 3rd Qu.:0.080 & 3rd Qu.: 4023 & 3rd Qu.: 27087 & 3rd Qu.:0.14 & NA\\
- & Max.   :0.420 & Max.   :3.79 & Max.   :0.47 & Max.   :42 & Max.   :0.380 & Max.   :18813 & Max.   :440854 & Max.   :0.18 & NA\\
-\bottomrule
-\end{tabular}}
-\end{table}
-
-\rowcolors{2}{white}{white}
-
 \begin{figure}[H]
 
 {\centering \includegraphics{Report_files/figure-latex/demographics_data-1} 
@@ -368,7 +328,14 @@ scatterplots about explanatory variables.
 
 }
 
-\caption{\label{5}Scatterplot explanatory variables}\label{fig:unnamed-chunk-7}
+\caption{\label{5}Scatterplot explanatory variables}\label{fig:unnamed-chunk-71}
+\end{figure}\begin{figure}[H]
+
+{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-7-2} 
+
+}
+
+\caption{\label{5}Scatterplot explanatory variables}\label{fig:unnamed-chunk-72}
 \end{figure}
 
 \textbf{Multiple boxplots} In this graph boxplots are made, to compare
@@ -379,6 +346,15 @@ is extended with those. The line within the box is the median, the first
 and third quartile are the down- and upside of the box. The length of
 the box is the Inter Quartile Range (IQR). The minimum and maximum are
 1.5XIQR distance. Outliers are thus further away than 1.5XIQR.
+
+\begin{figure}[H]
+
+{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-8-1} 
+
+}
+
+\caption{\label{6}Three boxplots: Votes for CDA, Votes for GroenLinks and Urbanity index}\label{fig:unnamed-chunk-8}
+\end{figure}
 
 \section{2. Multiple linear
 regression}\label{multiple-linear-regression}
