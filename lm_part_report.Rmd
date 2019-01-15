@@ -148,7 +148,7 @@ The coëfficients are given in the table below
 ```{r demographics_data1, echo=FALSE}
 lm_CDA_final <-lm(log(CDA_frac) ~ High_educated_frac +  Urban_index +Non_west + Frac_60plus,data = Data_CDA[-16,])
 knitr::kable(
-  summary(Datlm_CDA_final, digits=2), caption="Final Model", "latex",booktabs = T) %>% kable_styling(latex_options=c("scale_down", "striped"), bootstrap_options = "hover")
+  summary(lm_CDA_final$coef, digits=2), caption="Final Model", "latex",booktabs = T) %>% kable_styling(latex_options=c("scale_down", "striped"), bootstrap_options = "hover")
 ```
 \begin{table}[ht]
 \centering
