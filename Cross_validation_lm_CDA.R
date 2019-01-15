@@ -21,8 +21,8 @@ Data_CDA <- read.csv("1_clean_data/Clean_data_CDA_2018-12-21.csv",
 
 
 #### Final model ####
-final_model_lm_CDA<- lm(log10(CDA_frac) ~  Urban_index + Mean_income+
-                                 Non_west + Frac_60plus,data = Data_CDA[-16,])
+final_model_lm_CDA <- lm(log(CDA_frac) ~  Urban_index+ Mean_income+
+                  Non_west + Frac_60plus,data = Data_CDA[-16,])
 
 
 summary(final_model_lm_CDA) 
@@ -45,7 +45,7 @@ for (k in 1:K){
   validation <- Data_CDA[fold.index==k, ]
   training.fit <- final_model_lm_CDA
   validation.predict <- predict(training.fit, newdata=validation, type='response')
-  loss[k] <- Loss(validation$CDA_frac, validation.predict)
+  loss[k] <- Loss(log(validation$CDA_frac), validation.predict)
 }
 
 #average, with weights equal to the number of objects used to calculate the loss at each fold:
@@ -53,4 +53,9 @@ mean(loss)
 
 
 
+
+library(cvTools)
+library("robustbase")
+folds <- cvFolds(nrow(Data_CDA), K = 5, R = 10)
+repCV(final_model_lm_CDA, cost = rtmspe, folds = folds, trim = 0.1)
 

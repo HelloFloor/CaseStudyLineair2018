@@ -72,6 +72,7 @@ In this research the above described demographics are chosen because of their in
 \item Moderate urbanity (1000- 1500 addresses per $km^2$) 
 \item Little urbanity (500-1000 addresses per $km^2$)  
 \item No urbanity (less than 500 addresses per $km^2$)
+\end{itemize}
 
 Per municipality the amount of $km^2$ per category is given. The *non-west residents per municipality* is given in an amount per municipality, also the total amount of residents is given per municipality. 
 
@@ -103,7 +104,7 @@ The variable *non-western residents* are divided in three groups:
 \item Municipalities with less than 5 % non-western residents 
 \item Municipalities with 5-10 % non-western resident 
 \item Municipalities with mre than 10 % non-western residents
-
+\end{itemize}
 
 ```{r}
 Data_CDA$Non_west <- ifelse(Data_CDA$Non_west_frac < 0.05, 1, NA)
@@ -344,7 +345,7 @@ In this graph boxplots are made, to compare some variables. A boxplot is a stand
 
 The raw respons variable is the absolute amount of residents per municipality that voted for CDA. For linear regresssion, we transformed this variable to a fraction. However, we also know the total amount of votes per municipality. Therefore, a better fit to our data would be a binomial model. We use the logit as link function to transform the range of the respons. The choice for the logit was easily made. Because the inverse of the logit is directly interpretable as the log-odds ratio. This link displays the underlaying pattern of our data best. Below, the formula for our link function:
 
-$\eta = log(\frac{\theta}{1 - \theta}) $
+$\eta = log(\frac{\theta}{1 - \theta})$
 
 Where $\theta$ is the absolute amount of votes for CDA.
 

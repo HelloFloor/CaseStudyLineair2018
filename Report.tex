@@ -126,7 +126,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{January 15, 2019}
+    \date{januari 15, 2019}
 
 \usepackage{float}
 
@@ -168,11 +168,13 @@ is a more interesting demographic to research on an individual level.
 \emph{the urban index of a municipality} is a database with five
 categories per municipality. These five categories are:
 
-\textbackslash{}begin\{itemize\} \item Really strong urbanity (more than
-2500 addresses per \(km^2\)) \item Strong urbanity (1500-2500 addresses
-per \(km^2\)) \item Moderate urbanity (1000- 1500 addresses per
-\(km^2\)) \item Little urbanity (500-1000 addresses per \(km^2\))\\
-\item No urbanity (less than 500 addresses per \(km^2\))
+\begin{itemize}
+\item Really strong urbanity (more than 2500 addresses per $km^2$) 
+\item Strong urbanity (1500-2500 addresses per $km^2$) 
+\item Moderate urbanity (1000- 1500 addresses per $km^2$) 
+\item Little urbanity (500-1000 addresses per $km^2$)  
+\item No urbanity (less than 500 addresses per $km^2$)
+\end{itemize}
 
 Per municipality the amount of \(km^2\) per category is given. The
 \emph{non-west residents per municipality} is given in an amount per
@@ -214,9 +216,11 @@ are describes and a small part of code is displayed.
 
 The variable \emph{non-western residents} are divided in three groups:
 
-\textbackslash{}begin\{itemize\} \item Municipalities with less than 5
-\% non-western residents \item Municipalities with 5-10 \% non-western
-resident \item Municipalities with mre than 10 \% non-western residents
+\begin{itemize}
+\item Municipalities with less than 5 % non-western residents 
+\item Municipalities with 5-10 % non-western resident 
+\item Municipalities with mre than 10 % non-western residents
+\end{itemize}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -383,7 +387,7 @@ inverse of the logit is directly interpretable as the log-odds ratio.
 This link displays the underlaying pattern of our data best. Below, the
 formula for our link function:
 
-\$\eta = log(\frac{\theta}{1 - \theta}) \$
+\(\eta = log(\frac{\theta}{1 - \theta})\)
 
 Where \(\theta\) is the absolute amount of votes for CDA.
 
