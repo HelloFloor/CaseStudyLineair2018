@@ -124,7 +124,7 @@ rsq(Dat2$CDA_frac, Dat2$Mean_income) # Calculate R-squared
 # Linear regression between votes for CDA and mean income
 Euro <- "\u20AC" # euro sign
 
-p3 <- ggplot(Dat2, aes(x=Mean_income, y=CDA)) + 
+p3 <- ggplot(Dat2, aes(x=Mean_income, y=CDA_frac)) + 
   geom_point() + 
   geom_smooth(method=lm, se = T) + # standard error = True
   ##ggtitle("Probability of votes for CDA and mean income per municipality") +
@@ -140,7 +140,7 @@ p3 <- ggplot(Dat2, aes(x=Mean_income, y=CDA)) +
 plot(p3) 
 
 
-p4 <- ggplot(Dat2, aes(x=Mean_income, y=High_edu_perc)) + 
+p4 <- ggplot(Dat2, aes(x=Mean_income, y=High_educated_frac)) + 
   geom_point() + 
   geom_smooth(method=lm, se = T) + # standard error = True
   ##ggtitle("Highly educated residents and mean income per municipality ") +
@@ -155,7 +155,7 @@ p4 <- ggplot(Dat2, aes(x=Mean_income, y=High_edu_perc)) +
 plot(p4)
 
 # Urbanity index and highly educated residents
-p5 <- ggplot(Dat2, aes(x=Urban_index, y=High_edu_perc)) + 
+p5 <- ggplot(Dat2, aes(x=Urban_index, y=High_educated_frac)) + 
   geom_point() + 
   geom_smooth(method=lm, se = T) + # standard error = True
   ##ggtitle("Highly educated residents and urbanity index") +
@@ -172,7 +172,7 @@ plot(p5)
 
 
 # Urbanity index and CDA votes
-p6 <- ggplot(Dat2, aes(x=Urban_index, y=CDA)) + 
+p6 <- ggplot(Dat2, aes(x=Urban_index, y=CDA_frac)) + 
   geom_point() + 
   geom_smooth(method=lm, se = T) + # standard error = True
   ##ggtitle("Probability of the votes for CDA and urbanity index per municipality") +
@@ -188,7 +188,7 @@ p6 <- ggplot(Dat2, aes(x=Urban_index, y=CDA)) +
 plot(p6)
 
 # Urbanity index and GL votes
-p7 <- ggplot(Dat2, aes(x=Urban_index, y=GL)) + 
+p7 <- ggplot(Dat2, aes(x=Urban_index, y=GL_frac)) + 
   geom_point() + 
   geom_smooth(method=lm, se = T) + # standard error = True
   ##ggtitle("Probability of the votes for CDA and urbanity index per municipality") +
@@ -204,7 +204,7 @@ p7 <- ggplot(Dat2, aes(x=Urban_index, y=GL)) +
 plot(p7)
 
 # Highly educted residents and GL votes
-p8 <- ggplot(Dat2, aes(x=High_edu_perc, y=GL)) + 
+p8 <- ggplot(Dat2, aes(x=High_educated_frac, y=GL_frac)) + 
   geom_point() + 
   geom_smooth(method=lm, se = T) + # standard error = True
   ##ggtitle("Probability of the votes for CDA and urbanity index per municipality") +
@@ -221,7 +221,7 @@ plot(p8)
 
 
 # Urbanity index and GL votes
-p9 <- ggplot(Dat2, aes(x=Urban_index, y=Perc_60plus)) + 
+p9 <- ggplot(Dat2, aes(x=Urban_index, y=Frac_60plus)) + 
   geom_point() + 
   geom_smooth(method=lm, se = T) + # standard error = True
   ##ggtitle("Probability of the votes for CDA and urbanity index per municipality") +
@@ -237,7 +237,7 @@ p9 <- ggplot(Dat2, aes(x=Urban_index, y=Perc_60plus)) +
 plot(p9)
 
 # Function to plot multiple plots together
-multiplot <- function(..., plotlist=NULL, file, cols=3, layout=NULL) {
+multiplot <- function(..., plotlist=NULL, file, cols= 3, layout=NULL) {
   library(grid)
   
   # Make a list from the ... arguments and plotlist
@@ -273,10 +273,10 @@ multiplot <- function(..., plotlist=NULL, file, cols=3, layout=NULL) {
   }
 }
 
-multi_linearCDA <- multiplot(p3, p6)
-multi_linear <- multiplot(p4, p5, p9)
-multi_boxpl <- multiplot(p1, p2a, p2)
-multi_linearGL <- multiplot(p7, p8)
+multi_linearCDA <- multiplot(p3, p6, cols = 2)
+multi_linear <- multiplot(p4, p5, p9, cols = 3)
+multi_boxpl <- multiplot(p1, p2a, p2, cols = 3)
+multi_linearGL <- multiplot(p7, p8, cols = 2)
 
 
 #### Save plots ####
@@ -288,7 +288,9 @@ png('Plots/Visualisation_Heatmap.png', width = 10, height = 10, units='in',res=6
 print(heatmap)
 dev.off()
 
-
+png('Plots/Visualisation_LinearCDA.png', width = 15, height = 7, units='in',res=600)
+plot(multiplot(p3, p6, cols = 2))
+dev.off()
 
 
 

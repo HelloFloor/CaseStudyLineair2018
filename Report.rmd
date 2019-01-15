@@ -1,6 +1,6 @@
 ---
 title: "Case Study Elections Netherlands"
-author: "Ilse van Beelen, Floor Komen and Lotte Pater"
+author: "Ilse van Beelen, Floor Komen"
 affiliation: Leiden University
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output:
@@ -25,9 +25,6 @@ knitr::opts_chunk$set(echo = TRUE, tidy= TRUE, tidy.opts = list(comment = FALSE)
 )
 library("tidyverse")
 library("car")
-library("ggplot2")
-library("reshape2")
-library("plyr")
 library("GGally")
 library("Hmisc")
 library("lattice")
