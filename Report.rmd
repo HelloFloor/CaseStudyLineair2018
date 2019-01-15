@@ -1,8 +1,14 @@
 ---
 title: "Case Study Elections Netherlands"
+<<<<<<< HEAD
 author: "Ilse van Beelen, Floor Komen"
+=======
+author: "Ilse van Beelen and Floor Komen"
+>>>>>>> ce490d7795e341fc6410d18d96fec0736b55e5e3
 affiliation: Leiden University
 date: "`r format(Sys.time(), '%B %d, %Y')`"
+header-includes:
+   - \usepackage{float}
 output:
   pdf_document:
     citation_package: natbib
@@ -20,7 +26,8 @@ abstract: Put the abstract over here
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, tidy= TRUE, tidy.opts = list(comment = FALSE),
   dev.args = list(bg = 'transparent'),
-  fig.align = "center"
+  fig.align = "center",
+  fig.pos = "H"
   
 )
 library("tidyverse")
@@ -30,8 +37,13 @@ library("Hmisc")
 library("lattice")
 library("survival")
 library("formatR")
+library("kableExtra")
 
-Dat2 <- read.csv("1_clean_data/Cleandata_GL_CDA2018-12-14.csv",
+Data_all <- read.csv("1_clean_data/Clean_data_all_variables_2018-12-21.csv",
+                 stringsAsFactors=F, header = T)
+Data_CDA <- read.csv("1_clean_data/Clean_data_CDA_2018-12-21.csv",
+                 stringsAsFactors=F, header = T)
+Data_GL <- read.csv("1_clean_data/Clean_data_GL_2018-12-21.csv",
                  stringsAsFactors=F, header = T)
 ```
 
@@ -39,7 +51,6 @@ Dat2 <- read.csv("1_clean_data/Cleandata_GL_CDA2018-12-14.csv",
 In this report the election 
 
 ## 1.1 Motivation
-
 
 
 ![Party landscape](Partijlandschap.jpg){width=250px}
@@ -105,10 +116,16 @@ Dat_cda <- Dat_cda[complete.cases(Dat_cda),]
 ```
 ## 1.3 Data visualisation
 
-In this part the cleaned data is visualized, so that a good picture can be obtained of the current data. First of all some demographics of data will be showed. In these histograms the density of the *parties*, *the urban index*, *the percentage of highly educated residents*, *the mean income*, *The non west residents factor* and * the percentage 60 plus* are plotted. 
+In this part the cleaned data is visualized, so that a good picture can be obtained of the current data. First of all some demographics of data will be showed. In figure \ref{1} of the *parties*, *the urban index*, *the percentage of highly educated residents*, *the mean income*, *The non west residents factor* and * the percentage 60 plus* are plotted. 
 As you can see in the plot, they are normal distributed. Because of the low values at the x-axis, the CDA, GroenLinks, 60 plus percentage and the highly educated densities are above 1. The area beneath the curve sums to 1, so it is correct. 
+```{r demographics_data1, echo=FALSE}
+knitr::kable(
+  summary(Dat2[,-1], digits=2), caption="Data summary", "latex",booktabs = T
+) %>% 
+  kable_styling(latex_options=c("scale_down", "striped"), bootstrap_options = "hover")
+```
 
-```{r demographics_data, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.cap="Density plot" , fig.width=5, fig.height=3}
+```{r demographics_data, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.cap="\\label{1} Density plot" , fig.width=5, fig.height=3}
 #### Demographics of data ####
 
 dens = ggplot(melt(Dat2[,c(2,3,4,5,6,8)]), aes(x = value)) + 
@@ -122,10 +139,10 @@ plot(dens)
 
 
 **Correlation heatmap**
-In this heatmap the correlation between explanatory and respons variable are showed. The red color means a positive relation, the purple color means a negative relation. The non_west variable is not taken into account, because it is a factor and the other variables are continous. 
+In this heatmap (figure \ref{2}) the correlation between explanatory and respons variable are showed. The red color means a positive relation, the purple color means a negative relation. The non_west variable is not taken into account, because it is a factor and the other variables are continous. 
 VERDER UITLEG 
 
-```{r correlation_heatmap, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.cap= 'Correlation between explanatory and respons variables', fig.width=5, fig.height=3}
+```{r correlation_heatmap, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.cap= '\\label{2}Correlation between explanatory and respons variables', fig.width=5, fig.height=3}
 # Heatmap of the correlations
 heatmap = ggcorr(Dat2[,c(2,3,4,5,6,8)], 
                  low = "darkblue", mid = "lightyellow", high = "red",
@@ -347,25 +364,26 @@ multiplot <- function(..., plotlist=NULL, file, cols=3, layout=NULL) {
 ```
 **Multilineair plots CDA **
 In these two plots you can see a scatterplot with on the y-axis the votes for CDA in percentages and on the x-axis on the left graph the mean income per municipality in 1000 euro. The right plot has the urbanity index as x-axis. As you can see, the trend is that when the mean income goes up, the votes for CDA goes down. Same with the urbanity index. In the model formulation graph these trends are checked. 
-```{r, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.cap= "Scatterplots CDA", fig.width=5, fig.height=3}
+```{r, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.cap= "\\label{3}Scatterplots CDA", fig.width=5, fig.height=3}
 multi_linearCDA <- multiplot(p3, p6)
 
 ```
-*Multilineair plots Groenlinks**
+**Multilineair plots Groenlinks**  
+
 In these plots the percentage of votes for GL are compared with urbanity index and percentage of highly educated residents. When municipalities get more crowded, the trend is that votes for GL goes up. The other visible trend is that when more residents in a municipality are highly educated, GL got more votes.   
-```{r, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE,fig.cap= "Scatterplot GroenLinks", fig.width=5, fig.height=3}
+```{r, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE,fig.cap= "\\label{4}Scatterplot GroenLinks", fig.width=5, fig.height=3}
 multi_linearGL <- multiplot(p7, p8)
 
 ```
 **Multilinear plots explanatory variables**
 These three plots are scatterplots about explanatory variables. 
-```{r, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.width=5, fig.height=3, fig.cap= "Scatterplot explanatory variables"}
+```{r, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.width=5, fig.height=3, fig.cap= "\\label{5}Scatterplot explanatory variables"}
 multi_linear <- multiplot(p4, p5, p9)
 
 ```
 **Multiple boxplots**
 In this graph boxplots are made, to compare some variables. A boxplot is a standardized way to display the distribution of data. It gives the minimum, first quartile, median, third quartile and the maximum. If there are any outliers, the boxplot is extended with those. The line within the box is the median, the first and third quartile are the down- and upside of the box. The length of the box is the Inter Quartile Range (IQR). The minimum and maximum are 1.5XIQR distance. Outliers are thus further away than 1.5XIQR. 
-```{r, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.width=5, fig.height=3, fig.cap= "Three boxplots: Votes for CDA, Votes for GroenLinks and Urbanity index"}
+```{r, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.width=5, fig.height=3, fig.cap= "\\label{6}Three boxplots: Votes for CDA, Votes for GroenLinks and Urbanity index"}
 multi_boxpl <- multiplot(p1, p2a, p2)
 
 ```
