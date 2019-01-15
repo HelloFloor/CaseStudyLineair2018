@@ -51,11 +51,6 @@ for (k in 1:K){
 #average, with weights equal to the number of objects used to calculate the loss at each fold:
 mean(loss)
 
+mean(final_model_lm_CDA$residuals^2)
 
-
-
-library(cvTools)
-library("robustbase")
-folds <- cvFolds(nrow(Data_CDA), K = 5, R = 10)
-repCV(final_model_lm_CDA, cost = rtmspe, folds = folds, trim = 0.1)
 
