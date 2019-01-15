@@ -24,8 +24,8 @@
 \usepackage[margin=1in]{geometry}
 \usepackage{hyperref}
 \hypersetup{unicode=true,
-            pdftitle={Case Study Elections Netherlands},
-            pdfauthor={Ilse van Beelen and Floor Komen},
+            pdftitle={Case Study: Predicting the outcomes of the 2017 Dutch General Elections},
+            pdfauthor={Ilse van Beelen, Floor Komen},
             pdfkeywords={put some keywords here},
             pdfborder={0 0 0},
             breaklinks=true}
@@ -72,6 +72,7 @@
 \newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
 \newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
 \newcommand{\NormalTok}[1]{#1}
+\usepackage{longtable,booktabs}
 \usepackage{graphicx,grffile}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -117,30 +118,15 @@
 
 \setlength{\droptitle}{-2em}
 
-  \title{Case Study Elections Netherlands}
+  \title{Case Study: Predicting the outcomes of the 2017 Dutch General Elections}
     \pretitle{\vspace{\droptitle}\centering\huge}
   \posttitle{\par}
-    \author{Ilse van Beelen and Floor Komen}
+    \author{Ilse van Beelen, Floor Komen}
     \preauthor{\centering\large\emph}
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{december 21, 2018}
-
-\usepackage{booktabs}
-\usepackage{longtable}
-\usepackage{array}
-\usepackage{multirow}
-\usepackage[table]{xcolor}
-\usepackage{wrapfig}
-\usepackage{float}
-\usepackage{colortbl}
-\usepackage{pdflscape}
-\usepackage{tabu}
-\usepackage{threeparttable}
-\usepackage{threeparttablex}
-\usepackage[normalem]{ulem}
-\usepackage{makecell}
+    \date{January 15, 2019}
 
 \usepackage{float}
 
@@ -152,47 +138,56 @@ Put the abstract over here
 
 \section{1. Introduction}\label{introduction}
 
-In this report the election
-
 \subsection{1.1 Motivation}\label{motivation}
+
+For this case study, it was decided to combine the outcome from the
+Dutch elections of 2017 and demographic data. Both are collected per
+municipality and are well maintained and reliable. This makes A lot of
+information is available for both in the Netherlands. This will
+hopefully result in observing voting trends per demographic group. The
+final goal is to validate the model for making futyre predictions.
 
 \includegraphics[width=2.60417in]{Partijlandschap.jpg} \textbf{Dutch
 political parties}\\
-In this landscape the diffence between the parties is graphically
-displayed in this figure. In this research, two parties are chosen to
-investigate. These two parties had to be different, so that some
-comparisons could be made. The parties should not be to extreme
-left/right/conservative/progressive, so that the model will be proven to
-work on less-extreme parties. Therefore, the chosen parties are: CDA and
-GroenLinks. After the data-cleaning the CDA will be researched first,
-afterwards GroenLinks will be researched.
+This figure displays the diffences between the political parties in the
+Netherlands. The Netherlands has a total of 13 parties. This
+investigation focusses on only one party. This party should not be to
+extreme left/right/conservative/progressive and should also be one of
+the bigger parties. Otherwise, there is not enough data available,
+making the results less reliable. Therefore, party CDA is chosen.
 
 In this research the above described demographics are chosen because of
-there influence on a municipality level. The thought is that a more
-non-western municipality for example votes different than a less
-non-western municipality. This is the same for the other two
-demographics. Other demographics are also researched, for example
-gender, but on a municipality level there is no big difference between
-the amount of men and women per municipality. So that is a more
-interesting demographic to research on an individual level. \emph{The
-standardized income per municipality} are given in thousands. \emph{the
-urban index of a municipality} is a database with five categories per
-municipality. These five categories are; really strong urban (more than
-2500 addresses per km2), strong urban (1500-2500 addresses per km2),
-moderate urban (1000- 1500 addresses per km2), little urban (500-1000
-addresses per km2) and not urban (less than 500 addresses per km2). Per
-municipality the amount of km2 per category is given. The \emph{non-west
-residents per municipality} is given in an amount per municipality, also
-the total amount of residents is given per municipality.
+their influence on a municipality level. The expectation is that a
+municipality with more non-western residents for example votes different
+than a municipality with less non-western residents. This is the same
+for the other two demographics. Other demographics are also researched,
+for example gender, but on a municipality level there is no large
+difference between the amount of men and women per municipality. So that
+is a more interesting demographic to research on an individual level.
+\emph{The standardized income per municipality} are given in thousands.
+\emph{the urban index of a municipality} is a database with five
+categories per municipality. These five categories are:
+
+\textbackslash{}begin\{itemize\} \item Really strong urbanity (more than
+2500 addresses per \(km^2\)) \item Strong urbanity (1500-2500 addresses
+per \(km^2\)) \item Moderate urbanity (1000- 1500 addresses per
+\(km^2\)) \item Little urbanity (500-1000 addresses per \(km^2\))\\
+\item No urbanity (less than 500 addresses per \(km^2\))
+
+Per municipality the amount of \(km^2\) per category is given. The
+\emph{non-west residents per municipality} is given in an amount per
+municipality, also the total amount of residents is given per
+municipality.
 
 \subsection{1.2 Data sources}\label{data-sources}
 
-\textbf{Electoral data} For the electoral data we used the results of
-the 2017 general election. This is the most recent national election and
-is of the most important election type. Therefore, it seems plausible
-that the data for this election is representative of the political
-makeup of different municipalities. We downloaded the raw data directly
-from the official government source.\footnote{\url{https://data.overheid.nl/data/dataset/verkiezingsuitslag-tweede-kamer-2017}}
+\textbf{Electoral data} For the electoral data, the results of the 2017
+general election are used. This is the most recent national election and
+is of the most important election type in the Netherlands. Furthermore,
+it had a turnup of 81.9\%. Therefore, it seems plausible that the data
+for this election is representative of the political makeup of different
+municipalities. We downloaded the raw data directly from the official
+government source.\footnote{\url{https://data.overheid.nl/data/dataset/verkiezingsuitslag-tweede-kamer-2017}}
 This contained a .csv file with the raw number of votes for every party
 in every municipality.
 
@@ -206,38 +201,67 @@ demographical attributes: education grade, average income, age,
 urbanization and the amount of people with a non-western background.
 Note that the data we downloaded from the CBS site usually had to be
 transformed to get it in a useful predictor variable format. The
-specifics of this are described in the next section.
+specifics of these are described in the next section.
 
 \subsection{1.3 Data cleaning}\label{data-cleaning}
 
-The data cleaning is the process in which we used
+An extensive amount of data cleaning had to be done. Below these steps
+are describes and a small part of code is displayed.
 
 \textbf{Electoral data}
 
 \textbf{Demographical data}
 
-The variable \emph{non-western residents} are divided in three groups.
-Municipalities with less than 5 \% non-western residents, 5-10 \%
-non-western residents and municipalities with more dan 10 \% non-western
-residents.
+The variable \emph{non-western residents} are divided in three groups:
+
+\textbackslash{}begin\{itemize\} \item Municipalities with less than 5
+\% non-western residents \item Municipalities with 5-10 \% non-western
+resident \item Municipalities with mre than 10 \% non-western residents
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{Data <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"1_clean_data/voting_and_demographics.csv"}\NormalTok{, }\DataTypeTok{stringsAsFactors =}\NormalTok{ F, }
-    \DataTypeTok{header =}\NormalTok{ T)}
-\NormalTok{Data <-}\StringTok{ }\NormalTok{Data[, }\OperatorTok{-}\DecValTok{15}\NormalTok{]}
-\KeywordTok{colnames}\NormalTok{(Data) <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"Muni"}\NormalTok{, }\StringTok{"VVD"}\NormalTok{, }\StringTok{"CDA"}\NormalTok{, }\StringTok{"PVV"}\NormalTok{, }\StringTok{"D66"}\NormalTok{, }\StringTok{"SP"}\NormalTok{, }\StringTok{"GL"}\NormalTok{, }\StringTok{"PvdA"}\NormalTok{, }
-    \StringTok{"CU"}\NormalTok{, }\StringTok{"50PLUS"}\NormalTok{, }\StringTok{"PvdD"}\NormalTok{, }\StringTok{"SGP"}\NormalTok{, }\StringTok{"FvD"}\NormalTok{, }\StringTok{"DENK"}\NormalTok{, }\StringTok{"Urban_index"}\NormalTok{, }\StringTok{"High_edu_perc"}\NormalTok{, }
-    \StringTok{"Mean_income"}\NormalTok{, }\StringTok{"Dutch_perc"}\NormalTok{, }\StringTok{"West_perc"}\NormalTok{, }\StringTok{"Non_west_perc"}\NormalTok{)}
-\NormalTok{Data}\OperatorTok{$}\NormalTok{Non_west <-}\StringTok{ }\KeywordTok{ifelse}\NormalTok{(Data}\OperatorTok{$}\NormalTok{Non_west_perc }\OperatorTok{<}\StringTok{ }\FloatTok{0.05}\NormalTok{, }\DecValTok{1}\NormalTok{, }\OtherTok{NA}\NormalTok{)}
-\NormalTok{Data}\OperatorTok{$}\NormalTok{Non_west <-}\StringTok{ }\KeywordTok{ifelse}\NormalTok{(Data}\OperatorTok{$}\NormalTok{Non_west_perc }\OperatorTok{>=}\StringTok{ }\FloatTok{0.05} \OperatorTok{&}\StringTok{ }\NormalTok{Data}\OperatorTok{$}\NormalTok{Non_west_perc }\OperatorTok{<}\StringTok{ }\FloatTok{0.1}\NormalTok{, }
-    \DecValTok{2}\NormalTok{, Data}\OperatorTok{$}\NormalTok{Non_west)}
-\NormalTok{Data}\OperatorTok{$}\NormalTok{Non_west <-}\StringTok{ }\KeywordTok{ifelse}\NormalTok{(Data}\OperatorTok{$}\NormalTok{Non_west_perc }\OperatorTok{>=}\StringTok{ }\FloatTok{0.1}\NormalTok{, }\DecValTok{3}\NormalTok{, Data}\OperatorTok{$}\NormalTok{Non_west)}
-\NormalTok{Data}\OperatorTok{$}\NormalTok{Non_west <-}\StringTok{ }\KeywordTok{as.factor}\NormalTok{(Data}\OperatorTok{$}\NormalTok{Non_west)}
-\NormalTok{Dat_cda <-}\StringTok{ }\NormalTok{Data[, }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{3}\NormalTok{, }\DecValTok{15}\NormalTok{, }\DecValTok{16}\NormalTok{, }\DecValTok{17}\NormalTok{, }\DecValTok{21}\NormalTok{)]}
-\NormalTok{Dat_cda <-}\StringTok{ }\NormalTok{Dat_cda[}\KeywordTok{complete.cases}\NormalTok{(Dat_cda), ]}
+\NormalTok{Data_CDA}\OperatorTok{$}\NormalTok{Non_west <-}\StringTok{ }\KeywordTok{ifelse}\NormalTok{(Data_CDA}\OperatorTok{$}\NormalTok{Non_west_frac }\OperatorTok{<}\StringTok{ }\FloatTok{0.05}\NormalTok{, }\DecValTok{1}\NormalTok{, }\OtherTok{NA}\NormalTok{)}
+\NormalTok{Data_CDA}\OperatorTok{$}\NormalTok{Non_west <-}\StringTok{ }\KeywordTok{ifelse}\NormalTok{(Data_CDA}\OperatorTok{$}\NormalTok{Non_west_frac }\OperatorTok{>=}\StringTok{ }\FloatTok{0.05} \OperatorTok{&}\StringTok{ }\NormalTok{Data_CDA}\OperatorTok{$}\NormalTok{Non_west_frac }\OperatorTok{<}\StringTok{ }
+\StringTok{    }\FloatTok{0.1}\NormalTok{, }\DecValTok{2}\NormalTok{, Data_CDA}\OperatorTok{$}\NormalTok{Non_west)}
+\NormalTok{Data_CDA}\OperatorTok{$}\NormalTok{Non_west <-}\StringTok{ }\KeywordTok{ifelse}\NormalTok{(Data_CDA}\OperatorTok{$}\NormalTok{Non_west_frac }\OperatorTok{>=}\StringTok{ }\FloatTok{0.1}\NormalTok{, }\DecValTok{3}\NormalTok{, Data_CDA}\OperatorTok{$}\NormalTok{Non_west)}
+\NormalTok{Data_CDA}\OperatorTok{$}\NormalTok{Non_west <-}\StringTok{ }\KeywordTok{as.factor}\NormalTok{(Data_CDA}\OperatorTok{$}\NormalTok{Non_west)}
 \end{Highlighting}
 \end{Shaded}
+
+At last, the electoral data and demographic data are combined again.
+Only the municipality Boxmeer is removed, due to a mistake not all the
+votes are reported here\footnote{\url{https://www.gelderlander.nl/boxmeer/7-600-stemmen-in-boxmeer-niet-meegenomen-in-uitslag-verkiezingen~a063ee9e/}}.
+The final dataset has no NAs
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(Data_CDA)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      Muni              CDA_frac       Urban_index     High_educated_frac
+##  Length:366         Min.   :0.0310   Min.   :0.0000   Min.   :0.1200    
+##  Class :character   1st Qu.:0.1170   1st Qu.:0.6623   1st Qu.:0.2200    
+##  Mode  :character   Median :0.1420   Median :1.2305   Median :0.2600    
+##                     Mean   :0.1528   Mean   :1.4280   Mean   :0.2662    
+##                     3rd Qu.:0.1820   3rd Qu.:2.1750   3rd Qu.:0.3000    
+##                     Max.   :0.4200   Max.   :3.7890   Max.   :0.4700    
+##   Mean_income    Non_west_frac        CDA_abs        Total_abs     
+##  Min.   :20.80   Min.   :0.01000   Min.   :  421   Min.   :  2727  
+##  1st Qu.:24.30   1st Qu.:0.03000   1st Qu.: 1737   1st Qu.: 11516  
+##  Median :25.60   Median :0.05000   Median : 2510   Median : 16915  
+##  Mean   :25.91   Mean   :0.06574   Mean   : 3254   Mean   : 25162  
+##  3rd Qu.:27.00   3rd Qu.:0.08000   3rd Qu.: 4023   3rd Qu.: 27087  
+##  Max.   :41.80   Max.   :0.38000   Max.   :18813   Max.   :440854  
+##   Frac_60plus     Non_west
+##  Min.   :0.0700   1:178   
+##  1st Qu.:0.1200   2:111   
+##  Median :0.1300   3: 77   
+##  Mean   :0.1327           
+##  3rd Qu.:0.1400           
+##  Max.   :0.1800
+\end{verbatim}
 
 \subsection{1.3 Data visualisation}\label{data-visualisation}
 
@@ -250,30 +274,31 @@ mean income}, \emph{The non west residents factor} and * the percentage
 distributed. Because of the low values at the x-axis, the CDA,
 GroenLinks, 60 plus percentage and the highly educated densities are
 above 1. The area beneath the curve sums to 1, so it is correct.
-\rowcolors{2}{gray!6}{white}
 
-\begin{table}
-
-\caption{\label{tab:demographics_data1}Data summary}
-\centering
-\resizebox{\linewidth}{!}{
-\begin{tabular}[t]{llllllll}
-\hiderowcolors
+\begin{longtable}[]{@{}lcclclcccl@{}}
 \toprule
-  &      CDA &       GL &  Urban\_index & High\_edu\_perc &  Mean\_income &    Non\_west &  Perc\_60plus\\
+& CDA\_frac & Urban\_index & High\_educated\_frac & Mean\_income &
+Non\_west\_frac & CDA\_abs & Total\_abs & Frac\_60plus &
+Non\_west\tabularnewline
 \midrule
-\showrowcolors
- & Min.   :0.031 & Min.   :0.0025 & Min.   :0.00 & Min.   :0.12 & Min.   :21 & Min.   :1.0 & Min.   :0.067\\
- & 1st Qu.:0.116 & 1st Qu.:0.0539 & 1st Qu.:0.66 & 1st Qu.:0.22 & 1st Qu.:24 & 1st Qu.:1.0 & 1st Qu.:0.123\\
- & Median :0.142 & Median :0.0657 & Median :1.22 & Median :0.26 & Median :26 & Median :2.0 & Median :0.134\\
- & Mean   :0.152 & Mean   :0.0714 & Mean   :1.43 & Mean   :0.27 & Mean   :26 & Mean   :1.7 & Mean   :0.133\\
- & 3rd Qu.:0.182 & 3rd Qu.:0.0846 & 3rd Qu.:2.18 & 3rd Qu.:0.30 & 3rd Qu.:27 & 3rd Qu.:2.0 & 3rd Qu.:0.142\\
- & Max.   :0.420 & Max.   :0.2055 & Max.   :3.79 & Max.   :0.53 & Max.   :42 & Max.   :3.0 & Max.   :0.178\\
+\endhead
+& Min. :0.031 & Min. :0.00 & Min. :0.12 & Min. :21 & Min. :0.010 & Min.
+: 421 & Min. : 2727 & Min. :0.07 & 1:178\tabularnewline
+& 1st Qu.:0.117 & 1st Qu.:0.66 & 1st Qu.:0.22 & 1st Qu.:24 & 1st
+Qu.:0.030 & 1st Qu.: 1737 & 1st Qu.: 11516 & 1st Qu.:0.12 &
+2:111\tabularnewline
+& Median :0.142 & Median :1.23 & Median :0.26 & Median :26 & Median
+:0.050 & Median : 2510 & Median : 16915 & Median :0.13 & 3:
+77\tabularnewline
+& Mean :0.153 & Mean :1.43 & Mean :0.27 & Mean :26 & Mean :0.066 & Mean
+: 3254 & Mean : 25162 & Mean :0.13 & NA\tabularnewline
+& 3rd Qu.:0.182 & 3rd Qu.:2.17 & 3rd Qu.:0.30 & 3rd Qu.:27 & 3rd
+Qu.:0.080 & 3rd Qu.: 4023 & 3rd Qu.: 27087 & 3rd Qu.:0.14 &
+NA\tabularnewline
+& Max. :0.420 & Max. :3.79 & Max. :0.47 & Max. :42 & Max. :0.380 & Max.
+:18813 & Max. :440854 & Max. :0.18 & NA\tabularnewline
 \bottomrule
-\end{tabular}}
-\end{table}
-
-\rowcolors{2}{white}{white}
+\end{longtable}
 
 \begin{figure}[H]
 
@@ -284,11 +309,11 @@ above 1. The area beneath the curve sums to 1, so it is correct.
 \caption{\label{1} Density plot}\label{fig:demographics_data}
 \end{figure}
 
-\textbf{Correlation heatmap} In this heatmap the correlation between
-explanatory and respons variable are showed. The red color means a
-positive relation, the purple color means a negative relation. The
-non\_west variable is not taken into account, because it is a factor and
-the other variables are continous. VERDER UITLEG
+\textbf{Correlation heatmap} In this heatmap (figure \ref{2}) the
+correlation between explanatory and respons variable are showed. The red
+color means a positive relation, the purple color means a negative
+relation. The non\_west variable is not taken into account, because it
+is a factor and the other variables are continous.
 
 \begin{figure}[H]
 
@@ -296,7 +321,7 @@ the other variables are continous. VERDER UITLEG
 
 }
 
-\caption{Correlation between explanatory and respons variables}\label{fig:correlation_heatmap}
+\caption{\label{2}Correlation between explanatory and respons variables}\label{fig:correlation_heatmap}
 \end{figure}
 
 \textbf{Multilineair plots CDA } In these two plots you can see a
@@ -309,28 +334,11 @@ trends are checked.
 
 \begin{figure}[H]
 
-{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-5-1} 
-
-}
-
-\caption{Scatterplots CDA}\label{fig:unnamed-chunk-5}
-\end{figure}
-
-\textbf{Multilineair plots Groenlinks}
-
-In these plots the percentage of votes for GL are compared with urbanity
-index and percentage of highly educated residents. When municipalities
-get more crowded, the trend is that votes for GL goes up. The other
-visible trend is that when more residents in a municipality are highly
-educated, GL got more votes.\\
-
-\begin{figure}[H]
-
 {\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-6-1} 
 
 }
 
-\caption{Scatterplot GroenLinks}\label{fig:unnamed-chunk-6}
+\caption{\label{3}Scatterplots CDA}\label{fig:unnamed-chunk-6}
 \end{figure}
 
 \textbf{Multilinear plots explanatory variables} These three plots are
@@ -342,7 +350,7 @@ scatterplots about explanatory variables.
 
 }
 
-\caption{Scatterplot explanatory variables}\label{fig:unnamed-chunk-7}
+\caption{\label{5}Scatterplot explanatory variables}\label{fig:unnamed-chunk-7}
 \end{figure}
 
 \textbf{Multiple boxplots} In this graph boxplots are made, to compare
@@ -354,34 +362,52 @@ and third quartile are the down- and upside of the box. The length of
 the box is the Inter Quartile Range (IQR). The minimum and maximum are
 1.5XIQR distance. Outliers are thus further away than 1.5XIQR.
 
-\begin{figure}[H]
+\section{2. Multiple linear
+regression}\label{multiple-linear-regression}
 
-{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-8-1} 
+\subsection{First model}\label{first-model}
 
-}
+\subsection{Final model}\label{final-model}
 
-\caption{Three boxplots: Votes for CDA, Votes for GroenLinks and Urbanity index}\label{fig:unnamed-chunk-8}
-\end{figure}
+\subsection{Cross validation}\label{cross-validation}
 
-\section{2. Formulate model}\label{formulate-model}
+\section{3. Logistic regression}\label{logistic-regression}
 
-Model formuleren
+The raw respons variable is the absolute amount of residents per
+municipality that voted for CDA. For linear regresssion, we transformed
+this variable to a fraction. However, we also know the total amount of
+votes per municipality. Therefore, a better fit to our data would be a
+binomial model. We use the logit as link function to transform the range
+of the respons. The choice for the logit was easily made. Because the
+inverse of the logit is directly interpretable as the log-odds ratio.
+This link displays the underlaying pattern of our data best. Below, the
+formula for our link function:
 
-\subsection{CDA}\label{cda}
+\$\eta = log(\frac{\theta}{1 - \theta}) \$
 
-\subsection{GroenLinks}\label{groenlinks}
+Where \(\theta\) is the absolute amount of votes for CDA.
 
-\section{3 Final model}\label{final-model}
+In GLM, we still have to make diagnostics plots to visualise if any of
+the assumptions for the error-term are violated. The assumptions made
+for the error-term in a binomial model are slightly different than for
+the linear model. Below we state the assumptions:
 
-\subsection{CDA}\label{cda-1}
+\begin{itemize}
+\item[] Check deviance residuals
+\item[] Leverages are no longer just a function of X and now depend on the response through the weights W.
+\end{itemize}
 
-\subsection{Groenlinks}\label{groenlinks-1}
+\subsection{First model}\label{first-model-1}
 
-\section{4 Analyse output}\label{analyse-output}
+\subsection{Second model}\label{second-model}
 
-\section{5 Discussion}\label{discussion}
+\subsection{Final model}\label{final-model-1}
 
-\subsection{5.1 Limitations}\label{limitations}
+\subsection{Cross validation}\label{cross-validation-1}
+
+\section{4. Discussion}\label{discussion}
+
+\subsection{Limitations}\label{limitations}
 
 
 \end{document}

@@ -16,7 +16,7 @@ library(car)
 
 #### Set up ####
 rm(list = ls()) # empty work space
-Data_CDA<- read.csv("1_clean_data/Clean_Data_CDA_2018-12-21.csv", 
+Data_CDA <- read.csv("1_clean_data/Clean_Data_CDA_2018-12-21.csv", 
                  header = T, stringsAsFactors = F)
 
 
@@ -27,9 +27,10 @@ Data_CDA$Non_west <- as.factor(Data_CDA$Non_west) # needs to be recognized as fa
 
 
 #### Final model ####
-final_model_glm_CDA <- glm(cbind(CDA_abs, Total_abs) ~ Urban_index + High_educated_frac + 
-                                          + Non_west + Frac_60plus, 
-                                        family=quasibinomial(link = "logit"), Data_CDA[-c(16, 265, 305),])
+glm_CDA_5 <- glm(cbind(CDA_abs, Total_abs - CDA_abs) ~ Urban_index  + 
+                   High_educated_frac + Non_west, 
+                 family=quasibinomial(link = "logit"), 
+                 data = Data_CDA[-c(16, 265),])
 
 
 
@@ -49,12 +50,14 @@ loss <- numeric(K)
 for (k in 1:K){
   training <- Data_CDA[fold.index!=k, ]
   validation <- Data_CDA[fold.index==k, ]
-  training.fit <- final_model_glm_CDA
+  training.fit <- glm_CDA_5
   validation.predict <- predict(training.fit, newdata=validation, type='response')
   loss[k] <- Loss(validation$CDA_frac, validation.predict)
 }
 
-#average, with weights equal to the number of objects used to calculate the loss at each fold:
+
+#average, with weights equal to the number of objects used to calculate 
+# the loss at each fold:
 mean(loss)
 
 

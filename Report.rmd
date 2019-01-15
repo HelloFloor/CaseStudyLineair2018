@@ -1,10 +1,9 @@
 ---
-title: "Case Study Elections Netherlands"
-<<<<<<< HEAD
+title: "Case Study: Predicting the outcomes of the 2017 Dutch General Elections"
+
 author: "Ilse van Beelen, Floor Komen"
-=======
-author: "Ilse van Beelen and Floor Komen"
->>>>>>> ce490d7795e341fc6410d18d96fec0736b55e5e3
+
+
 affiliation: Leiden University
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 header-includes:
@@ -32,103 +31,116 @@ knitr::opts_chunk$set(echo = TRUE, tidy= TRUE, tidy.opts = list(comment = FALSE)
 )
 library("tidyverse")
 library("car")
+library(reshape2)
 library("GGally")
 library("Hmisc")
 library("lattice")
 library("survival")
 library("formatR")
-library("kableExtra")
+#library("kableExtra")
+library("knitr")
 
-Data_all <- read.csv("1_clean_data/Clean_data_all_variables_2018-12-21.csv",
-                 stringsAsFactors=F, header = T)
+options(kableExtra.latex.load_packages = FALSE)
+
+rm(list = ls()) # empty work space
 Data_CDA <- read.csv("1_clean_data/Clean_data_CDA_2018-12-21.csv",
                  stringsAsFactors=F, header = T)
-Data_GL <- read.csv("1_clean_data/Clean_data_GL_2018-12-21.csv",
-                 stringsAsFactors=F, header = T)
+
+# Remove Non_west for now. We later add it again
+Data_CDA <- Data_CDA %>%
+  select(-Non_west)
+
 ```
 
 # 1. Introduction 
-In this report the election 
+
 
 ## 1.1 Motivation
 
+For this case study, it was decided to combine the outcome from the Dutch elections of 2017 and demographic data. Both are collected per municipality and are well maintained and reliable. This makes  A lot of information is available for both in the Netherlands. This will hopefully result in observing voting trends per demographic group. The final goal is to validate the model for making futyre predictions.
 
 ![Party landscape](Partijlandschap.jpg){width=250px}
 **Dutch political parties**   
-In this landscape the diffence between the parties is graphically displayed in this figure. In this research, two parties are chosen to investigate. These two parties had to be different, so that some comparisons could be made. The parties should not be to extreme left/right/conservative/progressive, so that the model will be proven to work on less-extreme parties. Therefore, the chosen parties are: CDA and GroenLinks. After the data-cleaning the CDA will be researched first, afterwards GroenLinks will be researched.  
+This figure displays the diffences between the political parties in the Netherlands. The Netherlands has a total of 13 parties. This investigation focusses on only one party. This party should not be to extreme left/right/conservative/progressive and should also be one of the bigger parties. Otherwise, there is not enough data available, making the results less reliable. Therefore, party CDA is chosen. 
 
-In this research the above described demographics are chosen because of there influence on a municipality level. The thought is that a more non-western municipality for example votes different than a less non-western municipality. This is the same for the other two demographics. Other demographics are also researched, for example gender, but on a municipality level there is no big difference between the amount of men and women per municipality. So that is a more interesting demographic to research on an individual level. 
-*The standardized income per municipality* are given in thousands. *the urban index of a municipality* is a database with five categories per municipality. These five categories are; really strong urban (more than 2500 addresses per km2), strong urban (1500-2500 addresses per km2), moderate urban (1000- 1500 addresses per km2), little urban (500-1000 addresses per km2) and not urban (less than 500 addresses per km2). Per municipality the amount of km2 per category is given. The *non-west residents per municipality* is given in an amount per municipality, also the total amount of residents is given per municipality. 
+In this research the above described demographics are chosen because of their influence on a municipality level. The expectation is that a municipality with more non-western residents for example votes different than a municipality with less non-western residents. This is the same for the other two demographics. Other demographics are also researched, for example gender, but on a municipality level there is no large difference between the amount of men and women per municipality. So that is a more interesting demographic to research on an individual level. 
+*The standardized income per municipality* are given in thousands. *the urban index of a municipality* is a database with five categories per municipality. These five categories are: 
+
+\begin{itemize}
+\item Really strong urbanity (more than 2500 addresses per $km^2$) 
+\item Strong urbanity (1500-2500 addresses per $km^2$) 
+\item Moderate urbanity (1000- 1500 addresses per $km^2$) 
+\item Little urbanity (500-1000 addresses per $km^2$)  
+\item No urbanity (less than 500 addresses per $km^2$)
+
+Per municipality the amount of $km^2$ per category is given. The *non-west residents per municipality* is given in an amount per municipality, also the total amount of residents is given per municipality. 
 
 
 ## 1.2 Data sources
 
 **Electoral data**
-For the electoral data we used the results of the 2017 general election. This is the most recent national election and is of the most important election type. Therefore, it seems plausible that the data for this election is representative of the political makeup of different municipalities. We downloaded the raw data directly from the official government source.^[https://data.overheid.nl/data/dataset/verkiezingsuitslag-tweede-kamer-2017] This contained a .csv file with the raw number of votes for every party in every municipality. 
+For the electoral data, the results of the 2017 general election are used. This is the most recent national election and is of the most important election type in the Netherlands. Furthermore, it had a turnup of 81.9%. Therefore, it seems plausible that the data for this election is representative of the political makeup of different municipalities. We downloaded the raw data directly from the official government source.^[https://data.overheid.nl/data/dataset/verkiezingsuitslag-tweede-kamer-2017] This contained a .csv file with the raw number of votes for every party in every municipality. 
 
 
 **Demographical data**  
-We got our demographical data from the CBS, the official Dutch statistical agency.^[https://opendata.cbs.nl/statline/#/CBS/nl/dataset/70072ned/table?ts=1544803364892] From the wealth of demographical information available we picked a handful of attributes that we suspected (based on prior research and some gut feeling) to be useful as predictor variables. We landed on five demographical attributes: education grade, average income, age, urbanization and the amount of people with a non-western background. Note that the data we downloaded from the CBS site usually had to be transformed to get it in a useful predictor variable format. The specifics of this are described in the next section.
+We got our demographical data from the CBS, the official Dutch statistical agency.^[https://opendata.cbs.nl/statline/#/CBS/nl/dataset/70072ned/table?ts=1544803364892] From the wealth of demographical information available we picked a handful of attributes that we suspected (based on prior research and some gut feeling) to be useful as predictor variables. We landed on five demographical attributes: education grade, average income, age, urbanization and the amount of people with a non-western background. Note that the data we downloaded from the CBS site usually had to be transformed to get it in a useful predictor variable format. The specifics of these are described in the next section.
 
 
 ## 1.3 Data cleaning 
 
-The data cleaning is the process in which we used 
+An extensive amount of data cleaning had to be done. Below these steps are describes and a small part of code is displayed.
 
 **Electoral data**  
+
 
 
 **Demographical data**  
 
 
-The variable *non-western residents* are divided in three groups. Municipalities with less than 5 % non-western residents, 5-10 % non-western residents and municipalities with more dan 10 % non-western residents.
+The variable *non-western residents* are divided in three groups:
+
+\begin{itemize}
+\item Municipalities with less than 5 % non-western residents 
+\item Municipalities with 5-10 % non-western resident 
+\item Municipalities with mre than 10 % non-western residents
 
 
 ```{r}
-#GetData
-
-Data <- read.csv("1_clean_data/voting_and_demographics.csv",
-                 stringsAsFactors=F, header = T) 
-
-
-#Remove and rename columns
-Data <- Data[,-15]
-colnames(Data) <- c("Muni", "VVD","CDA","PVV", "D66", "SP", "GL","PvdA","CU","50PLUS","PvdD","SGP","FvD","DENK", "Urban_index", "High_edu_perc", "Mean_income", "Dutch_perc", "West_perc", "Non_west_perc")
-
-# Non_west_perc is not linear. Therefore, we create a dummy variable with 3 levels
-# Level 1: x < 5%
-# Level 2: 5 <= x < 10%
-# Level 3: x >= 10%
-Data$Non_west <- ifelse(Data$Non_west_perc < 0.05, 1, NA)
-Data$Non_west <- ifelse(Data$Non_west_perc >= 0.05 
-                        & Data$Non_west_perc < 0.1, 2, Data$Non_west)
-Data$Non_west <- ifelse(Data$Non_west_perc >= 0.1, 3, Data$Non_west)
-
-Data$Non_west <- as.factor(Data$Non_west)
-
-# Select the right variables and remove NAs
-Dat_cda <- Data[,c(1,3,15,16,17,21)]
-Dat_cda <- Dat_cda[complete.cases(Dat_cda),]
-
-
+Data_CDA$Non_west <- ifelse(Data_CDA$Non_west_frac < 0.05, 1, NA)
+Data_CDA$Non_west <- ifelse(Data_CDA$Non_west_frac >= 0.05 
+                        & Data_CDA$Non_west_frac < 0.1, 2, Data_CDA$Non_west)
+Data_CDA$Non_west <- ifelse(Data_CDA$Non_west_frac >= 0.1, 3, Data_CDA$Non_west)
+Data_CDA$Non_west <- as.factor(Data_CDA$Non_west)
 
 
 ```
+
+At last, the electoral data and demographic data are combined again. Only the municipality Boxmeer is removed, due to a mistake not all the votes are reported here^[https://www.gelderlander.nl/boxmeer/7-600-stemmen-in-boxmeer-niet-meegenomen-in-uitslag-verkiezingen~a063ee9e/]. The final dataset has no NAs
+
+```{r}
+summary(Data_CDA)
+```
+
+
+
 ## 1.3 Data visualisation
 
 In this part the cleaned data is visualized, so that a good picture can be obtained of the current data. First of all some demographics of data will be showed. In figure \ref{1} of the *parties*, *the urban index*, *the percentage of highly educated residents*, *the mean income*, *The non west residents factor* and * the percentage 60 plus* are plotted. 
-As you can see in the plot, they are normal distributed. Because of the low values at the x-axis, the CDA, GroenLinks, 60 plus percentage and the highly educated densities are above 1. The area beneath the curve sums to 1, so it is correct. 
+As you can see in the plot, they are normal distributed. Because of the low values at the x-axis, the CDA, GroenLinks, 60 plus percentage and the highly educated densities are above 1. The area beneath the curve sums to 1, so it is correct.
+
 ```{r demographics_data1, echo=FALSE}
 knitr::kable(
-  summary(Dat2[,-1], digits=2), caption="Data summary", "latex",booktabs = T
-) %>% 
-  kable_styling(latex_options=c("scale_down", "striped"), bootstrap_options = "hover")
+  summary(Data_CDA[,-1], digits=2))
+  
+#  , caption="Data summary", "latex",booktabs = T
+#) %>% 
+#  kable_styling(latex_options=c("scale_down", "striped"), bootstrap_options = "hover")
 ```
 
 ```{r demographics_data, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.cap="\\label{1} Density plot" , fig.width=5, fig.height=3}
 #### Demographics of data ####
 
-dens = ggplot(melt(Dat2[,c(2,3,4,5,6,8)]), aes(x = value)) + 
+dens = ggplot(melt(Data_CDA[,c(2:9)]), aes(x = value)) + 
   facet_wrap(~ variable, scales = "free", ncol = 2) + 
   geom_histogram(aes(y=..density..), position="identity", alpha=0.5)+
   geom_density(alpha=0.4, aes(fill = "red", col = "red"))+
@@ -140,28 +152,26 @@ plot(dens)
 
 **Correlation heatmap**
 In this heatmap (figure \ref{2}) the correlation between explanatory and respons variable are showed. The red color means a positive relation, the purple color means a negative relation. The non_west variable is not taken into account, because it is a factor and the other variables are continous. 
-VERDER UITLEG 
+
 
 ```{r correlation_heatmap, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.cap= '\\label{2}Correlation between explanatory and respons variables', fig.width=5, fig.height=3}
 # Heatmap of the correlations
-heatmap = ggcorr(Dat2[,c(2,3,4,5,6,8)], 
+heatmap = ggcorr(Data_CDA[,c(2:9)], 
                  low = "darkblue", mid = "lightyellow", high = "red",
                  label = T, label_size = 2.5, label_round = 3,   
                  color = 'black', size = 4, layout.exp = 2, hjust = 1) 
-                 #ggtitle('Correlation between explanatory and respons variables ')
 
 plot(heatmap)
 
 ```
 
 ```{r  echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.cap= "Votes for CDA per municipality", fig.width=5, fig.height=3}
-p1 <- ggplot(Dat2, aes(x = Non_west, y = CDA, fill = Non_west)) + 
+p1 <- ggplot(Data_CDA, aes(x = Non_west, y = CDA_frac, fill = Non_west)) + 
        geom_boxplot(outlier.colour="black", 
                     outlier.size=2, 
                     outlier.fill =  "red",
                     na.rm = F,
                     color = "black") +
-       #ggtitle("Votes for CDA per municipality") +
        xlab("Non-western residents") +
        ylab("Votes for CDA") +
        scale_x_discrete(labels = c("< 5%", "5-10%", "> 10 %")) +
@@ -173,7 +183,7 @@ p1 <- ggplot(Dat2, aes(x = Non_west, y = CDA, fill = Non_west)) +
 
 ```{r  echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.cap= "Urbanity index against non-western residents" , fig.width=5, fig.height=3}
 
-p2 <- ggplot(Dat2, 
+p2 <- ggplot(Data_CDA, 
              aes(x = Non_west, y = Urban_index, fill = Non_west)) + 
   geom_boxplot(outlier.colour="black", 
                outlier.size=2, 
@@ -191,139 +201,71 @@ p2 <- ggplot(Dat2,
 #plot(p2)
 ```
 
-```{r  echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.cap= "Votes for GroenLinks per municipality", fig.width=5, fig.height=3}
-p2a <- ggplot(Dat2, aes(x = Non_west, y = GL, fill = Non_west)) + 
-  geom_boxplot(outlier.colour="black", 
-               outlier.size=2, 
-               outlier.fill =  "red",
-               na.rm = F,
-               color = "black") +
-  #ggtitle("Votes for CDA per municipality") +
-  xlab("Non-western residents") +
-  ylab("Votes for GL") +
-  scale_x_discrete(labels = c("< 5%", "5-10%", "> 10 %")) +
-  guides(fill = F)
 
-#plot(p2a)
-
-```
 
 
 ```{r boxplots_code, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE}
 # Linear regression between votes for CDA and mean income
 Euro <- "\u20AC" # euro sign
 
-p3 <- ggplot(Dat2, aes(x=Mean_income, y=CDA)) + 
+p3 <- ggplot(Data_CDA, aes(x=Mean_income, y=CDA_frac)) + 
   geom_point() + 
-  geom_smooth(method=lm, se = T) + # standard error = True
-  ##ggtitle("Probability of votes for CDA and mean income per municipality") +
+  geom_smooth(method=lm, se = T) +
   xlab(paste("Mean income per municipality ")) +
   ylab("Votes for CDA") +
   ylim(c(0,0.45)) +
-  xlim(c(20,42)) #+
-  #annotate("rect", xmin = 35, xmax = 41, ymin = 0.32, ymax = 0.4, 
-   #        fill="white", colour="red") +
-  #annotate("text", x=38, y=0.38, label = "correlation == -0.27", parse=T) + 
-  #annotate("text", x=38, y=0.35, label = "p-value < 0.001", parse=T)
+  xlim(c(20,42)) 
 
 #plot(p3) 
 
 
-p4 <- ggplot(Dat2, aes(x=Mean_income, y=High_edu_perc)) + 
+p4 <- ggplot(Data_CDA, aes(x=Mean_income, y=High_educated_frac)) + 
   geom_point() + 
   geom_smooth(method=lm, se = T) + # standard error = True
   ##ggtitle("Highly educated residents and mean income per municipality ") +
   xlab(paste("Mean income (x ",Euro, " 1000)", sep = "")) +
   ylab("Highly educated residents") +
-  xlim(c(20,42)) #+
-  #annotate("rect", xmin = 36.5, xmax = 42, ymin = 0.1, ymax = 0.18, 
-   #        fill="white", colour="red") +
-  #annotate("text", x=39.5, y=0.16, label = "correlation == 0.567", parse=T) + 
-  #annotate("text", x=39.5, y=0.12, label = "p-value < 0.001", parse=T)
+  xlim(c(20,42)) 
 
 #plot(p4)
 
 # Urbanity index and highly educated residents
-p5 <- ggplot(Dat2, aes(x=Urban_index, y=High_edu_perc)) + 
+p5 <- ggplot(Data_CDA, aes(x=Urban_index, y=High_educated_frac)) + 
   geom_point() + 
   geom_smooth(method=lm, se = T) + # standard error = True
   ##ggtitle("Highly educated residents and urbanity index") +
   xlab("Urbanity index") +
   ylab("Highly educated residents") +
   xlim(c(0,4))
-  #ylim(c(0,0.53))# + 
-  #annotate("rect", xmin = 3.0, xmax = 4.0, ymin = 0.0, ymax = 0.1, 
-      #     fill="white", colour="red") +
-  #annotate("text", x=3.5, y=0.08, label = "correlation == 0.397", parse=T) + 
-  #annotate("text", x=3.5, y=0.04, label = "p-value < 0.001", parse=T)
+
 
 #plot(p5)
 
 
 # Urbanity index and CDA votes
-p6 <- ggplot(Dat2, aes(x=Urban_index, y=CDA)) + 
+p6 <- ggplot(Data_CDA, aes(x=Urban_index, y=CDA_frac)) + 
   geom_point() + 
-  geom_smooth(method=lm, se = T) + # standard error = True
-  ##ggtitle("Probability of the votes for CDA and urbanity index per municipality") +
+  geom_smooth(method=lm, se = T) + 
   xlab("Urbanity index") +
   ylab("Votes for CDA") +
   xlim(c(0,4.1)) +
-  ylim(c(0,0.45))# + 
-  #annotate("rect", xmin = 2.95, xmax = 4.05, ymin = 0.33, ymax = 0.4, 
-      #     fill="white", colour="red") +
-  #annotate("text", x=3.5, y=0.38, label = "correlation == -0.587", parse=T) + 
-  #annotate("text", x=3.5, y=0.35, label = "p-value < 0.001", parse=T)
+  ylim(c(0,0.45))
 
-#plot(p6)
 
-# Urbanity index and GL votes
-p7 <- ggplot(Dat2, aes(x=Urban_index, y=GL)) + 
+
+p9 <- ggplot(Data_CDA, aes(x=Urban_index, y=Frac_60plus)) + 
   geom_point() + 
-  geom_smooth(method=lm, se = T) + # standard error = True
-  ##ggtitle("Probability of the votes for CDA and urbanity index per municipality") +
-  xlab("Urbanity index") +
-  ylab("Votes for GL") +
-  xlim(c(0,4)) +
-  ylim(c(0,0.25))# + 
-#annotate("rect", xmin = 2.95, xmax = 4.05, ymin = 0.33, ymax = 0.4, 
-#     fill="white", colour="red") +
-#annotate("text", x=3.5, y=0.38, label = "correlation == -0.587", parse=T) + 
-#annotate("text", x=3.5, y=0.35, label = "p-value < 0.001", parse=T)
-
-#plot(p7)
-
-# Highly educted residents and GL votes
-p8 <- ggplot(Dat2, aes(x=High_edu_perc, y=GL)) + 
-  geom_point() + 
-  geom_smooth(method=lm, se = T) + # standard error = True
-  ##ggtitle("Probability of the votes for CDA and urbanity index per municipality") +
-  xlab("Highly educated residents") +
-  ylab("Votes for GL") +
-  #xlim(c(0, 0.6)) +
-  ylim(c(0,0.25))# + 
-#annotate("rect", xmin = 2.95, xmax = 4.05, ymin = 0.33, ymax = 0.4, 
-#     fill="white", colour="red") +
-#annotate("text", x=3.5, y=0.38, label = "correlation == -0.587", parse=T) + 
-#annotate("text", x=3.5, y=0.35, label = "p-value < 0.001", parse=T)
-
-#plot(p8)
-
-
-# Urbanity index and GL votes
-p9 <- ggplot(Dat2, aes(x=Urban_index, y=Perc_60plus)) + 
-  geom_point() + 
-  geom_smooth(method=lm, se = T) + # standard error = True
-  ##ggtitle("Probability of the votes for CDA and urbanity index per municipality") +
+  geom_smooth(method=lm, se = T)  +
   xlab("Urbanity index") +
   ylab("> 60 years old residents") +
   xlim(c(0, 4)) +
   ylim(c(0,0.20))# + 
-#annotate("rect", xmin = 2.95, xmax = 4.05, ymin = 0.33, ymax = 0.4, 
-#     fill="white", colour="red") +
-#annotate("text", x=3.5, y=0.38, label = "correlation == -0.587", parse=T) + 
-#annotate("text", x=3.5, y=0.35, label = "p-value < 0.001", parse=T)
 
-#plot(p9)
+
+```
+
+
+```{r, include=FALSE}
 
 # Function to plot multiple plots together
 multiplot <- function(..., plotlist=NULL, file, cols=3, layout=NULL) {
@@ -362,61 +304,71 @@ multiplot <- function(..., plotlist=NULL, file, cols=3, layout=NULL) {
   }
 }
 ```
+
 **Multilineair plots CDA **
 In these two plots you can see a scatterplot with on the y-axis the votes for CDA in percentages and on the x-axis on the left graph the mean income per municipality in 1000 euro. The right plot has the urbanity index as x-axis. As you can see, the trend is that when the mean income goes up, the votes for CDA goes down. Same with the urbanity index. In the model formulation graph these trends are checked. 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.cap= "\\label{3}Scatterplots CDA", fig.width=5, fig.height=3}
 multi_linearCDA <- multiplot(p3, p6)
 
 ```
-**Multilineair plots Groenlinks**  
 
-In these plots the percentage of votes for GL are compared with urbanity index and percentage of highly educated residents. When municipalities get more crowded, the trend is that votes for GL goes up. The other visible trend is that when more residents in a municipality are highly educated, GL got more votes.   
-```{r, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE,fig.cap= "\\label{4}Scatterplot GroenLinks", fig.width=5, fig.height=3}
-multi_linearGL <- multiplot(p7, p8)
 
-```
+
 **Multilinear plots explanatory variables**
 These three plots are scatterplots about explanatory variables. 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.width=5, fig.height=3, fig.cap= "\\label{5}Scatterplot explanatory variables"}
 multi_linear <- multiplot(p4, p5, p9)
 
 ```
+
 **Multiple boxplots**
 In this graph boxplots are made, to compare some variables. A boxplot is a standardized way to display the distribution of data. It gives the minimum, first quartile, median, third quartile and the maximum. If there are any outliers, the boxplot is extended with those. The line within the box is the median, the first and third quartile are the down- and upside of the box. The length of the box is the Inter Quartile Range (IQR). The minimum and maximum are 1.5XIQR distance. Outliers are thus further away than 1.5XIQR. 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.width=5, fig.height=3, fig.cap= "\\label{6}Three boxplots: Votes for CDA, Votes for GroenLinks and Urbanity index"}
-multi_boxpl <- multiplot(p1, p2a, p2)
+#plot(p1)
+#plot(p2)
 
 ```
 
 
-# 2. Formulate model 
-Model formuleren
+# 2. Multiple linear regression
 
-## CDA 
-```{r set_up_CDA, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE}
-#### Libraries ####
-#library(car)
+## First model
 
+## Final model
 
-#### Set up ####
-#rm(list = ls()) # empty work space
-#Data <- read.csv("1_clean_data/Cleandata_CDA_2018-12-06.csv", 
-                 #header = T, stringsAsFactors = F)
-
-#Data$Non_west <- as.factor(Data$Non_west) # needs to be recognized as factor
-
-```
-
-## GroenLinks
+## Cross validation
 
 
-# 3 Final model
-## CDA 
 
-## Groenlinks 
+# 3. Logistic regression
 
-# 4 Analyse output 
+The raw respons variable is the absolute amount of residents per municipality that voted for CDA. For linear regresssion, we transformed this variable to a fraction. However, we also know the total amount of votes per municipality. Therefore, a better fit to our data would be a binomial model. We use the logit as link function to transform the range of the respons. The choice for the logit was easily made. Because the inverse of the logit is directly interpretable as the log-odds ratio. This link displays the underlaying pattern of our data best. Below, the formula for our link function:
 
-# 5 Discussion
+$\eta = log(\frac{\theta}{1 - \theta}) $
 
-## 5.1 Limitations 
+Where $\theta$ is the absolute amount of votes for CDA.
+
+In GLM, we still have to make diagnostics plots to visualise if any of the assumptions for the error-term are violated. 
+The assumptions made for the error-term in a binomial model are slightly different than for the linear model. Below we state the assumptions:
+  
+\begin{itemize}
+\item[] Check deviance residuals
+\item[] Leverages are no longer just a function of X and now depend on the response through the weights W.
+\end{itemize}
+
+## First model
+
+## Second model
+
+## Final model
+
+## Cross validation
+
+
+ 
+
+# 4. Discussion
+
+## Limitations 
+
+# 5. Conclusion
