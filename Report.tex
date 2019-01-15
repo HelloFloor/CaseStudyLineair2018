@@ -72,7 +72,6 @@
 \newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
 \newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
 \newcommand{\NormalTok}[1]{#1}
-\usepackage{longtable,booktabs}
 \usepackage{graphicx,grffile}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -127,6 +126,21 @@
       \predate{\centering\large\emph}
   \postdate{\par}
     \date{januari 15, 2019}
+
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage[table]{xcolor}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
 
 \usepackage{float}
 
@@ -279,30 +293,30 @@ distributed. Because of the low values at the x-axis, the CDA,
 GroenLinks, 60 plus percentage and the highly educated densities are
 above 1. The area beneath the curve sums to 1, so it is correct.
 
-\begin{longtable}[]{@{}lcclclcccl@{}}
+\rowcolors{2}{gray!6}{white}
+
+\begin{table}
+
+\caption{\label{tab:demographics_data1}Data summary}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{tabular}[t]{llllllllll}
+\hiderowcolors
 \toprule
-& CDA\_frac & Urban\_index & High\_educated\_frac & Mean\_income &
-Non\_west\_frac & CDA\_abs & Total\_abs & Frac\_60plus &
-Non\_west\tabularnewline
+  &    CDA\_frac &  Urban\_index & High\_educated\_frac &  Mean\_income & Non\_west\_frac &    CDA\_abs &   Total\_abs &  Frac\_60plus & Non\_west\\
 \midrule
-\endhead
-& Min. :0.031 & Min. :0.00 & Min. :0.12 & Min. :21 & Min. :0.010 & Min.
-: 421 & Min. : 2727 & Min. :0.07 & 1:178\tabularnewline
-& 1st Qu.:0.117 & 1st Qu.:0.66 & 1st Qu.:0.22 & 1st Qu.:24 & 1st
-Qu.:0.030 & 1st Qu.: 1737 & 1st Qu.: 11516 & 1st Qu.:0.12 &
-2:111\tabularnewline
-& Median :0.142 & Median :1.23 & Median :0.26 & Median :26 & Median
-:0.050 & Median : 2510 & Median : 16915 & Median :0.13 & 3:
-77\tabularnewline
-& Mean :0.153 & Mean :1.43 & Mean :0.27 & Mean :26 & Mean :0.066 & Mean
-: 3254 & Mean : 25162 & Mean :0.13 & NA\tabularnewline
-& 3rd Qu.:0.182 & 3rd Qu.:2.17 & 3rd Qu.:0.30 & 3rd Qu.:27 & 3rd
-Qu.:0.080 & 3rd Qu.: 4023 & 3rd Qu.: 27087 & 3rd Qu.:0.14 &
-NA\tabularnewline
-& Max. :0.420 & Max. :3.79 & Max. :0.47 & Max. :42 & Max. :0.380 & Max.
-:18813 & Max. :440854 & Max. :0.18 & NA\tabularnewline
+\showrowcolors
+ & Min.   :0.031 & Min.   :0.00 & Min.   :0.12 & Min.   :21 & Min.   :0.010 & Min.   :  421 & Min.   :  2727 & Min.   :0.07 & 1:178\\
+ & 1st Qu.:0.117 & 1st Qu.:0.66 & 1st Qu.:0.22 & 1st Qu.:24 & 1st Qu.:0.030 & 1st Qu.: 1737 & 1st Qu.: 11516 & 1st Qu.:0.12 & 2:111\\
+ & Median :0.142 & Median :1.23 & Median :0.26 & Median :26 & Median :0.050 & Median : 2510 & Median : 16915 & Median :0.13 & 3: 77\\
+ & Mean   :0.153 & Mean   :1.43 & Mean   :0.27 & Mean   :26 & Mean   :0.066 & Mean   : 3254 & Mean   : 25162 & Mean   :0.13 & NA\\
+ & 3rd Qu.:0.182 & 3rd Qu.:2.17 & 3rd Qu.:0.30 & 3rd Qu.:27 & 3rd Qu.:0.080 & 3rd Qu.: 4023 & 3rd Qu.: 27087 & 3rd Qu.:0.14 & NA\\
+ & Max.   :0.420 & Max.   :3.79 & Max.   :0.47 & Max.   :42 & Max.   :0.380 & Max.   :18813 & Max.   :440854 & Max.   :0.18 & NA\\
 \bottomrule
-\end{longtable}
+\end{tabular}}
+\end{table}
+
+\rowcolors{2}{white}{white}
 
 \begin{figure}[H]
 

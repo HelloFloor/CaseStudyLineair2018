@@ -37,7 +37,7 @@ library("Hmisc")
 library("lattice")
 library("survival")
 library("formatR")
-#library("kableExtra")
+library("kableExtra")
 library("knitr")
 
 options(kableExtra.latex.load_packages = FALSE)
@@ -131,11 +131,7 @@ As you can see in the plot, they are normal distributed. Because of the low valu
 
 ```{r demographics_data1, echo=FALSE}
 knitr::kable(
-  summary(Data_CDA[,-1], digits=2))
-  
-#  , caption="Data summary", "latex",booktabs = T
-#) %>% 
-#  kable_styling(latex_options=c("scale_down", "striped"), bootstrap_options = "hover")
+  summary(Data_CDA[,-1], digits=2), caption="Data summary", "latex",booktabs = T) %>% kable_styling(latex_options=c("scale_down", "striped"), bootstrap_options = "hover")
 ```
 
 ```{r demographics_data, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.cap="\\label{1} Density plot" , fig.width=5, fig.height=3}
