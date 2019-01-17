@@ -26,9 +26,9 @@ abstract: Put the abstract over here
 knitr::opts_chunk$set(echo = TRUE, tidy= TRUE, tidy.opts = list(comment = FALSE),
   dev.args = list(bg = 'transparent'),
   fig.align = "center",
-  fig.pos = "H"
-  
-)
+  fig.pos = "H")
+
+
 library("tidyverse")
 library("car")
 library(reshape2)
@@ -39,6 +39,7 @@ library("survival")
 library("formatR")
 #library("kableExtra")
 library("knitr")
+library(faraway)
 
 #options(kableExtra.latex.load_packages = FALSE)
 
@@ -311,8 +312,8 @@ multi_linearCDA <- multiplot(p3, p6)
 
 
 
-**Multilinear plots explanatory variables**
-These three plots are scatterplots about explanatory variables. 
+**Exploratory plots of variables**
+These three plots are scatterplots of the explanatory variables. 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.width=5, fig.height=3, fig.cap= "\\label{5}Scatterplot explanatory variables"}
 multi_linear <- multiplot(p4, p5)
 plot(p9)
@@ -320,7 +321,8 @@ plot(p9)
 ```
 
 **Multiple boxplots**
-In this graph boxplots are made, to compare some variables. A boxplot is a standardized way to display the distribution of data. It gives the minimum, first quartile, median, third quartile and the maximum. If there are any outliers, the boxplot is extended with those. The line within the box is the median, the first and third quartile are the down- and upside of the box. The length of the box is the Inter Quartile Range (IQR). The minimum and maximum are 1.5XIQR distance. Outliers are thus further away than 1.5XIQR. 
+In this graph boxplots are made, to compare some variables. A boxplot is a standardized way to display the distribution of data. It gives the minimum, first quartile, median, third quartile and the maximum. If there are any outliers, the boxplot is extended with those. The line within the box is the median, the first and third quartile are the down- and upside of the box, respectively. The length of the box is the Inter Quartile Range (IQR). The minimum and maximum are 1.5X Inter Quartile Range (IQR). Observations further away can be considered outliers.
+
 ```{r, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.width=5, fig.height=3, fig.cap= "\\label{6}Three boxplots: Votes for CDA, Votes for GroenLinks and Urbanity index"}
 
 multiplot(p1, p2)
@@ -340,25 +342,137 @@ multiplot(p1, p2)
 
 # 3. Logistic regression
 
-The raw respons variable is the absolute amount of residents per municipality that voted for CDA. For linear regresssion, we transformed this variable to a fraction. However, we also know the total amount of votes per municipality. Therefore, a better fit to our data would be a binomial model. We use the logit as link function to transform the range of the respons. The choice for the logit was easily made. Because the inverse of the logit is directly interpretable as the log-odds ratio. This link displays the underlaying pattern of our data best. Below, the formula for our link function:
+The raw respons variable is the absolute amount of residents per municipality that voted for CDA. For linear regresssion, we transformed this variable to a fraction. However, the total amount of votes per municipality is also available. Therefore, a binomial model would be a better fit to the data. A second model is developed that uses the logit as link function to transform the range of the respons. The choice for the logit was easily made. Because the inverse of the logit is directly interpretable as the log-odds ratio. This link displays the underlaying pattern of this data best. Below, the formula for the link function:
 
-$\eta = log(\frac{\theta}{1 - \theta})$
+$\eta = log(\frac{\theta}{1 - \theta}) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + ... + \beta_n x_n$
 
-Where $\theta$ is the absolute amount of votes for CDA.
+Where $\theta$ is the probability of votes for CDA.
 
-In GLM, we still have to make diagnostics plots to visualise if any of the assumptions for the error-term are violated. 
-The assumptions made for the error-term in a binomial model are slightly different than for the linear model. Below we state the assumptions:
+Also for logistics regression are diagnostic plots needed to visualise if any of the assumptions for the stochastic and systematic part of the model are violated. Below, is stated why the diagnostic plots are made:
   
 \begin{itemize}
-\item[] Check deviance residuals
-\item[] Leverages are no longer just a function of X and now depend on the response through the weights W.
+\item[] Check if deviance residuals are homogenic distributed
+\item[] Check for influential observations
+\item[] Check for multicolinearity
 \end{itemize}
+
+Most of the diagnostics from the linear model extend relatively straighforward to logistic regression. However, leverages are no longer just a function of the explanatory variable, but also depend on the respons due to iterated weighted least squares. Furthermore, $\theta$ can never be zero or one. Fortunately, this was not the case for any of the observations.
 
 ## First model
 
+Again, the first is the full model. Stepwise backward elimination using the F-test is used to find the optimal model. 
+
+```{r}
+glm_CDA_1 <- glm(cbind(CDA_abs, Total_abs - CDA_abs) ~ Urban_index + 
+                   High_educated_frac + Mean_income +Non_west + Frac_60plus, 
+                 family=binomial(link = "logit"), data = Data_CDA)
+
+
+summary(glm_CDA_1)
+```
+
+The summary inmediately shows that the all the variables are very significant, with small errors. The full model has 359 degrees of freedom and it is expected that the residual deviance is roughly equivalent. However, the residual deviance is far above this value. These are strong indications that this model suffers from overdispersion. This assumption seems reasonable, because there is a very large variance in how many residents per municapality voted for CDA. In some municipalities only 3% voted for CDA, while it others nearly 50% voted for CDA. It is concluded that a quasi-binomial would better fit the data.
+
+
 ## Second model
 
+```{r}
+glm_CDA_2 <- glm(cbind(CDA_abs, Total_abs - CDA_abs) ~ Urban_index + 
+                   High_educated_frac + Mean_income + Non_west + Frac_60plus, 
+               family=quasibinomial(link = "logit"), data = Data_CDA)
+
+summary(glm_CDA_2)
+```
+
+By applying a quasi binomial, a dispersion parameter $\phi$ is included, resulting in larger standard errors and less significant p-values. $\phi$ is estimated on the data at 254.0441.  The variables `Frac_60plus`, `Mean_income` and factor `Non_west2` are no longer significant.
+
+No goodness of fit test is possible because of the free dispersion parameter. Models are compared using the F-test.
+```{r}
+vif(glm_CDA_2)
+drop1(glm_CDA_2, test = "F")
+```
+According to the F-test `Frac_60plus` should be removed. The values for the VIF are all very low, meaning there is barely collinearity between the explanatory variables.
+
+For the diagnostics
+```{r}
+par(mfrow = c(1,3))
+halfnorm(residuals(glm_CDA_2,"pearson"))
+plot(glm_CDA_2, which = 1, id.n = 5)
+plot(glm_CDA_2, which = 4, id.n = 5)
+
+Data_CDA[c(16,74, 265),]
+```
+The left plot display the half-normal quantiles against the pearson residuals. Ideally, these residuals would not be greater than 3. However, this plot shows residuals even up to 80. The middle plot displays the predicted values against the deviance resiuals. Also here is a large spread of the residuals observed. Also, some heterogeneity of the variance is observed. The right plots shows the cooks distance, which can identify influential observations. Three observations stand out in one or multiple plots. The observations are Amsterdam (obs 16), Dinkelland (obs 74) and Rotterdam (obs 265). Amsterdam is the municipality with the lowest percentage of CDA votes and Dinkelland has the highest percentage. 
+
+
+```{r}
+avPlots(glm_CDA_2)
+```
+
+The partial regression line is highly influenced by observation 16 again.
+
+## Third model
+
+For this model the variable `Frac_60plus` is removed, because it had the lowest F-value. Furthermore, the observations 16 (Amsterdam) and 265 (Dinkelland) are removed. Thes influenced the partial regression coefficients greatly and had large residual and cook's distances. These steps were originally done in two, but for this report they are combined.
+
+```{r}
+glm_CDA_4 <- glm(cbind(CDA_abs, Total_abs - CDA_abs) ~ Urban_index + 
+                   High_educated_frac + Mean_income + Non_west, 
+               family=quasibinomial(link = "logit"), data = Data_CDA[-c(16, 265),])
+
+summary(glm_CDA_4)
+```
+By removing observation 16 and 265, the factor `Non_west2` has become significant. Also the residual deviance has decreased, but is still far above the degrees of freedom.
+
+
+```{r}
+par(mfrow = c(1,3))
+halfnorm(residuals(glm_CDA_4,"pearson"))
+plot(glm_CDA_4, which = 1, id.n = 5)
+plot(glm_CDA_4, which = 4, id.n = 5)
+```
+
+The plot left still displays very large pearson residuals. The plot in the middle seems homogenic distributed, which slightly more variance for higher predicted values. And none of the observations stands out which it's cook's distance.
+
+```{r}
+drop1(glm_CDA_4, test = "F")
+```
+According to the F-test `Mean_income` should be removed as well, because the F-value is below 1 and the corresponding p-value is 0.96.
+
 ## Final model
+
+The final model is reached after dropping the variables `Mean_income` and `Frac_60plus`. Also, two observations are removed, Amsterdam (obs 16) and Dinkelland (obs 265), respectively. Removal of these observations results in partial regression slopes that represent the data best. 
+
+All the described above is done step by step, but these are not all shown in this report. 
+
+
+
+```{r}
+glm_CDA_5 <- glm(cbind(CDA_abs, Total_abs - CDA_abs) ~ Urban_index  + 
+                   High_educated_frac + Non_west, 
+                 family=quasibinomial(link = "logit"), 
+                 data = Data_CDA[-c(16, 265),])
+
+summary(glm_CDA_5)
+drop1(glm_CDA_5, test = "F")
+```
+The F-test shows that all variables now significantly contribute to the model. The residual deviance has slightly decreased, in compare to model `glm_CDA_2` with all the variables. However, the residual deviance is still much larger then the degrees of freedom.
+
+
+Diagnostics of final model.
+```{r}
+par(mfrow = c(1,3))
+halfnorm(residuals(glm_CDA_5,"pearson"))
+plot(glm_CDA_5, which = 1, id.n = 5)
+plot(glm_CDA_5, which = 4, id.n = 5)
+```
+
+
+```{r}
+vif(glm_CDA_5)
+avPlots(glm_CDA_5)
+```
+
 
 ## Cross validation
 
