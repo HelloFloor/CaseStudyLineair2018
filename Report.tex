@@ -125,7 +125,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{January 15, 2019}
+    \date{January 18, 2019}
 
 \usepackage{float}
 
@@ -319,8 +319,8 @@ trends are checked.
 \caption{\label{3}Scatterplots CDA}\label{fig:unnamed-chunk-6}
 \end{figure}
 
-\textbf{Multilinear plots explanatory variables} These three plots are
-scatterplots about explanatory variables.
+\textbf{Exploratory plots of variables} These three plots are
+scatterplots of the explanatory variables.
 
 \begin{figure}[H]
 
@@ -343,9 +343,10 @@ some variables. A boxplot is a standardized way to display the
 distribution of data. It gives the minimum, first quartile, median,
 third quartile and the maximum. If there are any outliers, the boxplot
 is extended with those. The line within the box is the median, the first
-and third quartile are the down- and upside of the box. The length of
-the box is the Inter Quartile Range (IQR). The minimum and maximum are
-1.5XIQR distance. Outliers are thus further away than 1.5XIQR.
+and third quartile are the down- and upside of the box, respectively.
+The length of the box is the Inter Quartile Range (IQR). The minimum and
+maximum are 1.5X Inter Quartile Range (IQR). Observations further away
+can be considered outliers.
 
 \begin{figure}[H]
 
@@ -359,43 +360,707 @@ the box is the Inter Quartile Range (IQR). The minimum and maximum are
 \section{2. Multiple linear
 regression}\label{multiple-linear-regression}
 
+In this chapter multiple linear models are generated. The demographics
+tested in this model are the highly educated fraction in a municipality
+\texttt{High\_educated\_frac}, the urban index of a municipality
+\texttt{Urban\_index}, the mean income of the municipality
+\texttt{Mean\_income}, the non-west factor \texttt{Non\_west} and the
+fraction that is 60 plus in the municipality \texttt{Frac\_60plus}. The
+error assumptions are also discussed. This are assumptions made for the
+residuals, to check if meet the requirements for correct linear
+regressions. These assumptions are: * Linearity: The expected value of
+the error is zero * Constant variance: The variance of the error is
+constant * Normality: The errors are normally distributed * Indepence:
+The observations are sampled indipendently
+
 \subsection{First model}\label{first-model}
 
+The first model will be the model with all the demographics:\\
+\(Y_i = \beta_0 + \beta_1*high educated fraction + \beta_2*Urban index + \beta_3*Mean income + \beta_4*Non west2 +\beta_5*Non west3 + \beta_6*Frac 60plus + \epsilon i\)\\
+The outcome of this model is shown below:
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrr}
+  \hline
+ & Estimate & Std. Error & t value & Pr() \\ 
+  \hline
+(Intercept) & 0.3381 & 0.0314 & 10.78 & 0.0000 \\ 
+  High\_educated\_frac & -0.0864 & 0.0454 & -1.90 & 0.0576 \\ 
+  Urban\_index & -0.0193 & 0.0041 & -4.69 & 0.0000 \\ 
+  Mean\_income & -0.0015 & 0.0011 & -1.46 & 0.1453 \\ 
+  Non\_west2 & -0.0223 & 0.0065 & -3.45 & 0.0006 \\ 
+  Non\_west3 & -0.0455 & 0.0095 & -4.77 & 0.0000 \\ 
+  Frac\_60plus & -0.5904 & 0.1494 & -3.95 & 0.0001 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+The first model is the total model, \texttt{high\_educated\_frac} and
+\texttt{Mean\_income} do not have a significant t-value. Before any
+conclusions are made, the assumptions are checked via plots and the VIF
+is checked. The VIF is the Variation Inflation Factor, it implies if
+there is multicollinearity between two or more variables. The formula
+for VIF is \(1/(1-R^2)\) and the thresholdvalue is 10. So values above
+10 give signs of multicollinearity. As shown below none of the values
+are above 10, so no signs of collinearity.
+
+\begin{verbatim}
+## High_educated_frac        Urban_index        Mean_income 
+##           1.871032           3.383149           1.658015 
+##          Non_west2          Non_west3        Frac_60plus 
+##           1.974537           3.361734           1.289979
+\end{verbatim}
+
+\begin{verbatim}
+## [1]  74 298
+\end{verbatim}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-9-1} 
+
+}
+
+\caption{\label{afm}assumptions first model}\label{fig:unnamed-chunk-9}
+\end{figure}
+
+In figure \ref{afm} the four plots are shown. The first plot (Residuals
+vs Fitted) shows that the residuals have a `loudspeaker pattern', the
+variance of the residuals tends to increase with an increase of the
+fitted value. Because of this, a BoxCox graph is consulted. This graph
+suggests a transformation for the response. The BoxCos figure \ref{BC1}
+in has a 95\% Confidence interval located around the 0. So a ln
+transformation is suggested.
+
+\begin{figure}[H]
+
+{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-10-1} 
+
+}
+
+\caption{\label{BC1}BoxCox first model}\label{fig:unnamed-chunk-10}
+\end{figure}
+
+\subsection{Second model}\label{second-model}
+
+In the second model the response variable will be ln transformed. So the
+new model will be:\\
+\(ln(Y_i) = \beta_0 + \beta_1*high educated fraction + \beta_2*Urban index + \beta_3*Mean income + \beta_4*Non west2 + \beta_5*Non west 3 + \beta_6*Frac 60plus + \epsilon i\)
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrr}
+  \hline
+ & Estimate & Std. Error & t value & Pr() \\ 
+  \hline
+(Intercept) & -0.9944 & 0.1882 & -5.28 & 0.0000 \\ 
+  High\_educated\_frac & -0.8808 & 0.2723 & -3.24 & 0.0013 \\ 
+  Urban\_index & -0.1388 & 0.0247 & -5.62 & 0.0000 \\ 
+  Mean\_income & -0.0024 & 0.0064 & -0.38 & 0.7042 \\ 
+  Non\_west2 & -0.0991 & 0.0389 & -2.55 & 0.0112 \\ 
+  Non\_west3 & -0.2763 & 0.0572 & -4.83 & 0.0000 \\ 
+  Frac\_60plus & -2.6940 & 0.8965 & -3.01 & 0.0028 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+\begin{verbatim}
+## [1]  16 237
+\end{verbatim}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-11-1} 
+
+}
+
+\caption{\label{asm}assumptions second model}\label{fig:unnamed-chunk-11}
+\end{figure}
+
+The plots in figure \ref{asm} show one big outlier, the municipality
+Amsterdam which has number 16. Amsterdams value for the cooks distance
+goes way above the cutoff value for cooks, \(4/(369-5-1)=0.011\). It is
+also outside the (-3,3) range with the studentized residuals. That is
+why this municipality is removed.\\
+For the second model without Amsterdam, a step function is used. This
+step function uses the AIC for backward elimination. If the AIC can get
+lower, because a variable is removed that variable will be removed else
+no variable is removed. The formula for AIC is
+\(AIC=-2log(likelihood)+2p\), p is the number of parameters in the
+model. The variables that are left are the variables used in the final
+model.
+
+\begin{verbatim}
+## Start:  AIC=-1041.5
+## log(CDA_frac) ~ High_educated_frac + Urban_index + Mean_income + 
+##     Non_west + Frac_60plus
+## 
+##                      Df Sum of Sq    RSS     AIC
+## - Mean_income         1   0.04208 20.291 -1042.7
+## <none>                            20.249 -1041.5
+## - High_educated_frac  1   0.36195 20.611 -1037.0
+## - Frac_60plus         1   0.67266 20.922 -1031.6
+## - Non_west            2   1.54236 21.792 -1018.7
+## - Urban_index         1   1.72696 21.976 -1013.6
+## 
+## Step:  AIC=-1042.74
+## log(CDA_frac) ~ High_educated_frac + Urban_index + Non_west + 
+##     Frac_60plus
+## 
+##                      Df Sum of Sq    RSS     AIC
+## <none>                            20.291 -1042.7
+## - Frac_60plus         1   0.66435 20.956 -1033.0
+## - High_educated_frac  1   0.85427 21.146 -1029.7
+## - Non_west            2   1.51164 21.803 -1020.5
+## - Urban_index         1   1.68687 21.978 -1015.6
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = log(CDA_frac) ~ High_educated_frac + Urban_index + 
+##     Non_west + Frac_60plus, data = Data_CDA[-16, ])
+## 
+## Coefficients:
+##        (Intercept)  High_educated_frac         Urban_index  
+##            -1.0298             -0.8277             -0.1311  
+##          Non_west2           Non_west3         Frac_60plus  
+##            -0.1141             -0.2871             -3.0168
+\end{verbatim}
+
 \subsection{Final model}\label{final-model}
+
+The backward elimination gave the final model.\\
+\(ln(Y_i) = \beta_0 + \beta_1*high educated fraction + \beta_2*Urban index + \beta_4*Non west2 + \beta_5*Non west 3 + \beta_6*Frac 60plus + \epsilon i\)
+The coëfficients are given in the table below
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrr}
+  \hline
+ & Estimate & Std. Error & t value & Pr($>$$|$t$|$) \\ 
+  \hline
+(Intercept) & -1.0298 & 0.1365 & -7.54 & 0.0000 \\ 
+  High\_educated\_frac & -0.8277 & 0.2129 & -3.89 & 0.0001 \\ 
+  Urban\_index & -0.1311 & 0.0240 & -5.46 & 0.0000 \\ 
+  Non\_west2 & -0.1141 & 0.0378 & -3.02 & 0.0027 \\ 
+  Non\_west3 & -0.2871 & 0.0559 & -5.13 & 0.0000 \\ 
+  Frac\_60plus & -3.0168 & 0.8799 & -3.43 & 0.0007 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+First, the error-assumptions will be checked (figure \ref{afm}). The
+`loudspeaker pattern' almost disappeared, so the variance of the error
+is almost stable. Because the model is already transformed into a log
+model, there is not much transformation possible to let the pattern
+totally disappear. The influence will not be that high, because the
+pattern is relatively small. In the qq-plot it is visible that almost
+all municipalities are in the -3,3 range. Only the municipalities
+Oostzaan and Tubbergen are outside this range. This is because Oostzaan
+has an extreme low CDA\_frac(0.067) and Tubbergen an extreme high
+CDA\_frac(0.42). The decision is made not to delete these values,
+because they are still in the 95\% envelope of the qq-plot. In the third
+plot the red line is notable, it goes up at the end of the graph. This
+means that there is some non-constant error variance, but because the
+scatter is not that big no action is needed.
+
+\begin{verbatim}
+## 237 298 
+## 236 297
+\end{verbatim}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-13-1} 
+
+}
+
+\caption{\label{afm}Assumptions final model}\label{fig:unnamed-chunk-13}
+\end{figure}
+
+The estimates for the predictors are filled in the model and the
+following results are obtained:
+
+\(ln(Y_i) = -1.0298 -0.8277*high educated fraction -0.1311*Urban index -0.1141*Non west2 -0.2871*Non west3 -3.0168*Frac 60plus + \epsilon i\)
+
+Something notable is that all coëfficients are negative, but because the
+fitted values are logaritmic the eventual output will be positive. The
+added-variable plots are visible below (figure\{avf\}).
+
+\begin{figure}[H]
+
+{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-14-1} 
+
+}
+
+\caption{\label{avf} Added variable plots final model}\label{fig:unnamed-chunk-14}
+\end{figure}
 
 \subsection{Cross validation}\label{cross-validation}
 
 \section{3. Logistic regression}\label{logistic-regression}
 
 The raw respons variable is the absolute amount of residents per
-municipality that voted for CDA. For linear regresssion, we transformed
-this variable to a fraction. However, we also know the total amount of
-votes per municipality. Therefore, a better fit to our data would be a
-binomial model. We use the logit as link function to transform the range
-of the respons. The choice for the logit was easily made. Because the
-inverse of the logit is directly interpretable as the log-odds ratio.
-This link displays the underlaying pattern of our data best. Below, the
-formula for our link function:
+municipality that voted for CDA. For linear regresssion, this variable
+is transformed to a fraction. However, the absolute total amount of
+votes per municipality is also available. Therefore, a binomial model
+would be a better fit to the data. A second model is developed that uses
+the logit as link function to transform the range of the respons. The
+choice for the logit was easily made. Because the inverse of the logit
+is directly interpretable as the log-odds ratio. This link displays the
+underlaying pattern of this data best. Below, the formula for the link
+function:
 
-\(\eta = log(\frac{\theta}{1 - \theta})\)
+\(\eta = log(\frac{\theta}{1 - \theta}) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + ... + \beta_n x_n\)
 
-Where \(\theta\) is the absolute amount of votes for CDA.
+Where \(\theta\) is the probability of votes for CDA.
 
-In GLM, we still have to make diagnostics plots to visualise if any of
-the assumptions for the error-term are violated. The assumptions made
-for the error-term in a binomial model are slightly different than for
-the linear model. Below we state the assumptions:
-
-\begin{itemize}
-\item[] Check deviance residuals
-\item[] Leverages are no longer just a function of X and now depend on the response through the weights W.
-\end{itemize}
+Also for logistics regression are diagnostic plots needed to visualise
+the deviance/pearson residuals and search for outliers. Most of the
+diagnostics from the linear model extend relatively straighforward to
+logistic regression. However, leverages are no longer just a function of
+the explanatory variable, but also depend on the respons due to iterated
+weighted least squares. Furthermore, \(\theta\) can never be zero or
+one. Fortunately, this was not the case for any of the observations in
+this dataset.
 
 \subsection{First model}\label{first-model-1}
 
-\subsection{Second model}\label{second-model}
+Again, the first is the full model. Stepwise backward elimination is
+used to find the optimal model. Below, the formula for the full model:
+
+\(log(\frac{\theta}{1 - \theta}) = \beta_0 + \beta_1 \cdot UrbanIndex + \beta_2 \cdot HighlyEducatedFraction + \beta_3 \cdot MeanIncome + \beta_4 \cdot NonWest + \beta_5 \cdot Fraction60Plus\)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{glm_CDA_}\DecValTok{1}\NormalTok{ <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(}\KeywordTok{cbind}\NormalTok{(CDA_abs, Total_abs }\OperatorTok{-}\StringTok{ }\NormalTok{CDA_abs) }\OperatorTok{~}\StringTok{ }\NormalTok{Urban_index }\OperatorTok{+}\StringTok{ }\NormalTok{High_educated_frac }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\NormalTok{Mean_income }\OperatorTok{+}\StringTok{ }\NormalTok{Non_west }\OperatorTok{+}\StringTok{ }\NormalTok{Frac_60plus, }\DataTypeTok{family =} \KeywordTok{binomial}\NormalTok{(}\DataTypeTok{link =} \StringTok{"logit"}\NormalTok{), }
+    \DataTypeTok{data =}\NormalTok{ Data_CDA)}
+\KeywordTok{summary}\NormalTok{(glm_CDA_}\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## glm(formula = cbind(CDA_abs, Total_abs - CDA_abs) ~ Urban_index + 
+##     High_educated_frac + Mean_income + Non_west + Frac_60plus, 
+##     family = binomial(link = "logit"), data = Data_CDA)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -88.318   -8.988   -1.521    7.670   57.920  
+## 
+## Coefficients:
+##                      Estimate Std. Error z value Pr(>|z|)    
+## (Intercept)        -1.0559765  0.0156927  -67.29   <2e-16 ***
+## Urban_index        -0.1933926  0.0020376  -94.91   <2e-16 ***
+## High_educated_frac -2.1027583  0.0199536 -105.38   <2e-16 ***
+## Mean_income         0.0156359  0.0005334   29.32   <2e-16 ***
+## Non_west2          -0.0562758  0.0031606  -17.80   <2e-16 ***
+## Non_west3          -0.2592768  0.0046088  -56.26   <2e-16 ***
+## Frac_60plus        -1.3424322  0.0737404  -18.20   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 247550  on 365  degrees of freedom
+## Residual deviance:  89969  on 359  degrees of freedom
+## AIC: 93475
+## 
+## Number of Fisher Scoring iterations: 4
+\end{verbatim}
+
+The summary visualizes that the all the variables are very significant,
+with small errors. The full model has 359 degrees of freedom and it is
+expected that the residual deviance is roughly equivalent. However, the
+residual deviance is far above this value. These are strong indications
+that this model suffers from overdispersion. This assumption seems
+reasonable, because there is a very large variance in how many residents
+per municapality voted for CDA. In some municipalities only 3\% voted
+for CDA, while it others nearly 50\% voted for CDA. It is concluded that
+a quasi-binomial would fit the data better.
+
+\subsection{Second model}\label{second-model-1}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{glm_CDA_}\DecValTok{2}\NormalTok{ <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(}\KeywordTok{cbind}\NormalTok{(CDA_abs, Total_abs }\OperatorTok{-}\StringTok{ }\NormalTok{CDA_abs) }\OperatorTok{~}\StringTok{ }\NormalTok{Urban_index }\OperatorTok{+}\StringTok{ }\NormalTok{High_educated_frac }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\NormalTok{Mean_income }\OperatorTok{+}\StringTok{ }\NormalTok{Non_west }\OperatorTok{+}\StringTok{ }\NormalTok{Frac_60plus, }\DataTypeTok{family =} \KeywordTok{quasibinomial}\NormalTok{(}\DataTypeTok{link =} \StringTok{"logit"}\NormalTok{), }
+    \DataTypeTok{data =}\NormalTok{ Data_CDA)}
+\KeywordTok{summary}\NormalTok{(glm_CDA_}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## glm(formula = cbind(CDA_abs, Total_abs - CDA_abs) ~ Urban_index + 
+##     High_educated_frac + Mean_income + Non_west + Frac_60plus, 
+##     family = quasibinomial(link = "logit"), data = Data_CDA)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -88.318   -8.988   -1.521    7.670   57.920  
+## 
+## Coefficients:
+##                     Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)        -1.055977   0.250122  -4.222 3.07e-05 ***
+## Urban_index        -0.193393   0.032478  -5.955 6.21e-09 ***
+## High_educated_frac -2.102758   0.318036  -6.612 1.38e-10 ***
+## Mean_income         0.015636   0.008501   1.839  0.06670 .  
+## Non_west2          -0.056276   0.050376  -1.117  0.26469    
+## Non_west3          -0.259277   0.073459  -3.530  0.00047 ***
+## Frac_60plus        -1.342432   1.175330  -1.142  0.25414    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for quasibinomial family taken to be 254.0441)
+## 
+##     Null deviance: 247550  on 365  degrees of freedom
+## Residual deviance:  89969  on 359  degrees of freedom
+## AIC: NA
+## 
+## Number of Fisher Scoring iterations: 4
+\end{verbatim}
+
+By applying a quasi binomial model, a dispersion parameter \(\phi\) is
+included, resulting in larger standard errors and less significant
+p-values. \(\phi\) is estimated on the data at 254.0441. The variables
+\texttt{Frac\_60plus}, \texttt{Mean\_income} and factor
+\texttt{Non\_west2} are no longer significant.
+
+No goodness of fit test is possible because of the free dispersion
+parameter.The decision to remove variables is done based on the lowest
+F-test.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{vif}\NormalTok{(glm_CDA_}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        Urban_index High_educated_frac        Mean_income 
+##       0.0013605627       0.0005943712       0.0006876039 
+##          Non_west2          Non_west3        Frac_60plus 
+##       0.0007725368       0.0012914703       0.0005161910
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{drop1}\NormalTok{(glm_CDA_}\DecValTok{2}\NormalTok{, }\DataTypeTok{test =} \StringTok{"F"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Single term deletions
+## 
+## Model:
+## cbind(CDA_abs, Total_abs - CDA_abs) ~ Urban_index + High_educated_frac + 
+##     Mean_income + Non_west + Frac_60plus
+##                    Df Deviance F value    Pr(>F)    
+## <none>                   89969                      
+## Urban_index         1    99052 36.2459 4.300e-09 ***
+## High_educated_frac  1   101151 44.6196 9.132e-11 ***
+## Mean_income         1    90821  3.3987 0.0660730 .  
+## Non_west            2    94112  8.2661 0.0003092 ***
+## Frac_60plus         1    90300  1.3217 0.2510613    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+According to the F-test \texttt{Frac\_60plus} should be removed. This
+variable has a F-value of 1.32 and a corresponding p-value of 0.25. The
+values for the VIF are all very low, meaning there is barely
+collinearity between the explanatory variables.
+
+At last, the residuals and cook's distance are visualized
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mfrow =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{3}\NormalTok{))}
+\KeywordTok{halfnorm}\NormalTok{(}\KeywordTok{residuals}\NormalTok{(glm_CDA_}\DecValTok{2}\NormalTok{, }\StringTok{"pearson"}\NormalTok{))}
+\KeywordTok{plot}\NormalTok{(glm_CDA_}\DecValTok{2}\NormalTok{, }\DataTypeTok{which =} \DecValTok{1}\NormalTok{, }\DataTypeTok{id.n =} \DecValTok{5}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(glm_CDA_}\DecValTok{2}\NormalTok{, }\DataTypeTok{which =} \DecValTok{4}\NormalTok{, }\DataTypeTok{id.n =} \DecValTok{5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics{Report_files/figure-latex/unnamed-chunk-19-1} \end{center}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Data_CDA[}\KeywordTok{c}\NormalTok{(}\DecValTok{16}\NormalTok{, }\DecValTok{74}\NormalTok{, }\DecValTok{265}\NormalTok{), ]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##           Muni CDA_frac Urban_index High_educated_frac Mean_income
+## 16   Amsterdam    0.031       3.789               0.47        25.3
+## 74  Dinkelland    0.373       0.531               0.26        26.0
+## 265  Rotterdam    0.060       3.546               0.31        22.9
+##     Non_west_frac CDA_abs Total_abs Frac_60plus Non_west
+## 16           0.35   13562    440854        0.09        3
+## 74           0.02    6560     17586        0.13        1
+## 265          0.38   18813    315550        0.10        3
+\end{verbatim}
+
+The left plot display the half-normal quantiles against the pearson
+residuals. Ideally, these residuals would not be greater than 3.
+However, this plot shows residuals even up to 80. The middle plot
+displays the predicted values against the deviance resiuals. Also here a
+large spread of the residuals is observed. There seems to be
+non-constant erro variance, because the spread becomes larger for higher
+predicted values. The right plots shows the cook's distance, which can
+identify influential observations. Observation 16 is an outlier, because
+it is very influential and stands out from any pattern in the residual
+plots. Furthermore, Dinkelland (obs 74) and Rotterdam (obs 265) are also
+influential. Amsterdam is the municipality with the lowest percentage of
+CDA votes and Dinkelland has the highest percentage of CDA votes.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{avPlots}\NormalTok{(glm_CDA_}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics{Report_files/figure-latex/unnamed-chunk-20-1} \end{center}
+
+The avPlots help to interpret the partial regression coefficients when
+the other variables are held constant.The partial regression line is
+highly influenced by observation 16 again. The blue lines do not
+represent the data well at the moment.
+
+\subsection{Third model}\label{third-model}
+
+For this model the variable \texttt{Frac\_60plus} is removed, because it
+had the lowest F-value. Furthermore, the observations 16 (Amsterdam) and
+265 (Dinkelland) are removed. These influenced the partial regression
+coefficients greatly and had large residual and cook's distances. These
+steps were originally done in two, but they are combined for this
+report.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{glm_CDA_}\DecValTok{4}\NormalTok{ <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(}\KeywordTok{cbind}\NormalTok{(CDA_abs, Total_abs }\OperatorTok{-}\StringTok{ }\NormalTok{CDA_abs) }\OperatorTok{~}\StringTok{ }\NormalTok{Urban_index }\OperatorTok{+}\StringTok{ }\NormalTok{High_educated_frac }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\NormalTok{Mean_income }\OperatorTok{+}\StringTok{ }\NormalTok{Non_west, }\DataTypeTok{family =} \KeywordTok{quasibinomial}\NormalTok{(}\DataTypeTok{link =} \StringTok{"logit"}\NormalTok{), }\DataTypeTok{data =}\NormalTok{ Data_CDA[}\OperatorTok{-}\KeywordTok{c}\NormalTok{(}\DecValTok{16}\NormalTok{, }
+    \DecValTok{265}\NormalTok{), ])}
+\KeywordTok{summary}\NormalTok{(glm_CDA_}\DecValTok{4}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## glm(formula = cbind(CDA_abs, Total_abs - CDA_abs) ~ Urban_index + 
+##     High_educated_frac + Mean_income + Non_west, family = quasibinomial(link = "logit"), 
+##     data = Data_CDA[-c(16, 265), ])
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -44.024   -9.619   -2.437    6.074   59.653  
+## 
+## Coefficients:
+##                      Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)        -1.0877540  0.1801672  -6.037 3.92e-09 ***
+## Urban_index        -0.1351943  0.0303257  -4.458 1.11e-05 ***
+## High_educated_frac -1.2202265  0.3125548  -3.904 0.000113 ***
+## Mean_income        -0.0004273  0.0081731  -0.052 0.958331    
+## Non_west2          -0.1232492  0.0479004  -2.573 0.010483 *  
+## Non_west3          -0.3447138  0.0690753  -4.990 9.42e-07 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for quasibinomial family taken to be 221.709)
+## 
+##     Null deviance: 173842  on 363  degrees of freedom
+## Residual deviance:  76966  on 358  degrees of freedom
+## AIC: NA
+## 
+## Number of Fisher Scoring iterations: 4
+\end{verbatim}
+
+By removing observation 16 and 265, the factor \texttt{Non\_west2} has
+become significant. Also the residual deviance has decreased slightly,
+but is still far above the degrees of freedom.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mfrow =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{3}\NormalTok{))}
+\KeywordTok{halfnorm}\NormalTok{(}\KeywordTok{residuals}\NormalTok{(glm_CDA_}\DecValTok{4}\NormalTok{, }\StringTok{"pearson"}\NormalTok{))}
+\KeywordTok{plot}\NormalTok{(glm_CDA_}\DecValTok{4}\NormalTok{, }\DataTypeTok{which =} \DecValTok{1}\NormalTok{, }\DataTypeTok{id.n =} \DecValTok{5}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(glm_CDA_}\DecValTok{4}\NormalTok{, }\DataTypeTok{which =} \DecValTok{4}\NormalTok{, }\DataTypeTok{id.n =} \DecValTok{5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics{Report_files/figure-latex/unnamed-chunk-22-1} \end{center}
+
+The plot left still displays very large pearson residuals. The plot in
+the middle seems homogenic distributed, which slightly more variance for
+higher predicted values. And the cook's distance no longer displays
+highly influential observations.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{drop1}\NormalTok{(glm_CDA_}\DecValTok{4}\NormalTok{, }\DataTypeTok{test =} \StringTok{"F"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Single term deletions
+## 
+## Model:
+## cbind(CDA_abs, Total_abs - CDA_abs) ~ Urban_index + High_educated_frac + 
+##     Mean_income + Non_west
+##                    Df Deviance F value    Pr(>F)    
+## <none>                   76966                      
+## Urban_index         1    81396 20.6048 7.721e-06 ***
+## High_educated_frac  1    80361 15.7942 8.543e-05 ***
+## Mean_income         1    76966  0.0028    0.9577    
+## Non_west            2    82994 14.0208 1.373e-06 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+According to the F-test \texttt{Mean\_income} should be removed as well,
+because the F-value is below 1 and the corresponding p-value is 0.96.
 
 \subsection{Final model}\label{final-model-1}
+
+The final model is reached after dropping the variables
+\texttt{Mean\_income} and \texttt{Frac\_60plus}. It's formula is as
+follows:
+
+\(logit(p_{ij}) = -1.09 -0.14 \cdot UrbanIndex -1.23 \cdot HighlyEducatedFraction - 0.12 \cdot NonWest:2 - 0.34 \cdot NonWest:3\)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{glm_CDA_}\DecValTok{5}\NormalTok{ <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(}\KeywordTok{cbind}\NormalTok{(CDA_abs, Total_abs }\OperatorTok{-}\StringTok{ }\NormalTok{CDA_abs) }\OperatorTok{~}\StringTok{ }\NormalTok{Urban_index }\OperatorTok{+}\StringTok{ }\NormalTok{High_educated_frac }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\NormalTok{Non_west, }\DataTypeTok{family =} \KeywordTok{quasibinomial}\NormalTok{(}\DataTypeTok{link =} \StringTok{"logit"}\NormalTok{), }\DataTypeTok{data =}\NormalTok{ Data_CDA[}\OperatorTok{-}\KeywordTok{c}\NormalTok{(}\DecValTok{16}\NormalTok{, }
+    \DecValTok{265}\NormalTok{), ])}
+\KeywordTok{summary}\NormalTok{(glm_CDA_}\DecValTok{5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## glm(formula = cbind(CDA_abs, Total_abs - CDA_abs) ~ Urban_index + 
+##     High_educated_frac + Non_west, family = quasibinomial(link = "logit"), 
+##     data = Data_CDA[-c(16, 265), ])
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -44.014   -9.626   -2.447    6.099   59.654  
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)        -1.09653    0.06526 -16.804  < 2e-16 ***
+## Urban_index        -0.13497    0.02996  -4.504 9.02e-06 ***
+## High_educated_frac -1.22972    0.25406  -4.840 1.93e-06 ***
+## Non_west2          -0.12346    0.04767  -2.590  0.00999 ** 
+## Non_west3          -0.34443    0.06876  -5.009 8.60e-07 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for quasibinomial family taken to be 221.0972)
+## 
+##     Null deviance: 173842  on 363  degrees of freedom
+## Residual deviance:  76966  on 359  degrees of freedom
+## AIC: NA
+## 
+## Number of Fisher Scoring iterations: 4
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{drop1}\NormalTok{(glm_CDA_}\DecValTok{5}\NormalTok{, }\DataTypeTok{test =} \StringTok{"F"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Single term deletions
+## 
+## Model:
+## cbind(CDA_abs, Total_abs - CDA_abs) ~ Urban_index + High_educated_frac + 
+##     Non_west
+##                    Df Deviance F value    Pr(>F)    
+## <none>                   76966                      
+## Urban_index         1    81471  21.009 6.318e-06 ***
+## High_educated_frac  1    82190  24.364 1.223e-06 ***
+## Non_west            2    83077  14.251 1.108e-06 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+The F-test shows that all variables now significantly contribute to the
+model. The residual deviance has slightly decreased, in compare to model
+\texttt{glm\_CDA\_2} with all the variables. However, the residual
+deviance is still much larger then the degrees of freedom.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mfrow =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{3}\NormalTok{))}
+\KeywordTok{halfnorm}\NormalTok{(}\KeywordTok{residuals}\NormalTok{(glm_CDA_}\DecValTok{5}\NormalTok{, }\StringTok{"pearson"}\NormalTok{))}
+\KeywordTok{plot}\NormalTok{(glm_CDA_}\DecValTok{5}\NormalTok{, }\DataTypeTok{which =} \DecValTok{1}\NormalTok{, }\DataTypeTok{id.n =} \DecValTok{5}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(glm_CDA_}\DecValTok{5}\NormalTok{, }\DataTypeTok{which =} \DecValTok{4}\NormalTok{, }\DataTypeTok{id.n =} \DecValTok{5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics{Report_files/figure-latex/unnamed-chunk-25-1} \end{center}
+
+There is still a large spread of both the pearson (left plot) and
+deviance (middle plot) residuals. Furthermore, there is non-constant
+errror variance. The cook's distance does not display very influential
+observations.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{vif}\NormalTok{(glm_CDA_}\DecValTok{5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        Urban_index High_educated_frac          Non_west2 
+##       0.0012896670       0.0004230904       0.0007928046 
+##          Non_west3 
+##       0.0012734699
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{avPlots}\NormalTok{(glm_CDA_}\DecValTok{5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics{Report_files/figure-latex/unnamed-chunk-26-1} \end{center}
+
+After removing two outliers, the partial regression coefficients
+represent the data much better. There are no strong correlations between
+the explanatory variables and the respons. The low VIF values also
+indicate this.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{function_nonwest1 <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(x) \{}
+    \OperatorTok{-}\FloatTok{1.09} \OperatorTok{-}\StringTok{ }\FloatTok{0.14} \OperatorTok{*}\StringTok{ }\NormalTok{x }\OperatorTok{-}\StringTok{ }\FloatTok{1.23} \OperatorTok{*}\StringTok{ }\NormalTok{x}
+\NormalTok{\}}
+\NormalTok{function_nonwest2 <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(x) \{}
+    \OperatorTok{-}\FloatTok{1.09} \OperatorTok{-}\StringTok{ }\FloatTok{0.14} \OperatorTok{*}\StringTok{ }\NormalTok{x }\OperatorTok{-}\StringTok{ }\FloatTok{1.23} \OperatorTok{*}\StringTok{ }\NormalTok{x }\OperatorTok{-}\StringTok{ }\FloatTok{0.12} \OperatorTok{*}\StringTok{ }\NormalTok{x}
+\NormalTok{\}}
+\NormalTok{function_nonwest3 <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(x) \{}
+    \OperatorTok{-}\FloatTok{1.09} \OperatorTok{-}\StringTok{ }\FloatTok{0.14} \OperatorTok{*}\StringTok{ }\NormalTok{x }\OperatorTok{-}\StringTok{ }\FloatTok{1.23} \OperatorTok{*}\StringTok{ }\NormalTok{x }\OperatorTok{-}\StringTok{ }\FloatTok{0.34} \OperatorTok{*}\StringTok{ }\NormalTok{x}
+\NormalTok{\}}
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{function_nonwest1}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{), }\DataTypeTok{type =} \StringTok{"l"}\NormalTok{)}
+\KeywordTok{lines}\NormalTok{(}\KeywordTok{function_nonwest2}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{), }\DataTypeTok{type =} \StringTok{"l"}\NormalTok{, }\DataTypeTok{col =} \StringTok{"red"}\NormalTok{)}
+\KeywordTok{lines}\NormalTok{(}\KeywordTok{function_nonwest3}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{), }\DataTypeTok{type =} \StringTok{"l"}\NormalTok{, }\DataTypeTok{col =} \StringTok{"blue"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics{Report_files/figure-latex/unnamed-chunk-27-1} \end{center}
 
 \subsection{Cross validation}\label{cross-validation-1}
 

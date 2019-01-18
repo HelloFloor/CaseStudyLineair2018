@@ -32,6 +32,7 @@ knitr::opts_chunk$set(echo = TRUE, tidy= TRUE, tidy.opts = list(comment = FALSE)
 library("tidyverse")
 library("car")
 library(reshape2)
+library(lindia)
 library("GGally")
 library("Hmisc")
 library("lattice")
@@ -468,6 +469,8 @@ Something notable is that all coëfficients are negative, but because the fitted
 ```{r, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.width=10, fig.height=5, fig.cap= "\\label{avf} Added variable plots final model"}
 avPlots(lm_CDA_final)
 ```
+
+
 ```{r, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.width=10, fig.height=5, fig.cap= "\\label{pfm} plot final High educated frac"}
 function_High_educated_frac <- function(x){
   exp(-1.0298) + exp(-0.8277)*x +exp(-0.1311)*1.4280 +exp(-3.0168)*0.1327
@@ -477,13 +480,33 @@ function_Urban_index <- function(x){
 }
 
 
-plot(function_High_educated_frac(seq(from=0, to =0.5, by=0.01)), type='l')
-line(function_Urban_index(1:100), type="l", col="red")
 ```
 
 
 ## Cross validation
 
+```{r}
+K <- 5
+index <- rep(1:K, floor(nrow(Data_CDA)/K)+1)[1:nrow(Data_CDA)]
+summary(as.factor(index))
+fold.index <- sample(index)
+
+Loss <- function(x, y){
+  sum((x-y)^2)/length(x)
+}
+loss <- numeric(K)
+
+for (k in 1:K){
+  training <- Data_CDA[fold.index!=k, ]
+  validation <- Data_CDA[fold.index==k, ]
+  training.fit <- lm_CDA_final
+  validation.predict <- predict(training.fit, newdata=validation, type='response')
+  loss[k] <- Loss(log(validation$CDA_frac), validation.predict)
+}
+
+#average, with weights equal to the number of objects used to calculate the loss at each fold:
+mean(loss)
+```
 
 
 
@@ -589,28 +612,28 @@ The final model is reached after dropping the variables `Mean_income` and `Frac_
 $logit(p_{ij}) = -1.09  -0.14 \cdot UrbanIndex -1.23 \cdot HighlyEducatedFraction - 0.12 \cdot NonWest:2 - 0.34 \cdot NonWest:3$
 
 ```{r}
-glm_CDA_5 <- glm(cbind(CDA_abs, Total_abs - CDA_abs) ~ Urban_index  + 
+glm_CDA_final <- glm(cbind(CDA_abs, Total_abs - CDA_abs) ~ Urban_index  + 
                    High_educated_frac + Non_west, 
                  family=quasibinomial(link = "logit"), 
                  data = Data_CDA[-c(16, 265),])
 
-summary(glm_CDA_5)
-drop1(glm_CDA_5, test = "F")
+summary(glm_CDA_final)
+drop1(glm_CDA_final, test = "F")
 ```
 The F-test shows that all variables now significantly contribute to the model. The residual deviance has slightly decreased, in compare to model `glm_CDA_2` with all the variables. However, the residual deviance is still much larger then the degrees of freedom.
 
 
 ```{r}
 par(mfrow = c(1,3))
-halfnorm(residuals(glm_CDA_5,"pearson"))
-plot(glm_CDA_5, which = 1, id.n = 5)
-plot(glm_CDA_5, which = 4, id.n = 5)
+halfnorm(residuals(glm_CDA_final,"pearson"))
+plot(glm_CDA_final, which = 1, id.n = 5)
+plot(glm_CDA_final, which = 4, id.n = 5)
 ```
 There is still a large spread of both the pearson (left plot) and deviance (middle plot) residuals. Furthermore, there is non-constant errror variance. The cook's distance does not display very influential observations.
 
 ```{r}
-vif(glm_CDA_5)
-avPlots(glm_CDA_5)
+vif(glm_CDA_final)
+avPlots(glm_CDA_final)
 ```
 After removing two outliers, the partial regression coefficients represent the data much better. There are no strong correlations between the explanatory variables and the respons. The low VIF values also indicate this.
 
@@ -634,6 +657,28 @@ lines(function_nonwest3(1:10), type="l", col = "blue")
 ```
 
 ## Cross validation
+
+```{r}
+index <- rep(1:K, floor(nrow(Data_CDA)/K)+1)[1:nrow(Data_CDA)]
+summary(as.factor(index))
+fold.index <- sample(index)
+
+
+loss <- numeric(K)
+
+for (k in 1:K){
+  training <- Data_CDA[fold.index!=k, ]
+  validation <- Data_CDA[fold.index==k, ]
+  training.fit <- glm_CDA_final
+  validation.predict <- predict(training.fit, newdata=validation, type='response')
+  loss[k] <- Loss(validation$CDA_frac, validation.predict)
+}
+
+
+#average, with weights equal to the number of objects used to calculate 
+# the loss at each fold:
+mean(loss)
+```
 
 
  
