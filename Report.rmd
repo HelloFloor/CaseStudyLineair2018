@@ -342,25 +342,19 @@ multiplot(p1, p2)
 
 # 3. Logistic regression
 
-The raw respons variable is the absolute amount of residents per municipality that voted for CDA. For linear regresssion, we transformed this variable to a fraction. However, the total amount of votes per municipality is also available. Therefore, a binomial model would be a better fit to the data. A second model is developed that uses the logit as link function to transform the range of the respons. The choice for the logit was easily made. Because the inverse of the logit is directly interpretable as the log-odds ratio. This link displays the underlaying pattern of this data best. Below, the formula for the link function:
+The raw respons variable is the absolute amount of residents per municipality that voted for CDA. For linear regresssion, this variable is transformed to a fraction. However, the absolute total amount of votes per municipality is also available. Therefore, a binomial model would be a better fit to the data. A second model is developed that uses the logit as link function to transform the range of the respons. The choice for the logit was easily made. Because the inverse of the logit is directly interpretable as the log-odds ratio. This link displays the underlaying pattern of this data best. Below, the formula for the link function:
 
 $\eta = log(\frac{\theta}{1 - \theta}) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + ... + \beta_n x_n$
 
 Where $\theta$ is the probability of votes for CDA.
 
-Also for logistics regression are diagnostic plots needed to visualise if any of the assumptions for the stochastic and systematic part of the model are violated. Below, is stated why the diagnostic plots are made:
-  
-\begin{itemize}
-\item[] Check if deviance residuals are homogenic distributed
-\item[] Check for influential observations
-\item[] Check for multicolinearity
-\end{itemize}
-
-Most of the diagnostics from the linear model extend relatively straighforward to logistic regression. However, leverages are no longer just a function of the explanatory variable, but also depend on the respons due to iterated weighted least squares. Furthermore, $\theta$ can never be zero or one. Fortunately, this was not the case for any of the observations.
+Also for logistics regression are diagnostic plots needed to visualise the deviance/pearson residuals and search for outliers. Most of the diagnostics from the linear model extend relatively straighforward to logistic regression. However, leverages are no longer just a function of the explanatory variable, but also depend on the respons due to iterated weighted least squares. Furthermore, $\theta$ can never be zero or one. Fortunately, this was not the case for any of the observations in this dataset.
 
 ## First model
 
-Again, the first is the full model. Stepwise backward elimination using the F-test is used to find the optimal model. 
+Again, the first is the full model. Stepwise backward elimination is used to find the optimal model. Below, the formula for the full model:
+
+$log(\frac{\theta}{1 - \theta}) = \beta_0 + \beta_1 \cdot UrbanIndex + \beta_2 \cdot HighlyEducatedFraction + \beta_3 \cdot MeanIncome + \beta_4 \cdot NonWest + \beta_5 \cdot Fraction60Plus$
 
 ```{r}
 glm_CDA_1 <- glm(cbind(CDA_abs, Total_abs - CDA_abs) ~ Urban_index + 
@@ -371,7 +365,7 @@ glm_CDA_1 <- glm(cbind(CDA_abs, Total_abs - CDA_abs) ~ Urban_index +
 summary(glm_CDA_1)
 ```
 
-The summary inmediately shows that the all the variables are very significant, with small errors. The full model has 359 degrees of freedom and it is expected that the residual deviance is roughly equivalent. However, the residual deviance is far above this value. These are strong indications that this model suffers from overdispersion. This assumption seems reasonable, because there is a very large variance in how many residents per municapality voted for CDA. In some municipalities only 3% voted for CDA, while it others nearly 50% voted for CDA. It is concluded that a quasi-binomial would better fit the data.
+The summary visualizes that the all the variables are very significant, with small errors. The full model has 359 degrees of freedom and it is expected that the residual deviance is roughly equivalent. However, the residual deviance is far above this value. These are strong indications that this model suffers from overdispersion. This assumption seems reasonable, because there is a very large variance in how many residents per municapality voted for CDA. In some municipalities only 3% voted for CDA, while it others nearly 50% voted for CDA. It is concluded that a quasi-binomial would fit the data better.
 
 
 ## Second model
@@ -384,16 +378,17 @@ glm_CDA_2 <- glm(cbind(CDA_abs, Total_abs - CDA_abs) ~ Urban_index +
 summary(glm_CDA_2)
 ```
 
-By applying a quasi binomial, a dispersion parameter $\phi$ is included, resulting in larger standard errors and less significant p-values. $\phi$ is estimated on the data at 254.0441.  The variables `Frac_60plus`, `Mean_income` and factor `Non_west2` are no longer significant.
+By applying a quasi binomial model, a dispersion parameter $\phi$ is included, resulting in larger standard errors and less significant p-values. $\phi$ is estimated on the data at 254.0441.  The variables `Frac_60plus`, `Mean_income` and factor `Non_west2` are no longer significant.
 
-No goodness of fit test is possible because of the free dispersion parameter. Models are compared using the F-test.
+No goodness of fit test is possible because of the free dispersion parameter.The decision to remove variables is done based on the lowest F-test.
+
 ```{r}
 vif(glm_CDA_2)
 drop1(glm_CDA_2, test = "F")
 ```
-According to the F-test `Frac_60plus` should be removed. The values for the VIF are all very low, meaning there is barely collinearity between the explanatory variables.
+According to the F-test `Frac_60plus` should be removed. This variable has a F-value of 1.32 and a corresponding p-value of 0.25. The values for the VIF are all very low, meaning there is barely collinearity between the explanatory variables.
 
-For the diagnostics
+At last, the residuals and cook's distance are visualized
 ```{r}
 par(mfrow = c(1,3))
 halfnorm(residuals(glm_CDA_2,"pearson"))
@@ -402,18 +397,19 @@ plot(glm_CDA_2, which = 4, id.n = 5)
 
 Data_CDA[c(16,74, 265),]
 ```
-The left plot display the half-normal quantiles against the pearson residuals. Ideally, these residuals would not be greater than 3. However, this plot shows residuals even up to 80. The middle plot displays the predicted values against the deviance resiuals. Also here is a large spread of the residuals observed. Also, some heterogeneity of the variance is observed. The right plots shows the cooks distance, which can identify influential observations. Three observations stand out in one or multiple plots. The observations are Amsterdam (obs 16), Dinkelland (obs 74) and Rotterdam (obs 265). Amsterdam is the municipality with the lowest percentage of CDA votes and Dinkelland has the highest percentage. 
+
+The left plot display the half-normal quantiles against the pearson residuals. Ideally, these residuals would not be greater than 3. However, this plot shows residuals even up to 80. The middle plot displays the predicted values against the deviance resiuals. Also here a large spread of the residuals is observed. There seems to be non-constant erro variance, because the spread becomes larger for higher predicted values. The right plots shows the cook's distance, which can identify influential observations. Observation 16 is an outlier, because it is very influential and stands out from any pattern in the residual plots. Furthermore, Dinkelland (obs 74) and Rotterdam (obs 265) are also influential. Amsterdam is the municipality with the lowest percentage of CDA votes and Dinkelland has the highest percentage of CDA votes. 
 
 
 ```{r}
 avPlots(glm_CDA_2)
 ```
 
-The partial regression line is highly influenced by observation 16 again.
+The avPlots help to interpret the partial regression coefficients when the other variables are held constant.The partial regression line is highly influenced by observation 16 again. The blue lines do not represent the data well at the moment.
 
 ## Third model
 
-For this model the variable `Frac_60plus` is removed, because it had the lowest F-value. Furthermore, the observations 16 (Amsterdam) and 265 (Dinkelland) are removed. Thes influenced the partial regression coefficients greatly and had large residual and cook's distances. These steps were originally done in two, but for this report they are combined.
+For this model the variable `Frac_60plus` is removed, because it had the lowest F-value. Furthermore, the observations 16 (Amsterdam) and 265 (Dinkelland) are removed. These influenced the partial regression coefficients greatly and had large residual and cook's distances. These steps were originally done in two, but they are combined for this report.
 
 ```{r}
 glm_CDA_4 <- glm(cbind(CDA_abs, Total_abs - CDA_abs) ~ Urban_index + 
@@ -422,7 +418,7 @@ glm_CDA_4 <- glm(cbind(CDA_abs, Total_abs - CDA_abs) ~ Urban_index +
 
 summary(glm_CDA_4)
 ```
-By removing observation 16 and 265, the factor `Non_west2` has become significant. Also the residual deviance has decreased, but is still far above the degrees of freedom.
+By removing observation 16 and 265, the factor `Non_west2` has become significant. Also the residual deviance has decreased slightly, but is still far above the degrees of freedom.
 
 
 ```{r}
@@ -432,7 +428,7 @@ plot(glm_CDA_4, which = 1, id.n = 5)
 plot(glm_CDA_4, which = 4, id.n = 5)
 ```
 
-The plot left still displays very large pearson residuals. The plot in the middle seems homogenic distributed, which slightly more variance for higher predicted values. And none of the observations stands out which it's cook's distance.
+The plot left still displays very large pearson residuals. The plot in the middle seems homogenic distributed, which slightly more variance for higher predicted values. And the cook's distance no longer displays highly influential observations.
 
 ```{r}
 drop1(glm_CDA_4, test = "F")
@@ -441,11 +437,9 @@ According to the F-test `Mean_income` should be removed as well, because the F-v
 
 ## Final model
 
-The final model is reached after dropping the variables `Mean_income` and `Frac_60plus`. Also, two observations are removed, Amsterdam (obs 16) and Dinkelland (obs 265), respectively. Removal of these observations results in partial regression slopes that represent the data best. 
+The final model is reached after dropping the variables `Mean_income` and `Frac_60plus`. It's formula is as follows:
 
-All the described above is done step by step, but these are not all shown in this report. 
-
-
+$logit(p_{ij}) = -1.09  -0.14 \cdot UrbanIndex -1.23 \cdot HighlyEducatedFraction - 0.12 \cdot NonWest:2 - 0.34 \cdot NonWest:3$
 
 ```{r}
 glm_CDA_5 <- glm(cbind(CDA_abs, Total_abs - CDA_abs) ~ Urban_index  + 
@@ -459,20 +453,38 @@ drop1(glm_CDA_5, test = "F")
 The F-test shows that all variables now significantly contribute to the model. The residual deviance has slightly decreased, in compare to model `glm_CDA_2` with all the variables. However, the residual deviance is still much larger then the degrees of freedom.
 
 
-Diagnostics of final model.
 ```{r}
 par(mfrow = c(1,3))
 halfnorm(residuals(glm_CDA_5,"pearson"))
 plot(glm_CDA_5, which = 1, id.n = 5)
 plot(glm_CDA_5, which = 4, id.n = 5)
 ```
-
+There is still a large spread of both the pearson (left plot) and deviance (middle plot) residuals. Furthermore, there is non-constant errror variance. The cook's distance does not display very influential observations.
 
 ```{r}
 vif(glm_CDA_5)
 avPlots(glm_CDA_5)
 ```
+After removing two outliers, the partial regression coefficients represent the data much better. There are no strong correlations between the explanatory variables and the respons. The low VIF values also indicate this.
 
+
+```{r}
+function_nonwest1 <- function(x){
+  -1.09  - 0.14*x -1.23*x
+}
+
+function_nonwest2 <- function(x){
+  -1.09  - 0.14*x -1.23*x - 0.12*x
+}
+
+function_nonwest3 <- function(x){
+  -1.09  - 0.14*x -1.23*x - 0.34*x
+}
+
+plot(function_nonwest1(1:10), type='l')
+lines(function_nonwest2(1:10), type="l", col = "red")
+lines(function_nonwest3(1:10), type="l", col = "blue")
+```
 
 ## Cross validation
 
