@@ -32,6 +32,46 @@
 \urlstyle{same}  % don't use monospace font for urls
 \usepackage{natbib}
 \bibliographystyle{plainnat}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
 \usepackage{graphicx,grffile}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -157,10 +197,12 @@ for VIF is \(1/(1-R^2)\) and the thresholdvalue is 10. So values above
 are above 10, so no signs of collinearity.
 
 \begin{verbatim}
-## High_educated_frac        Urban_index        Mean_income 
-##           1.846691           3.355218           1.576931 
-##           Non_west        Frac_60plus 
-##           3.109682           1.285869
+##                        GVIF Df GVIF^(1/(2*Df))
+## High_educated_frac 1.871032  1        1.367857
+## Urban_index        3.383149  1        1.839334
+## Mean_income        1.658015  1        1.287640
+## Non_west           3.293503  2        1.347146
+## Frac_60plus        1.289979  1        1.135772
 \end{verbatim}
 
 \begin{verbatim}
@@ -217,7 +259,7 @@ new model will be:\\
 \end{table}
 
 \begin{verbatim}
-## [1]  16 298
+## [1]  16 237
 \end{verbatim}
 
 \begin{figure}[H]
@@ -243,28 +285,28 @@ model. The variables that are left are the variables used in the final
 model.
 
 \begin{verbatim}
-## Start:  AIC=-1042
+## Start:  AIC=-1041.5
 ## log(CDA_frac) ~ High_educated_frac + Urban_index + Mean_income + 
 ##     Non_west + Frac_60plus
 ## 
 ##                      Df Sum of Sq    RSS     AIC
-## - Mean_income         1   0.02142 20.354 -1043.6
-## <none>                            20.333 -1042.0
-## - High_educated_frac  1   0.40428 20.737 -1036.8
-## - Frac_60plus         1   0.64967 20.982 -1032.5
-## - Non_west            1   1.45896 21.792 -1018.7
-## - Urban_index         1   1.67178 22.005 -1015.2
+## - Mean_income         1   0.04208 20.291 -1042.7
+## <none>                            20.249 -1041.5
+## - High_educated_frac  1   0.36195 20.611 -1037.0
+## - Frac_60plus         1   0.67266 20.922 -1031.6
+## - Non_west            2   1.54236 21.792 -1018.7
+## - Urban_index         1   1.72696 21.976 -1013.6
 ## 
-## Step:  AIC=-1043.61
+## Step:  AIC=-1042.74
 ## log(CDA_frac) ~ High_educated_frac + Urban_index + Non_west + 
 ##     Frac_60plus
 ## 
 ##                      Df Sum of Sq    RSS     AIC
-## <none>                            20.354 -1043.6
-## - Frac_60plus         1   0.64626 21.000 -1034.2
-## - High_educated_frac  1   0.83927 21.193 -1030.9
-## - Non_west            1   1.44891 21.803 -1020.5
-## - Urban_index         1   1.65046 22.005 -1017.2
+## <none>                            20.291 -1042.7
+## - Frac_60plus         1   0.66435 20.956 -1033.0
+## - High_educated_frac  1   0.85427 21.146 -1029.7
+## - Non_west            2   1.51164 21.803 -1020.5
+## - Urban_index         1   1.68687 21.978 -1015.6
 \end{verbatim}
 
 \begin{verbatim}
@@ -275,9 +317,9 @@ model.
 ## 
 ## Coefficients:
 ##        (Intercept)  High_educated_frac         Urban_index  
-##            -0.8921             -0.8199             -0.1294  
-##           Non_west         Frac_60plus  
-##            -0.1410             -2.9719
+##            -1.0298             -0.8277             -0.1311  
+##          Non_west2           Non_west3         Frac_60plus  
+##            -0.1141             -0.2871             -3.0168
 \end{verbatim}
 
 \subsection{Final model}\label{final-model}
@@ -325,6 +367,125 @@ All the coëfficients are negative, but because the fitted value is a log
 value it will be positive.
 
 \subsection{Cross validation}\label{cross-validation}
+
+To tell something about the prediction possibilities of the model, cross
+validation is done. Cross validation tells something about how well the
+model predicts on average, it telss nothing about the 'correctness'of
+the model. Cross validation estimates the expected prediction error of a
+model.\\
+The cross validation works as follows. First 5k-folds are made. This
+means that the data is divided in five folds. Next, the loss function is
+made. This function makes the square of the real value minues the
+predicted value. By taking the sum of these values and the deviation by
+amount of real values in the k-folds, the mean is taken. 4 of the 5
+kfolds are used ase training data, the other one is the test/validation
+data. The model is fitted on the training data and afterwards it tries
+to fit on the test data, to see if it predicts closely. This is done 5
+times, every time another fold is is the testdata. As is shown below,
+the prediction error for this model is 0.0582
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lm_CDA_final <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(}\KeywordTok{log}\NormalTok{(CDA_frac) }\OperatorTok{~}\StringTok{ }\NormalTok{High_educated_frac }\OperatorTok{+}\StringTok{ }\NormalTok{Urban_index }\OperatorTok{+}\StringTok{ }\NormalTok{Non_west }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\NormalTok{Frac_60plus, }\DataTypeTok{data =}\NormalTok{ Data_CDA[}\OperatorTok{-}\DecValTok{16}\NormalTok{, ])}
+\NormalTok{K <-}\StringTok{ }\DecValTok{5}
+\NormalTok{index <-}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\NormalTok{K, }\KeywordTok{floor}\NormalTok{(}\KeywordTok{nrow}\NormalTok{(Data_CDA)}\OperatorTok{/}\NormalTok{K) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{)[}\DecValTok{1}\OperatorTok{:}\KeywordTok{nrow}\NormalTok{(Data_CDA)]}
+\NormalTok{fold.index <-}\StringTok{ }\KeywordTok{sample}\NormalTok{(index)}
+\NormalTok{Loss <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(x, y) \{}
+    \KeywordTok{sum}\NormalTok{((x }\OperatorTok{-}\StringTok{ }\NormalTok{y)}\OperatorTok{^}\DecValTok{2}\NormalTok{)}\OperatorTok{/}\KeywordTok{length}\NormalTok{(x)}
+\NormalTok{\}}
+\NormalTok{loss <-}\StringTok{ }\KeywordTok{numeric}\NormalTok{(K)}
+\ControlFlowTok{for}\NormalTok{ (k }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{K) \{}
+\NormalTok{    training <-}\StringTok{ }\NormalTok{Data_CDA[fold.index }\OperatorTok{!=}\StringTok{ }\NormalTok{k, ]}
+\NormalTok{    validation <-}\StringTok{ }\NormalTok{Data_CDA[fold.index }\OperatorTok{==}\StringTok{ }\NormalTok{k, ]}
+\NormalTok{    training.fit <-}\StringTok{ }\NormalTok{lm_CDA_final}
+\NormalTok{    validation.predict <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(training.fit, }\DataTypeTok{newdata =}\NormalTok{ validation, }\DataTypeTok{type =} \StringTok{"response"}\NormalTok{)}
+\NormalTok{    loss[k] <-}\StringTok{ }\KeywordTok{Loss}\NormalTok{(}\KeywordTok{log}\NormalTok{(validation}\OperatorTok{$}\NormalTok{CDA_frac), validation.predict)}
+\NormalTok{\}}
+\KeywordTok{mean}\NormalTok{(loss)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.05814674
+\end{verbatim}
+
+\subsection{Discussion}\label{discussion}
+
+\subsection{Linear regression}\label{linear-regression}
+
+Because the fitted values are transformed to a ln form, it is also
+possible to raise the coëfficients to a exponential power. The final
+model obtained then is:
+
+\(Y_i = e^(-1.0298 -0.8277*high educated fraction -0.1311*Urban index -0.1141*Non west2 -0.2871*Non west3 -3.0168*Frac 60plus + \epsilon i)\)
+
+Per variable the influence will be discussed. The slope will start at
+point exp(-1.0298), this is equal to 0.357. This means if all the other
+demographic variables are zero, the fitted value will be equal to the
+intercept, so equal to 0.357. This not a possible outcome, because a
+Municipality with all these demographics equal to zero is no reality.
+For the other coefficients it is a bit harder to predict there
+influence, because of the log transformation and the different range the
+different variables have. For example, the urban index has a 0-3.8 range
+and education ahs a 0.12-0.47 range in this data set. But still some
+remarks can be made about the slope of the model. The fraction 60 plus
+has the lowest marginal impact on the slope, if everything else stays
+the same an frac 60 plus changes for example 1 the exponent changes with
+-3.02. The non west2 has the highest impact on the slope, because the
+coëfficient is the lowest. Another important point is that or Non-west2
+and Non-west3 are both zero, or Non-west2 is one ore Non west 3 is one.
+The outcome of the crossvalidation for this model is 0.0582. So the mean
+squared difference between the fitted and predicted value is 0.0582,
+which is pretty close to 0. There are some limitations for this model,
+because the response variable is a fraction and will never be larger
+than one, theoratically a Generalized linear model would be better. Also
+some assumptions are violated. In the fitted vs residual graph it is
+visible that the variance is not equally spread, there is a small
+``loudspeaker pattern''. But because the fitted values are log
+transformed, it is not really possible to adapt this any further. Also
+there are two municipalities that fall outside the {[}-3,3{]} range in
+the normality plot, but because they are still in the 95\% envelope the
+decision is made to not delete these municipalities.
+
+\subsection{further research}\label{further-research}
+
+Both of the models have different significant variables. But it is
+difficult to say which one is a better fitting model. Because both of
+them have reasons to choose that kind of model, also both of them have
+limitations. That is why further research should be done to research
+which of the model is the best fitting model. Another topic that can be
+researched in further research is the influence of demographics on areas
+of municipalities instead of whole municipialities. Because differences
+between areas are nullified in the demographics of a municipality.
+
+\subsection{Abstract}\label{abstract}
+
+In this repport some demographics of dutch municipalities are compared
+with the general Dutch election results of 2017. The demographic
+variables in this research are the urban index, the fraction of high
+educated persons in a municipality, the non west factor, a 1 for the
+factor means less than 5\% non west residents, a 2 means 5 till 10\% non
+west residents and a three means more than 10\% residents, the mean
+income of the municipality and the fraction of persons who are 60 years
+and older. The response variable is the CDA votes. Two models are made
+to explain the influence of the demographics on the amount of votes for
+CDA per municipality. The first model is a multiple linear model, the
+fraction of CDA votes is the respons variable. Because of error
+assumptions, the response variable is log transformed. The final model
+with this transformation is:\\
+\(Y_i = e^(-1.0298 -0.8277*high educated fraction -0.1311*Urban index -0.1141*Non west2 -0.2871*Non west3 -3.0168*Frac 60plus + \epsilon i)\)\\
+The fraction 60 plus has the lowest marginal influence on the slope of
+the model. The factor Non west2 has the highest marginal impact on the
+slope. There are still some limitations, firstly because even though a
+log transformation has been made there is still a non constant error
+variance. Secondly because the respons variable is a fraction,
+theoretically a generalized linear model would be better. That is why
+the second kind of model described is a generalized linear model. HIER
+GML SAMENVATTING PLUS DISCUSSION The final linear model has different
+significant variables than the general linear model. It is difficult to
+say which model is better, because both have there limitations. In
+further research the best fitting model of those two can be obtained.
 
 
 \end{document}

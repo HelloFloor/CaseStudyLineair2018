@@ -53,4 +53,21 @@ mean(loss)
 
 mean(final_model_lm_CDA$residuals^2)
 
+K <- 5
+index <- rep(1:K, floor(nrow(Data_CDA)/K)+1)[1:nrow(Data_CDA)]
+fold.index <- sample(index)
 
+Loss <- function(x, y){
+  sum((x-y)^2)/length(x)
+}
+loss2 <- numeric(K)
+
+for (k in 1:K){
+  training <- Data_CDA[fold.index!=k, ]
+  validation <- Data_CDA[fold.index==k, ]
+  training.fit <- lm_CDA_2
+  validation.predict <- predict(training.fit, newdata=validation, type='response')
+  loss2[k] <- Loss(log(validation$CDA_frac), validation.predict)
+}
+mean(loss2)
+mean(loss)

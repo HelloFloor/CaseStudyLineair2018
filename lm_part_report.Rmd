@@ -43,6 +43,7 @@ Data_CDA <- read.csv("1_clean_data/Clean_data_CDA_2018-12-21.csv",
                  stringsAsFactors=F, header = T)
 Data_GL <- read.csv("1_clean_data/Clean_data_GL_2018-12-21.csv",
                  stringsAsFactors=F, header = T)
+Data_CDA$Non_west <- as.factor(Data_CDA$Non_west)
 ```
 
 
@@ -147,8 +148,7 @@ $ln(Y_i) = \beta_0 + 	\beta_1*high educated fraction + \beta_2*Urban index +  \b
 The coëfficients are given in the table below
 ```{r demographics_data1, echo=FALSE}
 lm_CDA_final <-lm(log(CDA_frac) ~ High_educated_frac +  Urban_index +Non_west + Frac_60plus,data = Data_CDA[-16,])
-knitr::kable(
-  summary(lm_CDA_final$coef, digits=2), caption="Final Model", "latex",booktabs = T) %>% kable_styling(latex_options=c("scale_down", "striped"), bootstrap_options = "hover")
+
 ```
 \begin{table}[ht]
 \centering
@@ -186,3 +186,55 @@ $ln(Y_i) = -1.0298  	-0.8277*high educated fraction  -0.1311*Urban index   -0.11
 All the coëfficients are negative, but because the fitted value is a log value it will be positive. 
 
 ## Cross validation
+To tell something about the prediction possibilities of the model, cross validation is done. Cross validation tells something about how well the model predicts on average, it telss nothing about the 'correctness'of the model. Cross validation estimates the expected prediction error of a model.  
+The cross validation works as follows. First 5k-folds are made. This means that the data is divided in five folds. Next, the loss function is made. This function makes the square of the real value minues the predicted value. By taking the sum of these values  and the deviation by amount of real values in the k-folds, the mean is taken. 4 of the 5 kfolds are used ase training data, the other one is the test/validation data. The model is fitted on the training data and afterwards it tries to fit on the test data, to see if it predicts closely. This is done  5 times, every time another fold is is the testdata. As is shown below, the prediction error for this model is 0.0582
+```{r}
+# The model
+lm_CDA_final <-lm(log(CDA_frac) ~ High_educated_frac +  Urban_index +Non_west + Frac_60plus,data = Data_CDA[-16,])
+
+# Make folds 
+
+K <- 5
+index <- rep(1:K, floor(nrow(Data_CDA)/K)+1)[1:nrow(Data_CDA)]
+
+fold.index <- sample(index)
+
+# Loss function
+Loss <- function(x, y){
+  sum((x-y)^2)/length(x)
+}
+loss <- numeric(K)
+
+# cross-validation
+for (k in 1:K){
+  training <- Data_CDA[fold.index!=k, ]
+  validation <- Data_CDA[fold.index==k, ]
+  training.fit <- lm_CDA_final 
+  validation.predict <- predict(training.fit, newdata=validation, type='response')
+  loss[k] <- Loss(log(validation$CDA_frac), validation.predict)
+}
+mean(loss)
+
+``` 
+
+
+## Discussion
+
+## Linear regression
+
+Because the fitted values are transformed to a ln form, it is also possible to raise the coëfficients to a exponential power. The final model obtained then is:  
+
+$Y_i = e^(-1.0298  	-0.8277*high educated fraction  -0.1311*Urban index   -0.1141*Non west2  -0.2871*Non west3 -3.0168*Frac 60plus + \epsilon i)$  
+
+Per variable the influence will be discussed. The slope will start at point exp(-1.0298), this is equal to 0.357. This means if all the other demographic variables are zero, the fitted value will be equal to the intercept, so equal to 0.357. This not a possible outcome, because a Municipality with all these demographics equal to zero is no reality. For the other coefficients it is a bit harder to predict there influence, because of the log transformation and the different range the different variables have. For example, the urban index has a 0-3.8 range and education ahs a 0.12-0.47 range in this data set. But still some remarks can be made about the slope of the model. The fraction 60 plus has the lowest marginal impact on the slope, if everything else stays the same an frac 60 plus changes for example 1 the exponent changes with -3.02. The non west2 has the highest impact on the slope, because the coëfficient is the lowest. Another important point is that or Non-west2 and Non-west3 are both zero, or Non-west2 is one ore Non west 3 is one. The outcome of the crossvalidation for this model is 0.0582. So the mean squared difference between the fitted and predicted value is 0.0582, which is pretty close to 0.
+There are some limitations for this model, because the response variable is a fraction and will never be larger than one, theoratically a Generalized linear model would be better.  Also some assumptions are violated. In the fitted vs residual graph it is visible that the variance is not equally spread, there is a small "loudspeaker pattern". But because the fitted values are log transformed, it is not really possible to adapt this any further. Also there are two municipalities that fall outside the [-3,3] range in the normality plot, but because they are still in the 95% envelope the decision is made to not delete these municipalities. 
+
+## further research
+Both of the models have different significant variables. But it is difficult to say which one is a better fitting model. Because both of them have reasons to choose that kind of model, also both of them have limitations. That is why further research should be done to research which of the model is the best fitting model. Another topic that can be researched in further research is the influence of demographics on areas of municipalities instead of whole municipialities. Because differences between areas are nullified in the demographics of a municipality. 
+
+## Abstract
+In this repport some demographics of dutch municipalities are compared with the general Dutch election results of 2017. The demographic variables in this research are the urban index, the fraction of high educated persons in a municipality, the non west factor, a 1 for the factor means less than 5% non west residents, a 2 means 5 till 10% non west residents and a three means more than 10% residents, the mean income of the municipality and the fraction of persons who are 60 years and older. The response variable is the CDA votes. Two models are made to explain the influence of the demographics on the amount of votes for CDA per municipality. The first model is a multiple linear model, the fraction of CDA votes is the respons variable. Because of error assumptions, the response variable is log transformed. The final model with this transformation is:  
+$Y_i = e^(-1.0298  	-0.8277*high educated fraction  -0.1311*Urban index   -0.1141*Non west2  -0.2871*Non west3 -3.0168*Frac 60plus + \epsilon i)$  
+The fraction 60 plus has the lowest marginal influence on the slope of the model. The factor Non west2 has the highest marginal impact on the slope. There are still some limitations, firstly because even though a log transformation has been made there is still a non constant error variance. Secondly because the respons variable is a fraction, theoretically a generalized linear model would be better. That is why the second kind of model described is a generalized linear model. 
+HIER GML SAMENVATTING PLUS DISCUSSION
+The final linear model has different significant variables than the general linear model. It is difficult to say which model is better, because both have there limitations. In further research the best fitting model of those two can be obtained. 
