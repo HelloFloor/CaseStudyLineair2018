@@ -125,7 +125,7 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{January 18, 2019}
+    \date{January 20, 2019}
 
 \usepackage{float}
 
@@ -135,19 +135,46 @@
 Put the abstract over here
 \end{abstract}
 
+\section{Abstract}\label{abstract}
+
+For this report demographics of Dutch municipalities are compared with
+the results of the general Dutch election of 2017. The demographic
+variables are the \emph{Urban index}, the \emph{fraction of highly
+educated residents}, \emph{Mean income}, \emph{fraction of 60 plus
+residents} in a municipality and the factor \emph{Non western}. This
+factor devides municipalities in the once with less than 5\%, 5-10\% and
+more than 10\% Non-western residents.
+
+This research focusses on the results for party CDA. The goal is to find
+voting trends per demographic group and to make future predictions for
+CDA. This goal is approached with two different models. The first is a
+linear model with a log transformation of the respons. The cross
+validation resulted in a Mean Squared Error (MSE) of 0.058. The second,
+is a binomial model with the logit as link function. The found MSE is
+0.0017.
+
+It is difficult to say which model fits the data better, because they
+have different significant variables. Furthermore both have their
+limitations and the data showed a large overdispersion. It is not likely
+that predictions for future elections can be made with these models.
+
 \section{1. Introduction}\label{introduction}
 
 \subsection{1.1 Motivation}\label{motivation}
 
 For this case study, it was decided to combine the outcome from the
 Dutch elections of 2017 and demographic data. Both are collected per
-municipality and are well maintained and reliable. This makes A lot of
-information is available for both in the Netherlands. This will
-hopefully result in observing voting trends per demographic group. The
-final goal is to validate the model for making futyre predictions.
+municipality and are well maintained and reliable. This will hopefully
+result in observing voting trends per demographic group. The final goal
+is to validate the model for making future predictions.
 
-\includegraphics[width=2.60417in]{Partijlandschap.jpg} \textbf{Dutch
-political parties}\\
+\begin{figure}
+\centering
+\includegraphics[width=2.60417in]{Partijlandschap.jpg}
+\caption{Party landscape}
+\end{figure}
+
+\textbf{Dutch political parties}\\
 This figure displays the diffences between the political parties in the
 Netherlands. The Netherlands has a total of 13 parties. This
 investigation focusses on only one party. This party should not be to
@@ -164,19 +191,19 @@ for example gender, but on a municipality level there is no large
 difference between the amount of men and women per municipality. So that
 is a more interesting demographic to research on an individual level.
 \emph{The standardized income per municipality} are given in thousands.
-\emph{the urban index of a municipality} is a database with five
-categories per municipality. These five categories are:
+\emph{Urban index} of a municipality is a database with five categories
+per municipality. These five categories are:
 
 \begin{itemize}
-\item Really strong urbanity (more than 2500 addresses per $km^2$) 
-\item Strong urbanity (1500-2500 addresses per $km^2$) 
-\item Moderate urbanity (1000- 1500 addresses per $km^2$) 
-\item Little urbanity (500-1000 addresses per $km^2$)  
-\item No urbanity (less than 500 addresses per $km^2$)
+\item 0. No urbanity (less than 500 addresses per $km^2$)
+\item 1. Little urbanity (500-1000 addresses per $km^2$)
+\item 2. Moderate urbanity (1000- 1500 addresses per $km^2$)
+\item 3. Strong urbanity (1500-2500 addresses per $km^2$) 
+\item 4. Really strong urbanity (more than 2500 addresses per $km^2$)
 \end{itemize}
 
 Per municipality the amount of \(km^2\) per category is given. The
-\emph{non-west residents per municipality} is given in an amount per
+\emph{non-west residents per municipality} is given as an amount per
 municipality, also the total amount of residents is given per
 municipality.
 
@@ -531,8 +558,8 @@ model.
 
 \subsection{Final model}\label{final-model}
 
-The backward elimination gave the final model.\\
-\(ln(Y_i) = \beta_0 + \beta_1*high educated fraction + \beta_2*Urban index + \beta_4*Non west2 + \beta_5*Non west 3 + \beta_6*Frac 60plus + \epsilon i\)
+The backward elimination resulted in the final model.\\
+\(ln(Y_i) = \beta_0 + \beta_1*high educated fraction + \beta_2*Urban index + \beta_4*Non west2 + \beta_5*Non west 3 + \beta_6*Frac 60plus + \epsilon_i\)
 The coëfficients are given in the table below
 
 \begin{table}[ht]
@@ -551,21 +578,6 @@ The coëfficients are given in the table below
 \end{tabular}
 \end{table}
 
-First, the error-assumptions will be checked (figure \ref{afm}). The
-`loudspeaker pattern' almost disappeared, so the variance of the error
-is almost stable. Because the model is already transformed into a log
-model, there is not much transformation possible to let the pattern
-totally disappear. The influence will not be that high, because the
-pattern is relatively small. In the qq-plot it is visible that almost
-all municipalities are in the -3,3 range. Only the municipalities
-Oostzaan and Tubbergen are outside this range. This is because Oostzaan
-has an extreme low CDA\_frac(0.067) and Tubbergen an extreme high
-CDA\_frac(0.42). The decision is made not to delete these values,
-because they are still in the 95\% envelope of the qq-plot. In the third
-plot the red line is notable, it goes up at the end of the graph. This
-means that there is some non-constant error variance, but because the
-scatter is not that big no action is needed.
-
 \begin{verbatim}
 ## 237 298 
 ## 236 297
@@ -577,7 +589,7 @@ scatter is not that big no action is needed.
 
 }
 
-\caption{\label{afm}Assumptions final model}\label{fig:unnamed-chunk-13}
+\caption{\label{asm}assumptions second model}\label{fig:unnamed-chunk-13}
 \end{figure}
 
 The estimates for the predictors are filled in the model and the
@@ -585,20 +597,52 @@ following results are obtained:
 
 \(ln(Y_i) = -1.0298 -0.8277*high educated fraction -0.1311*Urban index -0.1141*Non west2 -0.2871*Non west3 -3.0168*Frac 60plus + \epsilon i\)
 
-Something notable is that all coëfficients are negative, but because the
-fitted values are logaritmic the eventual output will be positive. The
-added-variable plots are visible below (figure\{avf\}).
-
-\begin{figure}[H]
-
-{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-14-1} 
-
-}
-
-\caption{\label{avf} Added variable plots final model}\label{fig:unnamed-chunk-14}
-\end{figure}
+All the coëfficients are negative, but because the fitted value is a log
+value it will be positive.
 
 \subsection{Cross validation}\label{cross-validation}
+
+To tell something about the prediction possibilities of the model, cross
+validation is done. Cross validation tells something about how well the
+model predicts on average, it telss nothing about the 'correctness'of
+the model. Cross validation estimates the expected prediction error of a
+model.\\
+The cross validation works as follows. First 5k-folds are made. This
+means that the data is divided in five folds. Next, the loss function is
+made. This function makes the square of the real value minues the
+predicted value. By taking the sum of these values and the deviation by
+amount of real values in the k-folds, the mean is taken. 4 of the 5
+kfolds are used ase training data, the other one is the test/validation
+data. The model is fitted on the training data and afterwards it tries
+to fit on the test data, to see if it predicts closely. This is done 5
+times, every time another fold is is the testdata. As is shown below,
+the prediction error for this model is 0.0582
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lm_CDA_final <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(}\KeywordTok{log}\NormalTok{(CDA_frac) }\OperatorTok{~}\StringTok{ }\NormalTok{High_educated_frac }\OperatorTok{+}\StringTok{ }\NormalTok{Urban_index }\OperatorTok{+}\StringTok{ }\NormalTok{Non_west }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\NormalTok{Frac_60plus, }\DataTypeTok{data =}\NormalTok{ Data_CDA[}\OperatorTok{-}\DecValTok{16}\NormalTok{, ])}
+\NormalTok{K <-}\StringTok{ }\DecValTok{5}
+\NormalTok{index <-}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\NormalTok{K, }\KeywordTok{floor}\NormalTok{(}\KeywordTok{nrow}\NormalTok{(Data_CDA)}\OperatorTok{/}\NormalTok{K) }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{)[}\DecValTok{1}\OperatorTok{:}\KeywordTok{nrow}\NormalTok{(Data_CDA)]}
+\NormalTok{fold.index <-}\StringTok{ }\KeywordTok{sample}\NormalTok{(index)}
+\NormalTok{Loss <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(x, y) \{}
+    \KeywordTok{sum}\NormalTok{((x }\OperatorTok{-}\StringTok{ }\NormalTok{y)}\OperatorTok{^}\DecValTok{2}\NormalTok{)}\OperatorTok{/}\KeywordTok{length}\NormalTok{(x)}
+\NormalTok{\}}
+\NormalTok{loss <-}\StringTok{ }\KeywordTok{numeric}\NormalTok{(K)}
+\ControlFlowTok{for}\NormalTok{ (k }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{K) \{}
+\NormalTok{    training <-}\StringTok{ }\NormalTok{Data_CDA[fold.index }\OperatorTok{!=}\StringTok{ }\NormalTok{k, ]}
+\NormalTok{    validation <-}\StringTok{ }\NormalTok{Data_CDA[fold.index }\OperatorTok{==}\StringTok{ }\NormalTok{k, ]}
+\NormalTok{    training.fit <-}\StringTok{ }\NormalTok{lm_CDA_final}
+\NormalTok{    validation.predict <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(training.fit, }\DataTypeTok{newdata =}\NormalTok{ validation, }\DataTypeTok{type =} \StringTok{"response"}\NormalTok{)}
+\NormalTok{    loss[k] <-}\StringTok{ }\KeywordTok{Loss}\NormalTok{(}\KeywordTok{log}\NormalTok{(validation}\OperatorTok{$}\NormalTok{CDA_frac), validation.predict)}
+\NormalTok{\}}
+\KeywordTok{mean}\NormalTok{(loss)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.05813659
+\end{verbatim}
 
 \section{3. Logistic regression}\label{logistic-regression}
 
@@ -609,139 +653,94 @@ votes per municipality is also available. Therefore, a binomial model
 would be a better fit to the data. A second model is developed that uses
 the logit as link function to transform the range of the respons. The
 choice for the logit was easily made. Because the inverse of the logit
-is directly interpretable as the log-odds ratio. This link displays the
-underlaying pattern of this data best. Below, the formula for the link
-function:
+is directly interpretable as the log-odds ratio and this link displays
+the underlaying pattern of the data best. Below, the formula for the
+link function:
 
 \(\eta = log(\frac{\theta}{1 - \theta}) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + ... + \beta_n x_n\)
 
 Where \(\theta\) is the probability of votes for CDA.
 
-Also for logistics regression are diagnostic plots needed to visualise
+Also for logistics regression diagnostic plots are needed to visualise
 the deviance/pearson residuals and search for outliers. Most of the
 diagnostics from the linear model extend relatively straighforward to
 logistic regression. However, leverages are no longer just a function of
-the explanatory variable, but also depend on the respons due to iterated
-weighted least squares. Furthermore, \(\theta\) can never be zero or
-one. Fortunately, this was not the case for any of the observations in
-this dataset.
+the explanatory variable, but also depend on the respons due to the
+iterated weighted least squares. Furthermore, \(\theta\) can never be
+zero or one. Fortunately, this was not the case for any of the
+observations in this dataset.
 
-\subsection{First model}\label{first-model-1}
+\subsection{3.1 First model}\label{first-model-1}
 
 Again, the first is the full model. Stepwise backward elimination is
 used to find the optimal model. Below, the formula for the full model:
 
-\(log(\frac{\theta}{1 - \theta}) = \beta_0 + \beta_1 \cdot UrbanIndex + \beta_2 \cdot HighlyEducatedFraction + \beta_3 \cdot MeanIncome + \beta_4 \cdot NonWest + \beta_5 \cdot Fraction60Plus\)
+\(log(\frac{\theta_i}{1 - \theta_i}) = \beta_0 + \beta_1 \cdot UrbanIndex + \beta_2 \cdot HighlyEducatedFraction + \beta_3 \cdot MeanIncome + \beta_4 \cdot NonWest + \beta_5 \cdot Fraction60Plus + \epsilon_i\)
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{glm_CDA_}\DecValTok{1}\NormalTok{ <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(}\KeywordTok{cbind}\NormalTok{(CDA_abs, Total_abs }\OperatorTok{-}\StringTok{ }\NormalTok{CDA_abs) }\OperatorTok{~}\StringTok{ }\NormalTok{Urban_index }\OperatorTok{+}\StringTok{ }\NormalTok{High_educated_frac }\OperatorTok{+}\StringTok{ }
-\StringTok{    }\NormalTok{Mean_income }\OperatorTok{+}\StringTok{ }\NormalTok{Non_west }\OperatorTok{+}\StringTok{ }\NormalTok{Frac_60plus, }\DataTypeTok{family =} \KeywordTok{binomial}\NormalTok{(}\DataTypeTok{link =} \StringTok{"logit"}\NormalTok{), }
-    \DataTypeTok{data =}\NormalTok{ Data_CDA)}
-\KeywordTok{summary}\NormalTok{(glm_CDA_}\DecValTok{1}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
+With \(i = 1, 2,.., N\) for the number of observations.
 
-\begin{verbatim}
-## 
-## Call:
-## glm(formula = cbind(CDA_abs, Total_abs - CDA_abs) ~ Urban_index + 
-##     High_educated_frac + Mean_income + Non_west + Frac_60plus, 
-##     family = binomial(link = "logit"), data = Data_CDA)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -88.318   -8.988   -1.521    7.670   57.920  
-## 
-## Coefficients:
-##                      Estimate Std. Error z value Pr(>|z|)    
-## (Intercept)        -1.0559765  0.0156927  -67.29   <2e-16 ***
-## Urban_index        -0.1933926  0.0020376  -94.91   <2e-16 ***
-## High_educated_frac -2.1027583  0.0199536 -105.38   <2e-16 ***
-## Mean_income         0.0156359  0.0005334   29.32   <2e-16 ***
-## Non_west2          -0.0562758  0.0031606  -17.80   <2e-16 ***
-## Non_west3          -0.2592768  0.0046088  -56.26   <2e-16 ***
-## Frac_60plus        -1.3424322  0.0737404  -18.20   <2e-16 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## (Dispersion parameter for binomial family taken to be 1)
-## 
-##     Null deviance: 247550  on 365  degrees of freedom
-## Residual deviance:  89969  on 359  degrees of freedom
-## AIC: 93475
-## 
-## Number of Fisher Scoring iterations: 4
-\end{verbatim}
+Below the summary of this model:
 
-The summary visualizes that the all the variables are very significant,
-with small errors. The full model has 359 degrees of freedom and it is
-expected that the residual deviance is roughly equivalent. However, the
-residual deviance is far above this value. These are strong indications
-that this model suffers from overdispersion. This assumption seems
-reasonable, because there is a very large variance in how many residents
-per municapality voted for CDA. In some municipalities only 3\% voted
-for CDA, while it others nearly 50\% voted for CDA. It is concluded that
-a quasi-binomial would fit the data better.
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrr}
+  \hline
+ & Estimate & Std. Error & z value & Pr($>$$|$z$|$) \\ 
+  \hline
+(Intercept) & -1.0560 & 0.0157 & -67.29 & 0.0000 \\ 
+  Urban\_index & -0.1934 & 0.0020 & -94.91 & 0.0000 \\ 
+  High\_educated\_frac & -2.1028 & 0.0200 & -105.38 & 0.0000 \\ 
+  Mean\_income & 0.0156 & 0.0005 & 29.32 & 0.0000 \\ 
+  Non\_west2 & -0.0563 & 0.0032 & -17.81 & 0.0000 \\ 
+  Non\_west3 & -0.2593 & 0.0046 & -56.26 & 0.0000 \\ 
+  Frac\_60plus & -1.3424 & 0.0737 & -18.20 & 0.0000 \\ 
+   \hline
+\end{tabular}
+\end{table}
 
-\subsection{Second model}\label{second-model-1}
+The summary shows that the all the variables are very significant and
+have small standard errors. The full model has 359 degrees of freedom
+and it is expected that the residual deviance is roughly equivalent.
+However, the residual deviance is far above this value. These are strong
+indications that this model suffers from overdispersion. This assumption
+seems reasonable, because there is a very large variance in how many
+residents per municapality voted for CDA. In some municipalities only
+3\% voted for CDA, while it others nearly 50\% voted for CDA. It is
+concluded that a quasi-binomial would fit the data better.
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{glm_CDA_}\DecValTok{2}\NormalTok{ <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(}\KeywordTok{cbind}\NormalTok{(CDA_abs, Total_abs }\OperatorTok{-}\StringTok{ }\NormalTok{CDA_abs) }\OperatorTok{~}\StringTok{ }\NormalTok{Urban_index }\OperatorTok{+}\StringTok{ }\NormalTok{High_educated_frac }\OperatorTok{+}\StringTok{ }
-\StringTok{    }\NormalTok{Mean_income }\OperatorTok{+}\StringTok{ }\NormalTok{Non_west }\OperatorTok{+}\StringTok{ }\NormalTok{Frac_60plus, }\DataTypeTok{family =} \KeywordTok{quasibinomial}\NormalTok{(}\DataTypeTok{link =} \StringTok{"logit"}\NormalTok{), }
-    \DataTypeTok{data =}\NormalTok{ Data_CDA)}
-\KeywordTok{summary}\NormalTok{(glm_CDA_}\DecValTok{2}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
+\subsection{3.2 Second model}\label{second-model-1}
 
-\begin{verbatim}
-## 
-## Call:
-## glm(formula = cbind(CDA_abs, Total_abs - CDA_abs) ~ Urban_index + 
-##     High_educated_frac + Mean_income + Non_west + Frac_60plus, 
-##     family = quasibinomial(link = "logit"), data = Data_CDA)
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -88.318   -8.988   -1.521    7.670   57.920  
-## 
-## Coefficients:
-##                     Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)        -1.055977   0.250122  -4.222 3.07e-05 ***
-## Urban_index        -0.193393   0.032478  -5.955 6.21e-09 ***
-## High_educated_frac -2.102758   0.318036  -6.612 1.38e-10 ***
-## Mean_income         0.015636   0.008501   1.839  0.06670 .  
-## Non_west2          -0.056276   0.050376  -1.117  0.26469    
-## Non_west3          -0.259277   0.073459  -3.530  0.00047 ***
-## Frac_60plus        -1.342432   1.175330  -1.142  0.25414    
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## (Dispersion parameter for quasibinomial family taken to be 254.0441)
-## 
-##     Null deviance: 247550  on 365  degrees of freedom
-## Residual deviance:  89969  on 359  degrees of freedom
-## AIC: NA
-## 
-## Number of Fisher Scoring iterations: 4
-\end{verbatim}
+The second model has still all the variables, but is fitted to a
+quasi-binomial. Below the output of the summary is visualized:
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrr}
+  \hline
+ & Estimate & Std. Error & t value & Pr($>$$|$t$|$) \\ 
+  \hline
+(Intercept) & -1.0560 & 0.2501 & -4.22 & 0.0000 \\ 
+  Urban\_index & -0.1934 & 0.0325 & -5.95 & 0.0000 \\ 
+  High\_educated\_frac & -2.1028 & 0.3180 & -6.61 & 0.0000 \\ 
+  Mean\_income & 0.0156 & 0.0085 & 1.84 & 0.0667 \\ 
+  Non\_west2 & -0.0563 & 0.0504 & -1.12 & 0.2647 \\ 
+  Non\_west3 & -0.2593 & 0.0735 & -3.53 & 0.0005 \\ 
+  Frac\_60plus & -1.3424 & 1.1753 & -1.14 & 0.2541 \\ 
+   \hline
+\end{tabular}
+\end{table}
 
 By applying a quasi binomial model, a dispersion parameter \(\phi\) is
 included, resulting in larger standard errors and less significant
-p-values. \(\phi\) is estimated on the data at 254.0441. The variables
-\texttt{Frac\_60plus}, \texttt{Mean\_income} and factor
-\texttt{Non\_west2} are no longer significant.
+p-values. \(\phi\) is estimated on the data at 254.0441. Furthermore,
+the null deviance is estimated at 247,550 with 365 df and the residual
+at 89969 with 359 df. The variables \texttt{Frac\_60plus},
+\texttt{Mean\_income} and factor level \texttt{Non\_west2} are no longer
+significant.
 
 No goodness of fit test is possible because of the free dispersion
-parameter.The decision to remove variables is done based on the lowest
+parameter. The decision to remove variables is done based on the lowest
 F-test.
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{vif}\NormalTok{(glm_CDA_}\DecValTok{2}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
 
 \begin{verbatim}
 ##        Urban_index High_educated_frac        Mean_income 
@@ -749,12 +748,6 @@ F-test.
 ##          Non_west2          Non_west3        Frac_60plus 
 ##       0.0007725368       0.0012914703       0.0005161910
 \end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{drop1}\NormalTok{(glm_CDA_}\DecValTok{2}\NormalTok{, }\DataTypeTok{test =} \StringTok{"F"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
 
 \begin{verbatim}
 ## Single term deletions
@@ -780,134 +773,87 @@ collinearity between the explanatory variables.
 
 At last, the residuals and cook's distance are visualized
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{par}\NormalTok{(}\DataTypeTok{mfrow =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{3}\NormalTok{))}
-\KeywordTok{halfnorm}\NormalTok{(}\KeywordTok{residuals}\NormalTok{(glm_CDA_}\DecValTok{2}\NormalTok{, }\StringTok{"pearson"}\NormalTok{))}
-\KeywordTok{plot}\NormalTok{(glm_CDA_}\DecValTok{2}\NormalTok{, }\DataTypeTok{which =} \DecValTok{1}\NormalTok{, }\DataTypeTok{id.n =} \DecValTok{5}\NormalTok{)}
-\KeywordTok{plot}\NormalTok{(glm_CDA_}\DecValTok{2}\NormalTok{, }\DataTypeTok{which =} \DecValTok{4}\NormalTok{, }\DataTypeTok{id.n =} \DecValTok{5}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
+\begin{figure}[H]
 
-\begin{center}\includegraphics{Report_files/figure-latex/unnamed-chunk-19-1} \end{center}
+{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-16-1} 
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{Data_CDA[}\KeywordTok{c}\NormalTok{(}\DecValTok{16}\NormalTok{, }\DecValTok{74}\NormalTok{, }\DecValTok{265}\NormalTok{), ]}
-\end{Highlighting}
-\end{Shaded}
+}
 
-\begin{verbatim}
-##           Muni CDA_frac Urban_index High_educated_frac Mean_income
-## 16   Amsterdam    0.031       3.789               0.47        25.3
-## 74  Dinkelland    0.373       0.531               0.26        26.0
-## 265  Rotterdam    0.060       3.546               0.31        22.9
-##     Non_west_frac CDA_abs Total_abs Frac_60plus Non_west
-## 16           0.35   13562    440854        0.09        3
-## 74           0.02    6560     17586        0.13        1
-## 265          0.38   18813    315550        0.10        3
-\end{verbatim}
+\caption{\label{ass_mdl2}Diagnostics first quasi-binomial model}\label{fig:unnamed-chunk-16}
+\end{figure}
 
-The left plot display the half-normal quantiles against the pearson
-residuals. Ideally, these residuals would not be greater than 3.
-However, this plot shows residuals even up to 80. The middle plot
-displays the predicted values against the deviance resiuals. Also here a
-large spread of the residuals is observed. There seems to be
-non-constant erro variance, because the spread becomes larger for higher
-predicted values. The right plots shows the cook's distance, which can
-identify influential observations. Observation 16 is an outlier, because
-it is very influential and stands out from any pattern in the residual
-plots. Furthermore, Dinkelland (obs 74) and Rotterdam (obs 265) are also
+The left plot of figure \ref{ass_mdl2} visualizes the half-normal
+quantiles against the pearson residuals. Ideally, these residuals would
+not be greater than 3. However, this plot shows residuals even up to 80.
+The middle plot displays the predicted values against the deviance
+resiuals. Also here a large spread of the residuals is observed and the
+variance tends to increase with an increase of the fitted value. The
+right plots visualizes the cook's distance, which can identify
+influential observations. Observation 16 is an outlier, because it is
+very influential and stands out from any pattern in the residual plots.
+Furthermore, Dinkelland (obs 74) and Rotterdam (obs 265) are also
 influential. Amsterdam is the municipality with the lowest percentage of
 CDA votes and Dinkelland has the highest percentage of CDA votes.
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{avPlots}\NormalTok{(glm_CDA_}\DecValTok{2}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
+\begin{figure}[H]
 
-\begin{center}\includegraphics{Report_files/figure-latex/unnamed-chunk-20-1} \end{center}
+{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-17-1} 
 
-The avPlots help to interpret the partial regression coefficients when
-the other variables are held constant.The partial regression line is
-highly influenced by observation 16 again. The blue lines do not
-represent the data well at the moment.
+}
 
-\subsection{Third model}\label{third-model}
+\caption{\label{av_mdl2}AvPlots first quasi-binomial model}\label{fig:unnamed-chunk-17}
+\end{figure}
+
+Figure \ref{av_mdl2} help to interpret the partial regression
+coefficients in a model when the other variables are held constant. The
+partial regression line is highly influenced by observation 16 again.
+The blue lines do not represent the data well at the moment.
+
+\subsection{3.3 Third model}\label{third-model}
 
 For this model the variable \texttt{Frac\_60plus} is removed, because it
 had the lowest F-value. Furthermore, the observations 16 (Amsterdam) and
-265 (Dinkelland) are removed. These influenced the partial regression
-coefficients greatly and had large residual and cook's distances. These
-steps were originally done in two, but they are combined for this
+265 (Dinkelland) are removed. These influence the partial regression
+coefficients greatly and have large residuals and cook's distances.
+These steps were originally done in two, but are combined for this
 report.
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{glm_CDA_}\DecValTok{4}\NormalTok{ <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(}\KeywordTok{cbind}\NormalTok{(CDA_abs, Total_abs }\OperatorTok{-}\StringTok{ }\NormalTok{CDA_abs) }\OperatorTok{~}\StringTok{ }\NormalTok{Urban_index }\OperatorTok{+}\StringTok{ }\NormalTok{High_educated_frac }\OperatorTok{+}\StringTok{ }
-\StringTok{    }\NormalTok{Mean_income }\OperatorTok{+}\StringTok{ }\NormalTok{Non_west, }\DataTypeTok{family =} \KeywordTok{quasibinomial}\NormalTok{(}\DataTypeTok{link =} \StringTok{"logit"}\NormalTok{), }\DataTypeTok{data =}\NormalTok{ Data_CDA[}\OperatorTok{-}\KeywordTok{c}\NormalTok{(}\DecValTok{16}\NormalTok{, }
-    \DecValTok{265}\NormalTok{), ])}
-\KeywordTok{summary}\NormalTok{(glm_CDA_}\DecValTok{4}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
+Below the summary output from this third model:
 
-\begin{verbatim}
-## 
-## Call:
-## glm(formula = cbind(CDA_abs, Total_abs - CDA_abs) ~ Urban_index + 
-##     High_educated_frac + Mean_income + Non_west, family = quasibinomial(link = "logit"), 
-##     data = Data_CDA[-c(16, 265), ])
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -44.024   -9.619   -2.437    6.074   59.653  
-## 
-## Coefficients:
-##                      Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)        -1.0877540  0.1801672  -6.037 3.92e-09 ***
-## Urban_index        -0.1351943  0.0303257  -4.458 1.11e-05 ***
-## High_educated_frac -1.2202265  0.3125548  -3.904 0.000113 ***
-## Mean_income        -0.0004273  0.0081731  -0.052 0.958331    
-## Non_west2          -0.1232492  0.0479004  -2.573 0.010483 *  
-## Non_west3          -0.3447138  0.0690753  -4.990 9.42e-07 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## (Dispersion parameter for quasibinomial family taken to be 221.709)
-## 
-##     Null deviance: 173842  on 363  degrees of freedom
-## Residual deviance:  76966  on 358  degrees of freedom
-## AIC: NA
-## 
-## Number of Fisher Scoring iterations: 4
-\end{verbatim}
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrr}
+  \hline
+ & Estimate & Std. Error & t value & Pr($>$$|$t$|$) \\ 
+  \hline
+(Intercept) & -1.0878 & 0.1802 & -6.04 & 0.0000 \\ 
+  Urban\_index & -0.1352 & 0.0303 & -4.46 & 0.0000 \\ 
+  High\_educated\_frac & -1.2202 & 0.3126 & -3.90 & 0.0001 \\ 
+  Mean\_income & -0.0004 & 0.0082 & -0.05 & 0.9583 \\ 
+  Non\_west2 & -0.1232 & 0.0479 & -2.57 & 0.0105 \\ 
+  Non\_west3 & -0.3447 & 0.0691 & -4.99 & 0.0000 \\ 
+   \hline
+\end{tabular}
+\end{table}
 
 By removing observation 16 and 265, the factor \texttt{Non\_west2} has
-become significant. Also the residual deviance has decreased slightly,
-but is still far above the degrees of freedom.
+become significant. The null deviance has dropped to 173,842 with 363 df
+and the residual deviance has decreased slightly to 76,966 with 358 df.
+\(\phi\) has increased slightly to 221.709.
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{par}\NormalTok{(}\DataTypeTok{mfrow =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{3}\NormalTok{))}
-\KeywordTok{halfnorm}\NormalTok{(}\KeywordTok{residuals}\NormalTok{(glm_CDA_}\DecValTok{4}\NormalTok{, }\StringTok{"pearson"}\NormalTok{))}
-\KeywordTok{plot}\NormalTok{(glm_CDA_}\DecValTok{4}\NormalTok{, }\DataTypeTok{which =} \DecValTok{1}\NormalTok{, }\DataTypeTok{id.n =} \DecValTok{5}\NormalTok{)}
-\KeywordTok{plot}\NormalTok{(glm_CDA_}\DecValTok{4}\NormalTok{, }\DataTypeTok{which =} \DecValTok{4}\NormalTok{, }\DataTypeTok{id.n =} \DecValTok{5}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
+\begin{figure}[H]
 
-\begin{center}\includegraphics{Report_files/figure-latex/unnamed-chunk-22-1} \end{center}
+{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-19-1} 
+
+}
+
+\caption{\label{ass_mdl3}Diagnostics third quasi-binomial model}\label{fig:unnamed-chunk-19}
+\end{figure}
 
 The plot left still displays very large pearson residuals. The plot in
-the middle seems homogenic distributed, which slightly more variance for
-higher predicted values. And the cook's distance no longer displays
-highly influential observations.
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{drop1}\NormalTok{(glm_CDA_}\DecValTok{4}\NormalTok{, }\DataTypeTok{test =} \StringTok{"F"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
+the middle still visualized that the deviance residuals tend to increase
+when the predicted values increase. The cook's distance no longer
+displays highly influential observations.
 
 \begin{verbatim}
 ## Single term deletions
@@ -928,58 +874,29 @@ highly influential observations.
 According to the F-test \texttt{Mean\_income} should be removed as well,
 because the F-value is below 1 and the corresponding p-value is 0.96.
 
-\subsection{Final model}\label{final-model-1}
+\subsection{3.4 Final model}\label{final-model-1}
 
-The final model is reached after dropping the variables
-\texttt{Mean\_income} and \texttt{Frac\_60plus}. It's formula is as
-follows:
+The final model is reached after dropping the variable
+\texttt{Mean\_income}. It's formula is as follows:
 
-\(logit(p_{ij}) = -1.09 -0.14 \cdot UrbanIndex -1.23 \cdot HighlyEducatedFraction - 0.12 \cdot NonWest:2 - 0.34 \cdot NonWest:3\)
+\(logit(\theta_{i}) = -1.09 -0.13 \cdot UrbanIndex -1.23 \cdot HighlyEducatedFraction - 0.12 \cdot NonWest:2 - 0.34 \cdot NonWest:3 + \epsilon_i\)
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{glm_CDA_}\DecValTok{5}\NormalTok{ <-}\StringTok{ }\KeywordTok{glm}\NormalTok{(}\KeywordTok{cbind}\NormalTok{(CDA_abs, Total_abs }\OperatorTok{-}\StringTok{ }\NormalTok{CDA_abs) }\OperatorTok{~}\StringTok{ }\NormalTok{Urban_index }\OperatorTok{+}\StringTok{ }\NormalTok{High_educated_frac }\OperatorTok{+}\StringTok{ }
-\StringTok{    }\NormalTok{Non_west, }\DataTypeTok{family =} \KeywordTok{quasibinomial}\NormalTok{(}\DataTypeTok{link =} \StringTok{"logit"}\NormalTok{), }\DataTypeTok{data =}\NormalTok{ Data_CDA[}\OperatorTok{-}\KeywordTok{c}\NormalTok{(}\DecValTok{16}\NormalTok{, }
-    \DecValTok{265}\NormalTok{), ])}
-\KeywordTok{summary}\NormalTok{(glm_CDA_}\DecValTok{5}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
+The summary output is as follows:
 
-\begin{verbatim}
-## 
-## Call:
-## glm(formula = cbind(CDA_abs, Total_abs - CDA_abs) ~ Urban_index + 
-##     High_educated_frac + Non_west, family = quasibinomial(link = "logit"), 
-##     data = Data_CDA[-c(16, 265), ])
-## 
-## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -44.014   -9.626   -2.447    6.099   59.654  
-## 
-## Coefficients:
-##                    Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)        -1.09653    0.06526 -16.804  < 2e-16 ***
-## Urban_index        -0.13497    0.02996  -4.504 9.02e-06 ***
-## High_educated_frac -1.22972    0.25406  -4.840 1.93e-06 ***
-## Non_west2          -0.12346    0.04767  -2.590  0.00999 ** 
-## Non_west3          -0.34443    0.06876  -5.009 8.60e-07 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## (Dispersion parameter for quasibinomial family taken to be 221.0972)
-## 
-##     Null deviance: 173842  on 363  degrees of freedom
-## Residual deviance:  76966  on 359  degrees of freedom
-## AIC: NA
-## 
-## Number of Fisher Scoring iterations: 4
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{drop1}\NormalTok{(glm_CDA_}\DecValTok{5}\NormalTok{, }\DataTypeTok{test =} \StringTok{"F"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrr}
+  \hline
+ & Estimate & Std. Error & t value & Pr($>$$|$t$|$) \\ 
+  \hline
+(Intercept) & -1.0965 & 0.0653 & -16.80 & 0.0000 \\ 
+  Urban\_index & -0.1350 & 0.0300 & -4.50 & 0.0000 \\ 
+  High\_educated\_frac & -1.2297 & 0.2541 & -4.84 & 0.0000 \\ 
+  Non\_west2 & -0.1235 & 0.0477 & -2.59 & 0.0100 \\ 
+  Non\_west3 & -0.3444 & 0.0688 & -5.01 & 0.0000 \\ 
+   \hline
+\end{tabular}
+\end{table}
 
 \begin{verbatim}
 ## Single term deletions
@@ -996,32 +913,33 @@ follows:
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 \end{verbatim}
 
-The F-test shows that all variables now significantly contribute to the
-model. The residual deviance has slightly decreased, in compare to model
-\texttt{glm\_CDA\_2} with all the variables. However, the residual
-deviance is still much larger then the degrees of freedom.
+According to the F-test all variables now significantly contribute to
+the model. The null deviance is still 173,842 with 363 df and the
+residual deviance has slightly decreased to 76,966 with 359 df. \(\phi\)
+is estimated at 221.1.
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{par}\NormalTok{(}\DataTypeTok{mfrow =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{3}\NormalTok{))}
-\KeywordTok{halfnorm}\NormalTok{(}\KeywordTok{residuals}\NormalTok{(glm_CDA_}\DecValTok{5}\NormalTok{, }\StringTok{"pearson"}\NormalTok{))}
-\KeywordTok{plot}\NormalTok{(glm_CDA_}\DecValTok{5}\NormalTok{, }\DataTypeTok{which =} \DecValTok{1}\NormalTok{, }\DataTypeTok{id.n =} \DecValTok{5}\NormalTok{)}
-\KeywordTok{plot}\NormalTok{(glm_CDA_}\DecValTok{5}\NormalTok{, }\DataTypeTok{which =} \DecValTok{4}\NormalTok{, }\DataTypeTok{id.n =} \DecValTok{5}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
+\begin{figure}[H]
 
-\begin{center}\includegraphics{Report_files/figure-latex/unnamed-chunk-25-1} \end{center}
+{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-22-1} 
 
-There is still a large spread of both the pearson (left plot) and
-deviance (middle plot) residuals. Furthermore, there is non-constant
-errror variance. The cook's distance does not display very influential
-observations.
+}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{vif}\NormalTok{(glm_CDA_}\DecValTok{5}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
+\caption{\label{ass_final}Diagnostics final quasi-binomial model}\label{fig:unnamed-chunk-22}
+\end{figure}
+
+Figure \ref{ass_final} displays that there is still a large spread of
+both the pearson (left plot) and deviance (middle plot) residuals.
+Furthermore, there is non-constant errror variance. The cook's distance
+does not display very influential observations.
+
+\begin{figure}[H]
+
+{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-23-1} 
+
+}
+
+\caption{\label{av_final}Diagnostics final quasi-binomial model}\label{fig:unnamed-chunk-23}
+\end{figure}
 
 \begin{verbatim}
 ##        Urban_index High_educated_frac          Non_west2 
@@ -1030,43 +948,155 @@ observations.
 ##       0.0012734699
 \end{verbatim}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{avPlots}\NormalTok{(glm_CDA_}\DecValTok{5}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{center}\includegraphics{Report_files/figure-latex/unnamed-chunk-26-1} \end{center}
-
 After removing two outliers, the partial regression coefficients
 represent the data much better. There are no strong correlations between
 the explanatory variables and the respons. The low VIF values also
 indicate this.
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{function_nonwest1 <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(x) \{}
-    \OperatorTok{-}\FloatTok{1.09} \OperatorTok{-}\StringTok{ }\FloatTok{0.14} \OperatorTok{*}\StringTok{ }\NormalTok{x }\OperatorTok{-}\StringTok{ }\FloatTok{1.23} \OperatorTok{*}\StringTok{ }\NormalTok{x}
-\NormalTok{\}}
-\NormalTok{function_nonwest2 <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(x) \{}
-    \OperatorTok{-}\FloatTok{1.09} \OperatorTok{-}\StringTok{ }\FloatTok{0.14} \OperatorTok{*}\StringTok{ }\NormalTok{x }\OperatorTok{-}\StringTok{ }\FloatTok{1.23} \OperatorTok{*}\StringTok{ }\NormalTok{x }\OperatorTok{-}\StringTok{ }\FloatTok{0.12} \OperatorTok{*}\StringTok{ }\NormalTok{x}
-\NormalTok{\}}
-\NormalTok{function_nonwest3 <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(x) \{}
-    \OperatorTok{-}\FloatTok{1.09} \OperatorTok{-}\StringTok{ }\FloatTok{0.14} \OperatorTok{*}\StringTok{ }\NormalTok{x }\OperatorTok{-}\StringTok{ }\FloatTok{1.23} \OperatorTok{*}\StringTok{ }\NormalTok{x }\OperatorTok{-}\StringTok{ }\FloatTok{0.34} \OperatorTok{*}\StringTok{ }\NormalTok{x}
-\NormalTok{\}}
-\KeywordTok{plot}\NormalTok{(}\KeywordTok{function_nonwest1}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{), }\DataTypeTok{type =} \StringTok{"l"}\NormalTok{)}
-\KeywordTok{lines}\NormalTok{(}\KeywordTok{function_nonwest2}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{), }\DataTypeTok{type =} \StringTok{"l"}\NormalTok{, }\DataTypeTok{col =} \StringTok{"red"}\NormalTok{)}
-\KeywordTok{lines}\NormalTok{(}\KeywordTok{function_nonwest3}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{), }\DataTypeTok{type =} \StringTok{"l"}\NormalTok{, }\DataTypeTok{col =} \StringTok{"blue"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
+\subsection{3.5 Cross validation}\label{cross-validation-1}
 
-\begin{center}\includegraphics{Report_files/figure-latex/unnamed-chunk-27-1} \end{center}
+At last, the logistic model is validated by k-fold validation. This
+dataset has 366 observations, therefore K = 5 is enough. The code for
+cross validation is similar to the one used for the linear model.
+Therefore, only the output is presented here and not the code.
 
-\subsection{Cross validation}\label{cross-validation-1}
+\begin{verbatim}
+##  1  2  3  4  5 
+## 74 73 73 73 73
+\end{verbatim}
 
-\section{4. Discussion}\label{discussion}
+\begin{verbatim}
+## [1] 0.001708063
+\end{verbatim}
 
-\subsection{Limitations}\label{limitations}
+The cross validation results in a Means Squared Error (MSE) of 0.0017.
+
+\subsection{Discussion}\label{discussion}
+
+\subsection{Linear regression}\label{linear-regression}
+
+Because the fitted values are transformed to a ln form, it is also
+possible to raise the coëfficients to a exponential power. The final
+model obtained then is:
+
+\(Y_i = e^(-1.0298 -0.8277*high educated fraction -0.1311*Urban index -0.1141*Non west2 -0.2871*Non west3 -3.0168*Frac 60plus + \epsilon i)\)
+
+Per variable the influence will be discussed. The slope will start at
+point exp(-1.0298), this is equal to 0.357. This means if all the other
+demographic variables are zero, the fitted value will be equal to the
+intercept, so equal to 0.357. This not a possible outcome, because a
+Municipality with all these demographics equal to zero is no reality.
+For the other coefficients it is a bit harder to predict there
+influence, because of the log transformation and the different range the
+different variables have. For example, the urban index has a 0-3.8 range
+and education ahs a 0.12-0.47 range in this data set. But still some
+remarks can be made about the slope of the model. The fraction 60 plus
+has the lowest marginal impact on the slope, if everything else stays
+the same an frac 60 plus changes for example 1 the exponent changes with
+-3.02. The non west2 has the highest impact on the slope, because the
+coëfficient is the lowest. Another important point is that or Non-west2
+and Non-west3 are both zero, or Non-west2 is one ore Non west 3 is one.
+The outcome of the crossvalidation for this model is 0.0582. So the mean
+squared difference between the fitted and predicted value is 0.0582,
+which is pretty close to 0.
+
+There are some limitations for this model, because the response variable
+is a fraction and will never be larger than one, theoratically a
+Generalized linear model would be better. Also some assumptions are
+violated. In the fitted vs residual graph it is visible that the
+variance is not equally spread, there is a small ``loudspeaker
+pattern''. But because the fitted values are log transformed, it is not
+really possible to adapt this any further. Also there are two
+municipalities that fall outside the {[}-3,3{]} range in the normality
+plot, but because they are still in the 95\% envelope the decision is
+made to not delete these municipalities.
+
+\subsection{Further research}\label{further-research}
+
+Both of the models have different significant variables. But it is
+difficult to say which one is a better fitting model. Because both of
+them have reasons to choose that kind of model, also both of them have
+limitations. That is why further research should be done to research
+which of the model is the best fitting model. Another topic that can be
+researched in further research is the influence of demographics on areas
+of municipalities instead of whole municipialities. Because differences
+between areas are nullified in the demographics of a municipality.
+
+\subsection{4.2 Logistic regression}\label{logistic-regression-1}
+
+For the final model two variables and two outliers are removed. The
+coefficients of the model are on the log-odds scale and need to be
+transformed before interpretating them. Each estimated coefficient is
+the expected change in the log odds of voting for CDA for a unit
+increase in the corresponding explanatory variable holding the other
+explanatory variables constant.
+
+The coefficient for \emph{Urban Index} is the difference in the log
+odds. In other words, the expected change in log odds of voting for CDA
+is -0.13. This can be transformed to the odds: \(exp(-0.13)\) = 0.88.
+The odds of voting for CDA decrease with roughly 12\% if the Urbanity
+increases with one unit. The Urbanity index has a range from 0 to 4, so
+this variable has a large influence. For example, when comparing
+Terschelling (Urbanity index of 0) and Leiden (Urbanity index of 3.7),
+the expected decrease is 40.7\%.
+
+An similar calculation can be done for one unit increase of \emph{Non
+west}. When \emph{Non west} increases from 1 (the reference level) to 2
+and the other explanatory variables are held constant, then the log odds
+of voting for CDA is -0.12. Transforming this to the odds results in a
+decrease of 11\%, roughly. And when when comparing factor level 1 to 3,
+the log odds is -0.34. This results in the odds of \(exp(-0.34)\) =
+0.71, a decrease of 29\%. This is not a simple duplication of level 2.
+
+According to the model, holding \emph{Highly educated} and \emph{Non
+west} constant, the odds of voting for CDA if the Urban index increases
+with 1 unit is \(exp(-0.16)\) = 0.87. In percentage change does this
+mean that the odds decrease with 12.6\%.
+
+At last, the odds of voting for CDA if \emph{Highly educated} increases
+with 1 unit is \(exp(-1.23)\) = 0.29. In percentage change does this
+mean that the odds decrease with 70.8\%. This is a very large decrease,
+but can be explained. This variable is a fraction and has a range from 0
+- 1. An increase of one unit is not likely to happen.
+
+In summary, municipalities in rural areas, with smaller amounts of
+Non-western and Highly educated residents tend to vote for CDA. Below
+the formula with the odds ratio is shown:
+
+\(\frac{\theta_i}{1 - \theta_i}) = 0.33 + 0.88 \cdot UrbanIndex + 0.29 \cdot HighlyEducatedFraction - 0.89 \cdot NonWest:2 + 0.71 \cdot NonWest:3 + \epsilon_i\)
+
+As already said, there is still dispersion, even after using a quasi
+binomial model. A possible explanation can be clustering of
+observations. Municipalities close to each other will probably vote
+similar. Figure \ref{Results elections} shows that the municipalites
+where CDA (shown in light green) is the biggest party are clustered
+together. CDA is the biggest party in large parts of Friesland,
+Groningen and Drente. The municipalities located here are probably have
+a similar population.
+
+\begin{figure}
+\centering
+\includegraphics[width=2.60417in]{Uitslag_verkiezingen2017.png}
+\caption{Results elections with biggest parties. CDA is displayed in
+light green}
+\end{figure}
+
+Another explanation for the dispersion is the large variation. In some
+municipalities only 3\% voted for CDA, while in other almost 50\%. This
+large variation is hard to modeled in a binomial. By using the log odds,
+votes are distributed in two groups: voted for CDA or not voted for CDA.
+However, with 13 political parties is it hard to distinguish two groups.
+Because it is not possible to into account which parties are similar to
+CDA.
+
+Even though, the cross validation resulted in a MSE of 0.0017, it is not
+likely that this model can make future predictions. This because of the
+large variation and overdispersion.
+
+\section{5. Conclusion}\label{conclusion}
+
+-samenvatting -belangrijkste limitaties noemen -modellen met elkaar
+vergelijken
 
 
 \end{document}

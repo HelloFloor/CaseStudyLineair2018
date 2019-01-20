@@ -143,8 +143,8 @@ step(lm_CDA_2a)
 ```
 
 ## Final model
-The backward elimination gave the final model.  
-$ln(Y_i) = \beta_0 + 	\beta_1*high educated fraction + \beta_2*Urban index +  \beta_4*Non west2 + \beta_5*Non west 3 + \beta_6*Frac 60plus + \epsilon i$ 
+The backward elimination resulted in the final model.  
+$ln(Y_i) = \beta_0 + 	\beta_1*high educated fraction + \beta_2*Urban index +  \beta_4*Non west2 + \beta_5*Non west 3 + \beta_6*Frac 60plus + \epsilon_i$ 
 The coëfficients are given in the table below
 ```{r demographics_data1, echo=FALSE}
 lm_CDA_final <-lm(log(CDA_frac) ~ High_educated_frac +  Urban_index +Non_west + Frac_60plus,data = Data_CDA[-16,])
