@@ -19,7 +19,7 @@ fontfamily: mathpazo
 fontsize: 11pt
 keywords: 'put some keywords here '
 endnote: no
-abstract: Put the abstract over here
+abstract: For this report demographics of Dutch municipalities are compared with the results of the general Dutch election of 2017. The demographic variables are the *Urban index*, the *fraction of highly educated residents*, *Mean income*, *fraction of 60 plus residents* in a municipality and the factor *Non western*. This factor devides municipalities in the once with less than 5%, 5-10% and more than 10% Non-western residents.The research focust on the results for the party CDA. The goal is to find voting trends per demographic group and to make future predictions for CDA. This goal is approached with two different models. The first is a linear model with a log transformation of the respons. The cross validation resulted in a Mean Prediction Squared Error (MPSE) of 0.058. The second, is a binomial model with the logit as link function. The found MPSE is 0.0017. It is difficult to say which model fits the data better, because they have different significant variables. Furthermore both have their limitations and the data showed a large overdispersion. It is not likely that predictions for future elections can be made with these models. 
 ---
 
 ```{r setup, include=FALSE}
@@ -49,31 +49,23 @@ Data_CDA <- read.csv("1_clean_data/Clean_data_CDA_2018-12-21.csv",
                  stringsAsFactors=F, header = T)
 
 # Remove Non_west for now. We later add it again
-Data_CDA <- Data_CDA %>%
-  select(-Non_west)
-
+Data_CDA$Non_west <- as.factor(Data_CDA$Non_west)
 ```
 
-# Abstract
-For this report demographics of Dutch municipalities are compared with the results of the general Dutch election of 2017. The demographic variables are the *Urban index*, the *fraction of highly educated residents*, *Mean income*, *fraction of 60 plus residents* in a municipality and the factor *Non western*. This factor devides municipalities in the once with less than 5%, 5-10% and more than 10% Non-western residents.
-
-This research focusses on the results for party CDA. The goal is to find voting trends per demographic group and to make future predictions for CDA. This goal is approached with two different models. The first is a linear model with a log transformation of the respons. The cross validation resulted in a Mean Squared Error (MSE) of 0.058. The second, is a binomial model with the logit as link function. The found MSE is 0.0017.
-
-It is difficult to say which model fits the data better, because they have different significant variables. Furthermore both have their limitations and the data showed a large overdispersion. It is not likely that predictions for future elections can be made with these models. 
 
 # 1. Introduction 
 
 
 ## 1.1 Motivation
 
-For this case study, it was decided to combine the outcome from the Dutch elections of 2017 and demographic data. Both are collected per municipality and are well maintained and reliable.  This will hopefully result in observing voting trends per demographic group. The final goal is to validate the model for making future predictions.
+For this case study, the outcome from the Dutch elections of 2017 and  demographical data were combined. All data was  collected per municipality and are well maintained and reliable.  This will hopefully result in observing voting trends per demographic group. The final goal is to validate the model for making future predictions.
 
 ![Party landscape](Partijlandschap.jpg){width=250px}
 
 **Dutch political parties**   
-This figure displays the diffences between the political parties in the Netherlands. The Netherlands has a total of 13 parties. This investigation focusses on only one party. This party should not be to extreme left/right/conservative/progressive and should also be one of the bigger parties. Otherwise, there is not enough data available, making the results less reliable. Therefore, party CDA is chosen. 
+Figure \ref{0} displays the diffences between the political parties in the Netherlands. The Netherlands has a total of 13 parties. This investigation focusses on only one party. The chosen party should not be to extreme left/right/conservative/progressive and should also be one of the bigger parties. Otherwise, there is not enough data available, making the results less reliable. Therefore, the party CDA is chosen. 
 
-In this research the above described demographics are chosen because of their influence on a municipality level. The expectation is that a municipality with more non-western residents for example votes different than a municipality with less non-western residents. This is the same for the other two demographics. Other demographics are also researched, for example gender, but on a municipality level there is no large difference between the amount of men and women per municipality. So that is a more interesting demographic to research on an individual level. 
+In this research the demographics are chosen because of their influence on a municipality level. The expectation is that a municipality with more non-western residents for example votes different than a municipality with less non-western residents. This is the same for the other three demographics. Other demographics are also researched, for example gender, but on a municipality level there is no large difference between the amount of men and women per municipality. So that is a more interesting demographic to research on an individual level. 
 *The standardized income per municipality* are given in thousands. *Urban index* of a municipality is a database with five categories per municipality. These five categories are: 
 
 \begin{itemize}
@@ -89,12 +81,13 @@ Per municipality the amount of $km^2$ per category is given. The *non-west resid
 
 ## 1.2 Data sources
 
-**Electoral data**
-For the electoral data, the results of the 2017 general election are used. This is the most recent national election and is of the most important election type in the Netherlands. Furthermore, it had a turnup of 81.9%. Therefore, it seems plausible that the data for this election is representative of the political makeup of different municipalities. We downloaded the raw data directly from the official government source.^[https://data.overheid.nl/data/dataset/verkiezingsuitslag-tweede-kamer-2017] This contained a .csv file with the raw number of votes for every party in every municipality. 
+**Electoral data**  
+
+For the electoral data, the results of the 2017 general election were used. This is the most recent national election and is of the most important election type in the Netherlands. Furthermore, it had a turnup of 81.9%. Therefore, it seems plausible that the data for this election is representative of the political makeup of different municipalities. We downloaded the raw data directly from the official government source.^[https://data.overheid.nl/data/dataset/verkiezingsuitslag-tweede-kamer-2017] This contained a .csv file with the raw number of votes for every party in every municipality. 
 
 
 **Demographical data**  
-We got our demographical data from the CBS, the official Dutch statistical agency.^[https://opendata.cbs.nl/statline/#/CBS/nl/dataset/70072ned/table?ts=1544803364892] From the wealth of demographical information available we picked a handful of attributes that we suspected (based on prior research and some gut feeling) to be useful as predictor variables. We landed on five demographical attributes: education grade, average income, age, urbanization and the amount of people with a non-western background. Note that the data we downloaded from the CBS site usually had to be transformed to get it in a useful predictor variable format. The specifics of these are described in the next section.
+The demographical data is obtained from the CBS, the official Dutch statistical agency.^[https://opendata.cbs.nl/statline/#/CBS/nl/dataset/70072ned/table?ts=1544803364892] From the wealth of demographical information available  a handful of attributes were picked  that were suspected (based on prior research and some gut feeling) to be useful as predictor variables. Five demographical attributes were landed: education grade, average income, age, urbanization and the amount of people with a non-western background. The data downloaded from the CBS site usually had to be transformed to get it in a useful predictor variable format. The specifics of these are described in the next section.
 
 
 ## 1.3 Data cleaning 
@@ -129,8 +122,8 @@ summary(Data_CDA)
 
 ## 1.3 Data visualisation
 
-In this part the cleaned data is visualized, so that a good picture can be obtained of the current data. First of all some demographics of data will be showed. In figure \ref{1} of the *parties*, *the urban index*, *the percentage of highly educated residents*, *the mean income*, *The non west residents factor* and * the percentage 60 plus* are plotted. 
-As you can see in the plot, they are normal distributed. Because of the low values at the x-axis, the CDA, GroenLinks, 60 plus percentage and the highly educated densities are above 1. The area beneath the curve sums to 1, so it is correct.
+In this part the cleaned data is visualized, so that a good picture can be obtained of the current data. First of all some demographics of data will be showed. In figure \ref{1} of the *parties*, *the urban index*, *the percentage of highly educated residents*, *the mean income*, *The non west residents factor* and *the percentage 60 plus* are plotted. 
+As visible in figure \ref{1}, they are normal distributed. Because of the low values at the x-axis, the CDA, 60 plus percentage and the highly educated densities are above 1. The area beneath the curve sums to 1, so they are correct.
 
 ```{r demographics, echo=FALSE}
 #knitr::kable(
@@ -150,13 +143,14 @@ plot(dens)
 ```
 
 
-**Correlation heatmap**
-In this heatmap (figure \ref{2}) the correlation between explanatory and respons variable are showed. The red color means a positive relation, the purple color means a negative relation. The non_west variable is not taken into account, because it is a factor and the other variables are continous. 
+**Correlation heatmap**  
+
+In this heatmap (figure \ref{2}) the correlation between explanatory and respons variable are showed. The red color means a positive relation, the purple color means a negative relation. The *non_west* variable is not taken into account, because it is a factor and the other variables are continous. 
 
 
 ```{r correlation_heatmap, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.cap= '\\label{2}Correlation between explanatory and respons variables', fig.width=5, fig.height=3}
 # Heatmap of the correlations
-heatmap = ggcorr(Data_CDA[,c(2:9)], 
+heatmap = ggcorr(Data_CDA[,c(2,3,4,5,9,10)], 
                  low = "darkblue", mid = "lightyellow", high = "red",
                  label = T, label_size = 2.5, label_round = 3,   
                  color = 'black', size = 4, layout.exp = 2, hjust = 1) 
@@ -305,8 +299,9 @@ multiplot <- function(..., plotlist=NULL, file, cols=2, layout=NULL) {
 }
 ```
 
-**Multilineair plots CDA **
-In these two plots you can see a scatterplot with on the y-axis the votes for CDA in percentages and on the x-axis on the left graph the mean income per municipality in 1000 euro. The right plot has the urbanity index as x-axis. As you can see, the trend is that when the mean income goes up, the votes for CDA goes down. Same with the urbanity index. In the model formulation graph these trends are checked. 
+**Multilineair plots CDA **  
+
+In these two plots you can see a scatterplot with on the y-axis the votes for CDA in percentages and on the x-axis on the left graph the mean income per municipality in 1000 euro. The right plot has the urbanity index as x-axis. The visible trend is that when the mean income goes up, the votes for CDA goes down. Same counts for the urbanity index. In the model formulation graph these trends are checked. 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.cap= "\\label{3}Scatterplots CDA", fig.width=5, fig.height=3}
 multi_linearCDA <- multiplot(p3, p6)
 
@@ -314,7 +309,8 @@ multi_linearCDA <- multiplot(p3, p6)
 
 
 
-**Exploratory plots of variables**
+**Exploratory plots of variables**  
+
 These three plots are scatterplots of the explanatory variables. 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.width=5, fig.height=3, fig.cap= "\\label{5}Scatterplot explanatory variables"}
 multi_linear <- multiplot(p4, p5)
@@ -322,7 +318,8 @@ plot(p9)
 
 ```
 
-**Multiple boxplots**
+**Multiple boxplots** 
+
 In this graph boxplots are made, to compare some variables. A boxplot is a standardized way to display the distribution of data. It gives the minimum, first quartile, median, third quartile and the maximum. If there are any outliers, the boxplot is extended with those. The line within the box is the median, the first and third quartile are the down- and upside of the box, respectively. The length of the box is the Inter Quartile Range (IQR). The minimum and maximum are 1.5X Inter Quartile Range (IQR). Observations further away can be considered outliers.
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.width=5, fig.height=3, fig.cap= "\\label{6}Three boxplots: Votes for CDA, Votes for GroenLinks and Urbanity index"}
@@ -335,16 +332,19 @@ multiplot(p1, p2)
 # 2. Multiple linear regression
 In this chapter multiple linear models are generated. The demographics tested in this model are the highly educated fraction in a municipality `High_educated_frac`, the urban index of a municipality `Urban_index`, the mean income of the municipality `Mean_income`, the non-west factor `Non_west` and the fraction that is 60 plus in the municipality `Frac_60plus`. 
 The error assumptions are also discussed. This are assumptions made for the residuals, to check if meet the requirements for correct linear regressions. These assumptions are: 
-* Linearity: The expected value of the error is zero
-* Constant variance: The variance of the error is constant 
-* Normality: The errors are normally distributed
-* Indepence: The observations are sampled indipendently
 
+\begin{itemize}
+\item Linearity: The expected value of the error is zero
+\item Constant variance: The variance of the error is constant 
+\item Normality: The errors are normally distributed
+\item Indepence: The observations are sampled indipendently
+\end{itemize}
 
 ## First model
  The first model will be the model with all the demographics:  
 $Y_i = \beta_0 + 	\beta_1*high educated fraction + \beta_2*Urban index + \beta_3*Mean income + \beta_4*Non west2 +\beta_5*Non west3 + \beta_6*Frac 60plus + \epsilon i$   
 The outcome of this model is shown below: 
+
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrrrr}
@@ -380,7 +380,7 @@ abline(h = 0.011, col = "red")
 
 ```
 
-In figure \ref{afm} the four plots are shown. The first plot (Residuals vs Fitted) shows that the residuals have a 'loudspeaker pattern', the variance of the residuals tends to increase with an increase of the fitted value. Because of this, a BoxCox graph is consulted. This graph suggests a transformation for the response. The BoxCos figure \ref{BC1} in has a 95% Confidence interval located around the 0. So a ln transformation is suggested. 
+In figure \ref{afm} the four plots are shown. The first plot (Residuals vs Fitted) shows that the residuals have a 'loudspeaker pattern', the variance of the residuals tends to increase with an increase of the fitted value. Because of this, a BoxCox graph is consulted. This graph suggests a transformation for the response. The BoxCox in figure \ref{BC1} has a 95% Confidence interval located around the 0. So a log transformation is suggested. 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE,error=FALSE, fig.width=5, fig.height=3, fig.cap= "\\label{BC1}BoxCox first model"}
 gg_boxcox(lm_CDA_1)
 
@@ -429,7 +429,8 @@ step(lm_CDA_2a)
 
 ## Final model
 The backward elimination resulted in the final model.  
-$ln(Y_i) = \beta_0 + 	\beta_1*high educated fraction + \beta_2*Urban index +  \beta_4*Non west2 + \beta_5*Non west 3 + \beta_6*Frac 60plus + \epsilon_i$ 
+$ln(Y_i) = \beta_0 + 	\beta_1*high educated fraction + \beta_2*Urban index +  \beta_4*Non west2 + \beta_5*Non west 3 + \beta_6*Frac 60plus + \epsilon_i$  
+
 The coëfficients are given in the table below
 ```{r demographics_data1, echo=FALSE}
 lm_CDA_final <-lm(log(CDA_frac) ~ High_educated_frac +  Urban_index +Non_west + Frac_60plus,data = Data_CDA[-16,])
@@ -455,6 +456,7 @@ lm_CDA_final <-lm(log(CDA_frac) ~ High_educated_frac +  Urban_index +Non_west + 
 lm_CDA_final <-lm(log(CDA_frac) ~ High_educated_frac +  Urban_index +Non_west + Frac_60plus,data = Data_CDA[-16,])
 #xtable(summary(lm_CDA_final))
 # Check assumptions
+
 par(mfrow = c(1,4))
 plot(lm_CDA_final, which = 1) # still heteroscadacity, 
 qqPlot(lm_CDA_final) # normally distributed
@@ -468,10 +470,10 @@ The estimates for the predictors are filled in the model and the following resul
 
 $ln(Y_i) = -1.0298  	-0.8277*high educated fraction  -0.1311*Urban index   -0.1141*Non west2  -0.2871*Non west3 -3.0168*Frac 60plus + \epsilon i$  
 
-All the coëfficients are negative, but because the fitted value is a log value it will be positive. 
+All the coëfficients are negative, but because the fitted value is a log value the response will be positive. 
 
 ## Cross validation
-To tell something about the prediction possibilities of the model, cross validation is done. Cross validation tells something about how well the model predicts on average, it telss nothing about the 'correctness'of the model. Cross validation estimates the expected prediction error of a model.  
+To tell something about the prediction possibilities of the model, cross validation is done. Cross validation tells something about how well the model predicts on average, it tells nothing about the 'correctness'of the model. Cross validation estimates the expected prediction error of a model.  
 The cross validation works as follows. First 5k-folds are made. This means that the data is divided in five folds. Next, the loss function is made. This function makes the square of the real value minues the predicted value. By taking the sum of these values  and the deviation by amount of real values in the k-folds, the mean is taken. 4 of the 5 kfolds are used ase training data, the other one is the test/validation data. The model is fitted on the training data and afterwards it tries to fit on the test data, to see if it predicts closely. This is done  5 times, every time another fold is is the testdata. As is shown below, the prediction error for this model is 0.0582
 ```{r}
 # The model
@@ -516,7 +518,7 @@ Also for logistics regression diagnostic plots are needed to visualise the devia
 
 ## 3.1 First model
 
-Again, the first is the full model. Stepwise backward elimination is used to find the optimal model. Below, the formula for the full model:
+Again, the first model is the full model. Stepwise backward elimination is used to find the optimal model. Below, the formula for the full model:
 
 $log(\frac{\theta_i}{1 - \theta_i}) = \beta_0 + \beta_1 \cdot UrbanIndex + \beta_2 \cdot HighlyEducatedFraction + \beta_3 \cdot MeanIncome + \beta_4 \cdot NonWest + \beta_5 \cdot Fraction60Plus + \epsilon_i$
 
@@ -731,23 +733,21 @@ for (k in 1:K){
 mean(loss)
 ```
 
-The cross validation results in a Means Squared Error (MSE) of 0.0017.
+The cross validation results in a Prediction Means Squared Error (PMSE) of 0.0017.
  
 ## Discussion
 
 ## Linear regression
 
-Because the fitted values are transformed to a ln form, it is also possible to raise the coëfficients to a exponential power. The final model obtained then is:  
+Because the fitted values are transformed to a log form, it is also possible to raise the coëfficients to a exponential power. The final model obtained then is:  
 
-$Y_i = e^(-1.0298  	-0.8277*high educated fraction  -0.1311*Urban index   -0.1141*Non west2  -0.2871*Non west3 -3.0168*Frac 60plus + \epsilon i)$  
+$Y_i = e^{(-1.0298  	-0.8277*high educated fraction  -0.1311*Urban index   -0.1141*Non west2  -0.2871*Non west3 -3.0168*Frac 60plus + \epsilon i)}$  
 
-Per variable the influence will be discussed. The slope will start at point exp(-1.0298), this is equal to 0.357. This means if all the other demographic variables are zero, the fitted value will be equal to the intercept, so equal to 0.357. This not a possible outcome, because a Municipality with all these demographics equal to zero is no reality. For the other coefficients it is a bit harder to predict there influence, because of the log transformation and the different range the different variables have. For example, the urban index has a 0-3.8 range and education ahs a 0.12-0.47 range in this data set. But still some remarks can be made about the slope of the model. The fraction 60 plus has the lowest marginal impact on the slope, if everything else stays the same an frac 60 plus changes for example 1 the exponent changes with -3.02. The non west2 has the highest impact on the slope, because the coëfficient is the lowest. Another important point is that or Non-west2 and Non-west3 are both zero, or Non-west2 is one ore Non west 3 is one. The outcome of the crossvalidation for this model is 0.0582. So the mean squared difference between the fitted and predicted value is 0.0582, which is pretty close to 0.
+Per variable the influence will be discussed. The slope will start at point $exp(-1.0298)$, this is equal to 0.357. This means if all the other demographic variables are zero, the fitted value will be equal to the intercept, so equal to 0.357. This not a possible outcome, because a Municipality with all these demographics equal to zero is no reality. For the other coefficients it is a bit harder to predict there influence, because of the log transformation and the different range the different variables have. For example, the *urban index* has a 0-3.8 range and *education* has a 0.12-0.47 range in this data set. But still some remarks can be made about the slope of the model. The *fraction 60 plus* has the lowest marginal impact on the slope, if everything else stays the same an *frac 60 plus* changes for example with 1 the exponent changes with -3.02. The *non west2* has the highest impact on the slope, because the coëfficient is the lowest. Another important point is that or *Non-west2* and *Non-west3* are both zero, or *Non-west2* is one or *Non west 3* is one. The outcome of the crossvalidation for this model is 0.0582. So the predicted mean squared difference between the fitted and predicted value is 0.0582, which is pretty close to 0.
 
 There are some limitations for this model, because the response variable is a fraction and will never be larger than one, theoratically a Generalized linear model would be better.  Also some assumptions are violated. In the fitted vs residual graph it is visible that the variance is not equally spread, there is a small "loudspeaker pattern". But because the fitted values are log transformed, it is not really possible to adapt this any further. Also there are two municipalities that fall outside the [-3,3] range in the normality plot, but because they are still in the 95% envelope the decision is made to not delete these municipalities. 
 
-## Further research
 
-Both of the models have different significant variables. But it is difficult to say which one is a better fitting model. Because both of them have reasons to choose that kind of model, also both of them have limitations. That is why further research should be done to research which of the model is the best fitting model. Another topic that can be researched in further research is the influence of demographics on areas of municipalities instead of whole municipialities. Because differences between areas are nullified in the demographics of a municipality.
 
 ## 4.2 Logistic regression
 
@@ -769,18 +769,15 @@ $\frac{\theta_i}{1 - \theta_i}) = 0.33  + 0.88 \cdot UrbanIndex + 0.29 \cdot Hig
 As already said, there is still dispersion, even after using a quasi binomial model. A possible explanation can be clustering of observations. Municipalities close to each other will probably vote similar. Figure \ref{Results elections} shows that the municipalites where CDA (shown in light green) is the biggest party are clustered together. CDA is the biggest party in large parts of Friesland, Groningen and Drente. The municipalities located here are probably have a similar population.
 
 
-![Results elections with biggest parties. CDA is displayed in light green](Uitslag_verkiezingen2017.png){width=250px}
+![\label{Results elections}Results elections with biggest parties. CDA is displayed in light green](Uitslag_verkiezingen2017.png){width=250px}
 
 
-Another explanation for the dispersion is the large variation. In some municipalities only 3\% voted for CDA, while in other almost 50\%. This large variation is hard to modeled in a binomial. By using the log odds, votes are distributed in two groups: voted for CDA or not voted for CDA. However, with 13 political parties is it hard to distinguish two groups. Because it is not possible to into account which parties are similar to CDA.
+Another explanation for the dispersion is the large variation. In some municipalities only 3\% voted for CDA, while in other almost 50\%. This large variation is hard to modeled in a binomial. By using the log odds, votes are distributed in two groups: voted for CDA or not voted for CDA. However, with 13 political parties is it hard to distinguish two groups. Because it is not possible take to into account which parties are similar to CDA.
 
-Even though, the cross validation resulted in a MSE of 0.0017, it is not likely that this model can make future predictions. This because of the large variation and overdispersion.
+Even though, the cross validation resulted in a PMSE of 0.0017, it is not likely that this model can make future predictions. This because of the large variation and overdispersion.  
+
+## Further research
+
+Both of the models have different significant variables. But it is difficult to say which one is a better fitting model. Because both of them have reasons to choose that kind of model, also both of them have limitations. That is why further research should be done to research which of the model is the best fitting model. Another topic that can be researched in further research is the influence of demographics on areas of municipalities instead of whole municipialities. Because differences between areas are nullified in the demographics of a municipality.
 
 
-
-
-# 5. Conclusion
-
--samenvatting
--belangrijkste limitaties noemen
--modellen met elkaar vergelijken

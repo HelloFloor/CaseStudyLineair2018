@@ -125,45 +125,38 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{January 20, 2019}
+    \date{januari 20, 2019}
 
 \usepackage{float}
 
 \begin{document}
 \maketitle
 \begin{abstract}
-Put the abstract over here
-\end{abstract}
-
-\section{Abstract}\label{abstract}
-
 For this report demographics of Dutch municipalities are compared with
 the results of the general Dutch election of 2017. The demographic
 variables are the \emph{Urban index}, the \emph{fraction of highly
 educated residents}, \emph{Mean income}, \emph{fraction of 60 plus
 residents} in a municipality and the factor \emph{Non western}. This
 factor devides municipalities in the once with less than 5\%, 5-10\% and
-more than 10\% Non-western residents.
-
-This research focusses on the results for party CDA. The goal is to find
-voting trends per demographic group and to make future predictions for
-CDA. This goal is approached with two different models. The first is a
-linear model with a log transformation of the respons. The cross
-validation resulted in a Mean Squared Error (MSE) of 0.058. The second,
-is a binomial model with the logit as link function. The found MSE is
-0.0017.
-
-It is difficult to say which model fits the data better, because they
-have different significant variables. Furthermore both have their
-limitations and the data showed a large overdispersion. It is not likely
-that predictions for future elections can be made with these models.
+more than 10\% Non-western residents.The research focust on the results
+for the party CDA. The goal is to find voting trends per demographic
+group and to make future predictions for CDA. This goal is approached
+with two different models. The first is a linear model with a log
+transformation of the respons. The cross validation resulted in a Mean
+Prediction Squared Error (MPSE) of 0.058. The second, is a binomial
+model with the logit as link function. The found MPSE is 0.0017. It is
+difficult to say which model fits the data better, because they have
+different significant variables. Furthermore both have their limitations
+and the data showed a large overdispersion. It is not likely that
+predictions for future elections can be made with these models.
+\end{abstract}
 
 \section{1. Introduction}\label{introduction}
 
 \subsection{1.1 Motivation}\label{motivation}
 
-For this case study, it was decided to combine the outcome from the
-Dutch elections of 2017 and demographic data. Both are collected per
+For this case study, the outcome from the Dutch elections of 2017 and
+demographical data were combined. All data was collected per
 municipality and are well maintained and reliable. This will hopefully
 result in observing voting trends per demographic group. The final goal
 is to validate the model for making future predictions.
@@ -175,22 +168,22 @@ is to validate the model for making future predictions.
 \end{figure}
 
 \textbf{Dutch political parties}\\
-This figure displays the diffences between the political parties in the
-Netherlands. The Netherlands has a total of 13 parties. This
-investigation focusses on only one party. This party should not be to
-extreme left/right/conservative/progressive and should also be one of
+Figure \ref{0} displays the diffences between the political parties in
+the Netherlands. The Netherlands has a total of 13 parties. This
+investigation focusses on only one party. The chosen party should not be
+to extreme left/right/conservative/progressive and should also be one of
 the bigger parties. Otherwise, there is not enough data available,
-making the results less reliable. Therefore, party CDA is chosen.
+making the results less reliable. Therefore, the party CDA is chosen.
 
-In this research the above described demographics are chosen because of
-their influence on a municipality level. The expectation is that a
-municipality with more non-western residents for example votes different
-than a municipality with less non-western residents. This is the same
-for the other two demographics. Other demographics are also researched,
-for example gender, but on a municipality level there is no large
-difference between the amount of men and women per municipality. So that
-is a more interesting demographic to research on an individual level.
-\emph{The standardized income per municipality} are given in thousands.
+In this research the demographics are chosen because of their influence
+on a municipality level. The expectation is that a municipality with
+more non-western residents for example votes different than a
+municipality with less non-western residents. This is the same for the
+other three demographics. Other demographics are also researched, for
+example gender, but on a municipality level there is no large difference
+between the amount of men and women per municipality. So that is a more
+interesting demographic to research on an individual level. \emph{The
+standardized income per municipality} are given in thousands.
 \emph{Urban index} of a municipality is a database with five categories
 per municipality. These five categories are:
 
@@ -209,25 +202,27 @@ municipality.
 
 \subsection{1.2 Data sources}\label{data-sources}
 
-\textbf{Electoral data} For the electoral data, the results of the 2017
-general election are used. This is the most recent national election and
-is of the most important election type in the Netherlands. Furthermore,
-it had a turnup of 81.9\%. Therefore, it seems plausible that the data
-for this election is representative of the political makeup of different
-municipalities. We downloaded the raw data directly from the official
-government source.\footnote{\url{https://data.overheid.nl/data/dataset/verkiezingsuitslag-tweede-kamer-2017}}
+\textbf{Electoral data}
+
+For the electoral data, the results of the 2017 general election were
+used. This is the most recent national election and is of the most
+important election type in the Netherlands. Furthermore, it had a turnup
+of 81.9\%. Therefore, it seems plausible that the data for this election
+is representative of the political makeup of different municipalities.
+We downloaded the raw data directly from the official government
+source.\footnote{\url{https://data.overheid.nl/data/dataset/verkiezingsuitslag-tweede-kamer-2017}}
 This contained a .csv file with the raw number of votes for every party
 in every municipality.
 
 \textbf{Demographical data}\\
-We got our demographical data from the CBS, the official Dutch
+The demographical data is obtained from the CBS, the official Dutch
 statistical agency.\footnote{\url{https://opendata.cbs.nl/statline/\#/CBS/nl/dataset/70072ned/table?ts=1544803364892}}
-From the wealth of demographical information available we picked a
-handful of attributes that we suspected (based on prior research and
-some gut feeling) to be useful as predictor variables. We landed on five
-demographical attributes: education grade, average income, age,
-urbanization and the amount of people with a non-western background.
-Note that the data we downloaded from the CBS site usually had to be
+From the wealth of demographical information available a handful of
+attributes were picked that were suspected (based on prior research and
+some gut feeling) to be useful as predictor variables. Five
+demographical attributes were landed: education grade, average income,
+age, urbanization and the amount of people with a non-western
+background. The data downloaded from the CBS site usually had to be
 transformed to get it in a useful predictor variable format. The
 specifics of these are described in the next section.
 
@@ -238,6 +233,8 @@ are describes and a small part of code is displayed.
 
 \textbf{Electoral data}
 
+\ldots{}. write something here\ldots{}.
+
 \textbf{Demographical data}
 
 The variable \emph{non-western residents} are divided in three groups:
@@ -247,16 +244,6 @@ The variable \emph{non-western residents} are divided in three groups:
 \item Municipalities with 5-10 % non-western resident 
 \item Municipalities with mre than 10 % non-western residents
 \end{itemize}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{Data_CDA}\OperatorTok{$}\NormalTok{Non_west <-}\StringTok{ }\KeywordTok{ifelse}\NormalTok{(Data_CDA}\OperatorTok{$}\NormalTok{Non_west_frac }\OperatorTok{<}\StringTok{ }\FloatTok{0.05}\NormalTok{, }\DecValTok{1}\NormalTok{, }\OtherTok{NA}\NormalTok{)}
-\NormalTok{Data_CDA}\OperatorTok{$}\NormalTok{Non_west <-}\StringTok{ }\KeywordTok{ifelse}\NormalTok{(Data_CDA}\OperatorTok{$}\NormalTok{Non_west_frac }\OperatorTok{>=}\StringTok{ }\FloatTok{0.05} \OperatorTok{&}\StringTok{ }\NormalTok{Data_CDA}\OperatorTok{$}\NormalTok{Non_west_frac }\OperatorTok{<}\StringTok{ }
-\StringTok{    }\FloatTok{0.1}\NormalTok{, }\DecValTok{2}\NormalTok{, Data_CDA}\OperatorTok{$}\NormalTok{Non_west)}
-\NormalTok{Data_CDA}\OperatorTok{$}\NormalTok{Non_west <-}\StringTok{ }\KeywordTok{ifelse}\NormalTok{(Data_CDA}\OperatorTok{$}\NormalTok{Non_west_frac }\OperatorTok{>=}\StringTok{ }\FloatTok{0.1}\NormalTok{, }\DecValTok{3}\NormalTok{, Data_CDA}\OperatorTok{$}\NormalTok{Non_west)}
-\NormalTok{Data_CDA}\OperatorTok{$}\NormalTok{Non_west <-}\StringTok{ }\KeywordTok{as.factor}\NormalTok{(Data_CDA}\OperatorTok{$}\NormalTok{Non_west)}
-\end{Highlighting}
-\end{Shaded}
 
 At last, the electoral data and demographic data are combined again.
 Only the municipality Boxmeer is removed, due to a mistake not all the
@@ -284,13 +271,13 @@ The final dataset has no NAs
 ##  Mean   :25.91   Mean   :0.06574   Mean   : 3254   Mean   : 25162  
 ##  3rd Qu.:27.00   3rd Qu.:0.08000   3rd Qu.: 4023   3rd Qu.: 27087  
 ##  Max.   :41.80   Max.   :0.38000   Max.   :18813   Max.   :440854  
-##   Frac_60plus     Non_west
-##  Min.   :0.0700   1:178   
-##  1st Qu.:0.1200   2:111   
-##  Median :0.1300   3: 77   
-##  Mean   :0.1327           
-##  3rd Qu.:0.1400           
-##  Max.   :0.1800
+##  Non_west  Frac_60plus    
+##  1:178    Min.   :0.0700  
+##  2:111    1st Qu.:0.1200  
+##  3: 77    Median :0.1300  
+##           Mean   :0.1327  
+##           3rd Qu.:0.1400  
+##           Max.   :0.1800
 \end{verbatim}
 
 \subsection{1.3 Data visualisation}\label{data-visualisation}
@@ -299,11 +286,11 @@ In this part the cleaned data is visualized, so that a good picture can
 be obtained of the current data. First of all some demographics of data
 will be showed. In figure \ref{1} of the \emph{parties}, \emph{the urban
 index}, \emph{the percentage of highly educated residents}, \emph{the
-mean income}, \emph{The non west residents factor} and * the percentage
-60 plus* are plotted. As you can see in the plot, they are normal
-distributed. Because of the low values at the x-axis, the CDA,
-GroenLinks, 60 plus percentage and the highly educated densities are
-above 1. The area beneath the curve sums to 1, so it is correct.
+mean income}, \emph{The non west residents factor} and \emph{the
+percentage 60 plus} are plotted. As visible in figure \ref{1}, they are
+normal distributed. Because of the low values at the x-axis, the CDA, 60
+plus percentage and the highly educated densities are above 1. The area
+beneath the curve sums to 1, so they are correct.
 
 \begin{figure}[H]
 
@@ -314,11 +301,13 @@ above 1. The area beneath the curve sums to 1, so it is correct.
 \caption{\label{1} Density plot}\label{fig:demographics_data}
 \end{figure}
 
-\textbf{Correlation heatmap} In this heatmap (figure \ref{2}) the
-correlation between explanatory and respons variable are showed. The red
-color means a positive relation, the purple color means a negative
-relation. The non\_west variable is not taken into account, because it
-is a factor and the other variables are continous.
+\textbf{Correlation heatmap}
+
+In this heatmap (figure \ref{2}) the correlation between explanatory and
+respons variable are showed. The red color means a positive relation,
+the purple color means a negative relation. The \emph{non\_west}
+variable is not taken into account, because it is a factor and the other
+variables are continous.
 
 \begin{figure}[H]
 
@@ -329,13 +318,27 @@ is a factor and the other variables are continous.
 \caption{\label{2}Correlation between explanatory and respons variables}\label{fig:correlation_heatmap}
 \end{figure}
 
-\textbf{Multilineair plots CDA } In these two plots you can see a
-scatterplot with on the y-axis the votes for CDA in percentages and on
-the x-axis on the left graph the mean income per municipality in 1000
-euro. The right plot has the urbanity index as x-axis. As you can see,
-the trend is that when the mean income goes up, the votes for CDA goes
-down. Same with the urbanity index. In the model formulation graph these
-trends are checked.
+\textbf{Multilineair plots CDA }
+
+In these two plots you can see a scatterplot with on the y-axis the
+votes for CDA in percentages and on the x-axis on the left graph the
+mean income per municipality in 1000 euro. The right plot has the
+urbanity index as x-axis. The visible trend is that when the mean income
+goes up, the votes for CDA goes down. Same counts for the urbanity
+index. In the model formulation graph these trends are checked.
+
+\begin{figure}[H]
+
+{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-5-1} 
+
+}
+
+\caption{\label{3}Scatterplots CDA}\label{fig:unnamed-chunk-5}
+\end{figure}
+
+\textbf{Exploratory plots of variables}
+
+These three plots are scatterplots of the explanatory variables.
 
 \begin{figure}[H]
 
@@ -343,11 +346,26 @@ trends are checked.
 
 }
 
-\caption{\label{3}Scatterplots CDA}\label{fig:unnamed-chunk-6}
+\caption{\label{5}Scatterplot explanatory variables}\label{fig:unnamed-chunk-61}
+\end{figure}\begin{figure}[H]
+
+{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-6-2} 
+
+}
+
+\caption{\label{5}Scatterplot explanatory variables}\label{fig:unnamed-chunk-62}
 \end{figure}
 
-\textbf{Exploratory plots of variables} These three plots are
-scatterplots of the explanatory variables.
+\textbf{Multiple boxplots}
+
+In this graph boxplots are made, to compare some variables. A boxplot is
+a standardized way to display the distribution of data. It gives the
+minimum, first quartile, median, third quartile and the maximum. If
+there are any outliers, the boxplot is extended with those. The line
+within the box is the median, the first and third quartile are the down-
+and upside of the box, respectively. The length of the box is the Inter
+Quartile Range (IQR). The minimum and maximum are 1.5X Inter Quartile
+Range (IQR). Observations further away can be considered outliers.
 
 \begin{figure}[H]
 
@@ -355,33 +373,7 @@ scatterplots of the explanatory variables.
 
 }
 
-\caption{\label{5}Scatterplot explanatory variables}\label{fig:unnamed-chunk-71}
-\end{figure}\begin{figure}[H]
-
-{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-7-2} 
-
-}
-
-\caption{\label{5}Scatterplot explanatory variables}\label{fig:unnamed-chunk-72}
-\end{figure}
-
-\textbf{Multiple boxplots} In this graph boxplots are made, to compare
-some variables. A boxplot is a standardized way to display the
-distribution of data. It gives the minimum, first quartile, median,
-third quartile and the maximum. If there are any outliers, the boxplot
-is extended with those. The line within the box is the median, the first
-and third quartile are the down- and upside of the box, respectively.
-The length of the box is the Inter Quartile Range (IQR). The minimum and
-maximum are 1.5X Inter Quartile Range (IQR). Observations further away
-can be considered outliers.
-
-\begin{figure}[H]
-
-{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-8-1} 
-
-}
-
-\caption{\label{6}Three boxplots: Votes for CDA, Votes for GroenLinks and Urbanity index}\label{fig:unnamed-chunk-8}
+\caption{\label{6}Three boxplots: Votes for CDA, Votes for GroenLinks and Urbanity index}\label{fig:unnamed-chunk-7}
 \end{figure}
 
 \section{2. Multiple linear
@@ -395,10 +387,14 @@ tested in this model are the highly educated fraction in a municipality
 fraction that is 60 plus in the municipality \texttt{Frac\_60plus}. The
 error assumptions are also discussed. This are assumptions made for the
 residuals, to check if meet the requirements for correct linear
-regressions. These assumptions are: * Linearity: The expected value of
-the error is zero * Constant variance: The variance of the error is
-constant * Normality: The errors are normally distributed * Indepence:
-The observations are sampled indipendently
+regressions. These assumptions are:
+
+\begin{itemize}
+\item Linearity: The expected value of the error is zero
+\item Constant variance: The variance of the error is constant 
+\item Normality: The errors are normally distributed
+\item Indepence: The observations are sampled indipendently
+\end{itemize}
 
 \subsection{First model}\label{first-model}
 
@@ -445,28 +441,28 @@ are above 10, so no signs of collinearity.
 
 \begin{figure}[H]
 
-{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-9-1} 
+{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-8-1} 
 
 }
 
-\caption{\label{afm}assumptions first model}\label{fig:unnamed-chunk-9}
+\caption{\label{afm}assumptions first model}\label{fig:unnamed-chunk-8}
 \end{figure}
 
 In figure \ref{afm} the four plots are shown. The first plot (Residuals
 vs Fitted) shows that the residuals have a `loudspeaker pattern', the
 variance of the residuals tends to increase with an increase of the
 fitted value. Because of this, a BoxCox graph is consulted. This graph
-suggests a transformation for the response. The BoxCos figure \ref{BC1}
-in has a 95\% Confidence interval located around the 0. So a ln
+suggests a transformation for the response. The BoxCox in figure
+\ref{BC1} has a 95\% Confidence interval located around the 0. So a log
 transformation is suggested.
 
 \begin{figure}[H]
 
-{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-10-1} 
+{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-9-1} 
 
 }
 
-\caption{\label{BC1}BoxCox first model}\label{fig:unnamed-chunk-10}
+\caption{\label{BC1}BoxCox first model}\label{fig:unnamed-chunk-9}
 \end{figure}
 
 \subsection{Second model}\label{second-model}
@@ -498,11 +494,11 @@ new model will be:\\
 
 \begin{figure}[H]
 
-{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-11-1} 
+{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-10-1} 
 
 }
 
-\caption{\label{asm}assumptions second model}\label{fig:unnamed-chunk-11}
+\caption{\label{asm}assumptions second model}\label{fig:unnamed-chunk-10}
 \end{figure}
 
 The plots in figure \ref{asm} show one big outlier, the municipality
@@ -560,6 +556,7 @@ model.
 
 The backward elimination resulted in the final model.\\
 \(ln(Y_i) = \beta_0 + \beta_1*high educated fraction + \beta_2*Urban index + \beta_4*Non west2 + \beta_5*Non west 3 + \beta_6*Frac 60plus + \epsilon_i\)
+
 The coëfficients are given in the table below
 
 \begin{table}[ht]
@@ -585,11 +582,11 @@ The coëfficients are given in the table below
 
 \begin{figure}[H]
 
-{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-13-1} 
+{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-12-1} 
 
 }
 
-\caption{\label{asm}assumptions second model}\label{fig:unnamed-chunk-13}
+\caption{\label{asm}assumptions second model}\label{fig:unnamed-chunk-12}
 \end{figure}
 
 The estimates for the predictors are filled in the model and the
@@ -598,13 +595,13 @@ following results are obtained:
 \(ln(Y_i) = -1.0298 -0.8277*high educated fraction -0.1311*Urban index -0.1141*Non west2 -0.2871*Non west3 -3.0168*Frac 60plus + \epsilon i\)
 
 All the coëfficients are negative, but because the fitted value is a log
-value it will be positive.
+value the response will be positive.
 
 \subsection{Cross validation}\label{cross-validation}
 
 To tell something about the prediction possibilities of the model, cross
 validation is done. Cross validation tells something about how well the
-model predicts on average, it telss nothing about the 'correctness'of
+model predicts on average, it tells nothing about the 'correctness'of
 the model. Cross validation estimates the expected prediction error of a
 model.\\
 The cross validation works as follows. First 5k-folds are made. This
@@ -641,7 +638,7 @@ the prediction error for this model is 0.0582
 \end{Shaded}
 
 \begin{verbatim}
-## [1] 0.05813659
+## [1] 0.05821271
 \end{verbatim}
 
 \section{3. Logistic regression}\label{logistic-regression}
@@ -672,8 +669,9 @@ observations in this dataset.
 
 \subsection{3.1 First model}\label{first-model-1}
 
-Again, the first is the full model. Stepwise backward elimination is
-used to find the optimal model. Below, the formula for the full model:
+Again, the first model is the full model. Stepwise backward elimination
+is used to find the optimal model. Below, the formula for the full
+model:
 
 \(log(\frac{\theta_i}{1 - \theta_i}) = \beta_0 + \beta_1 \cdot UrbanIndex + \beta_2 \cdot HighlyEducatedFraction + \beta_3 \cdot MeanIncome + \beta_4 \cdot NonWest + \beta_5 \cdot Fraction60Plus + \epsilon_i\)
 
@@ -775,11 +773,11 @@ At last, the residuals and cook's distance are visualized
 
 \begin{figure}[H]
 
-{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-16-1} 
+{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-15-1} 
 
 }
 
-\caption{\label{ass_mdl2}Diagnostics first quasi-binomial model}\label{fig:unnamed-chunk-16}
+\caption{\label{ass_mdl2}Diagnostics first quasi-binomial model}\label{fig:unnamed-chunk-15}
 \end{figure}
 
 The left plot of figure \ref{ass_mdl2} visualizes the half-normal
@@ -797,11 +795,11 @@ CDA votes and Dinkelland has the highest percentage of CDA votes.
 
 \begin{figure}[H]
 
-{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-17-1} 
+{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-16-1} 
 
 }
 
-\caption{\label{av_mdl2}AvPlots first quasi-binomial model}\label{fig:unnamed-chunk-17}
+\caption{\label{av_mdl2}AvPlots first quasi-binomial model}\label{fig:unnamed-chunk-16}
 \end{figure}
 
 Figure \ref{av_mdl2} help to interpret the partial regression
@@ -843,11 +841,11 @@ and the residual deviance has decreased slightly to 76,966 with 358 df.
 
 \begin{figure}[H]
 
-{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-19-1} 
+{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-18-1} 
 
 }
 
-\caption{\label{ass_mdl3}Diagnostics third quasi-binomial model}\label{fig:unnamed-chunk-19}
+\caption{\label{ass_mdl3}Diagnostics third quasi-binomial model}\label{fig:unnamed-chunk-18}
 \end{figure}
 
 The plot left still displays very large pearson residuals. The plot in
@@ -920,11 +918,11 @@ is estimated at 221.1.
 
 \begin{figure}[H]
 
-{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-22-1} 
+{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-21-1} 
 
 }
 
-\caption{\label{ass_final}Diagnostics final quasi-binomial model}\label{fig:unnamed-chunk-22}
+\caption{\label{ass_final}Diagnostics final quasi-binomial model}\label{fig:unnamed-chunk-21}
 \end{figure}
 
 Figure \ref{ass_final} displays that there is still a large spread of
@@ -934,11 +932,11 @@ does not display very influential observations.
 
 \begin{figure}[H]
 
-{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-23-1} 
+{\centering \includegraphics{Report_files/figure-latex/unnamed-chunk-22-1} 
 
 }
 
-\caption{\label{av_final}Diagnostics final quasi-binomial model}\label{fig:unnamed-chunk-23}
+\caption{\label{av_final}Diagnostics final quasi-binomial model}\label{fig:unnamed-chunk-22}
 \end{figure}
 
 \begin{verbatim}
@@ -966,39 +964,41 @@ Therefore, only the output is presented here and not the code.
 \end{verbatim}
 
 \begin{verbatim}
-## [1] 0.001708063
+## [1] 0.001708
 \end{verbatim}
 
-The cross validation results in a Means Squared Error (MSE) of 0.0017.
+The cross validation results in a Prediction Means Squared Error (PMSE)
+of 0.0017.
 
 \subsection{Discussion}\label{discussion}
 
 \subsection{Linear regression}\label{linear-regression}
 
-Because the fitted values are transformed to a ln form, it is also
+Because the fitted values are transformed to a log form, it is also
 possible to raise the coëfficients to a exponential power. The final
 model obtained then is:
 
-\(Y_i = e^(-1.0298 -0.8277*high educated fraction -0.1311*Urban index -0.1141*Non west2 -0.2871*Non west3 -3.0168*Frac 60plus + \epsilon i)\)
+\(Y_i = e^{(-1.0298 -0.8277*high educated fraction -0.1311*Urban index -0.1141*Non west2 -0.2871*Non west3 -3.0168*Frac 60plus + \epsilon i)}\)
 
 Per variable the influence will be discussed. The slope will start at
-point exp(-1.0298), this is equal to 0.357. This means if all the other
-demographic variables are zero, the fitted value will be equal to the
-intercept, so equal to 0.357. This not a possible outcome, because a
+point \(exp(-1.0298)\), this is equal to 0.357. This means if all the
+other demographic variables are zero, the fitted value will be equal to
+the intercept, so equal to 0.357. This not a possible outcome, because a
 Municipality with all these demographics equal to zero is no reality.
 For the other coefficients it is a bit harder to predict there
 influence, because of the log transformation and the different range the
-different variables have. For example, the urban index has a 0-3.8 range
-and education ahs a 0.12-0.47 range in this data set. But still some
-remarks can be made about the slope of the model. The fraction 60 plus
-has the lowest marginal impact on the slope, if everything else stays
-the same an frac 60 plus changes for example 1 the exponent changes with
--3.02. The non west2 has the highest impact on the slope, because the
-coëfficient is the lowest. Another important point is that or Non-west2
-and Non-west3 are both zero, or Non-west2 is one ore Non west 3 is one.
-The outcome of the crossvalidation for this model is 0.0582. So the mean
-squared difference between the fitted and predicted value is 0.0582,
-which is pretty close to 0.
+different variables have. For example, the \emph{urban index} has a
+0-3.8 range and \emph{education} has a 0.12-0.47 range in this data set.
+But still some remarks can be made about the slope of the model. The
+\emph{fraction 60 plus} has the lowest marginal impact on the slope, if
+everything else stays the same an \emph{frac 60 plus} changes for
+example with 1 the exponent changes with -3.02. The \emph{non west2} has
+the highest impact on the slope, because the coëfficient is the lowest.
+Another important point is that or \emph{Non-west2} and \emph{Non-west3}
+are both zero, or \emph{Non-west2} is one or \emph{Non west 3} is one.
+The outcome of the crossvalidation for this model is 0.0582. So the
+predicted mean squared difference between the fitted and predicted value
+is 0.0582, which is pretty close to 0.
 
 There are some limitations for this model, because the response variable
 is a fraction and will never be larger than one, theoratically a
@@ -1010,17 +1010,6 @@ really possible to adapt this any further. Also there are two
 municipalities that fall outside the {[}-3,3{]} range in the normality
 plot, but because they are still in the 95\% envelope the decision is
 made to not delete these municipalities.
-
-\subsection{Further research}\label{further-research}
-
-Both of the models have different significant variables. But it is
-difficult to say which one is a better fitting model. Because both of
-them have reasons to choose that kind of model, also both of them have
-limitations. That is why further research should be done to research
-which of the model is the best fitting model. Another topic that can be
-researched in further research is the influence of demographics on areas
-of municipalities instead of whole municipialities. Because differences
-between areas are nullified in the demographics of a municipality.
 
 \subsection{4.2 Logistic regression}\label{logistic-regression-1}
 
@@ -1077,8 +1066,8 @@ a similar population.
 \begin{figure}
 \centering
 \includegraphics[width=2.60417in]{Uitslag_verkiezingen2017.png}
-\caption{Results elections with biggest parties. CDA is displayed in
-light green}
+\caption{\label{Results elections}Results elections with biggest
+parties. CDA is displayed in light green}
 \end{figure}
 
 Another explanation for the dispersion is the large variation. In some
@@ -1086,17 +1075,23 @@ municipalities only 3\% voted for CDA, while in other almost 50\%. This
 large variation is hard to modeled in a binomial. By using the log odds,
 votes are distributed in two groups: voted for CDA or not voted for CDA.
 However, with 13 political parties is it hard to distinguish two groups.
-Because it is not possible to into account which parties are similar to
-CDA.
+Because it is not possible take to into account which parties are
+similar to CDA.
 
-Even though, the cross validation resulted in a MSE of 0.0017, it is not
-likely that this model can make future predictions. This because of the
-large variation and overdispersion.
+Even though, the cross validation resulted in a PMSE of 0.0017, it is
+not likely that this model can make future predictions. This because of
+the large variation and overdispersion.
 
-\section{5. Conclusion}\label{conclusion}
+\subsection{Further research}\label{further-research}
 
--samenvatting -belangrijkste limitaties noemen -modellen met elkaar
-vergelijken
+Both of the models have different significant variables. But it is
+difficult to say which one is a better fitting model. Because both of
+them have reasons to choose that kind of model, also both of them have
+limitations. That is why further research should be done to research
+which of the model is the best fitting model. Another topic that can be
+researched in further research is the influence of demographics on areas
+of municipalities instead of whole municipialities. Because differences
+between areas are nullified in the demographics of a municipality.
 
 
 \end{document}
