@@ -846,5 +846,4 @@ Even though, the cross validation resulted in a PMSE of 0.0017, it is not likely
 Both of the models have different significant variables. This makes it even more difficult to determine which model is better fitting. However, the logistic regression fits the underlying pattern of the data better and has a smaller MSPE. Further research into the correctness of the models should be done. Another topic that can be researched in further research is the influence of demographics on districts of municipalities instead of the whole municipialities. Right now the developed models nullified the differences in demographics between areas in a municipality. 
 
 
-# 5. Conclusion
 
